@@ -45,11 +45,11 @@
   color: inherit;
 }
 
-.logo-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #facc15, #f97316);
+.logo-image {
+  width: 72px; 
+  height: 72px;
+  object-fit: contain; 
+  flex-shrink: 0;      
 }
 
 .logo-text {
@@ -515,3 +515,98 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* About Us Page */
+
+.about-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.about-hero {
+  margin-top: 8px;
+  padding: 40px 24px;
+  border-radius: 16px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  text-align: center;
+}
+
+.about-hero h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.about-section {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 24px 24px 28px;
+  line-height: 1.6;
+}
+
+.about-section h2 {
+  margin-top: 0;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.about-section h3 {
+  margin-top: 20px;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.about-paragraph {
+  font-size: 14px;
+  color: #374151;
+  margin: 4px 0;
+  text-align: left;
+}
+
+.about-list {
+  margin: 8px 0 0 18px;
+  padding: 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+.about-list li {
+  margin-bottom: 6px;
+}
+
+.about-note {
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+.about-cta-button {
+  margin-top: 14px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #f59e0b;
+  background: #fbbf24;
+  color: #111827;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.about-cta-button:hover {
+  background: #f59e0b;
+}
+
+/* About page responsive tweaks */
+
+@media (max-width: 640px) {
+  .about-hero {
+    padding: 28px 16px;
+  }
+
+  .about-section {
+    padding: 18px 16px 22px;
+  }
+}
+

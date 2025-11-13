@@ -12,7 +12,12 @@ function App() {
       {/* Top navigation bar */}
       <header className="app-header">
         <Link to="/" className="header-left header-left-link">
-          <div className="logo-circle" />
+          <img 
+            src="/src/assets/company-logo.png" 
+            alt="Growth Tutoring Logo" 
+            className="logo-image" 
+          />
+
           <div className="logo-text">
             <div className="logo-name">Growth Tutoring</div>
             <div className="logo-tagline">Learning that sticks</div>
