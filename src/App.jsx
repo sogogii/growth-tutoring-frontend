@@ -5,6 +5,7 @@ import SubjectsPage from './pages/SubjectsPage'
 import TutorsPage from './pages/TutorsPage'
 import ContactPage from './pages/ContactPage'
 import './App.css'
+import logo from './assets/company-logo.png'
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <header className="app-header">
         <Link to="/" className="header-left header-left-link">
           <img 
-            src="/src/assets/company-logo.png" 
+            src={logo} 
             alt="Growth Tutoring Logo" 
             className="logo-image" 
           />
