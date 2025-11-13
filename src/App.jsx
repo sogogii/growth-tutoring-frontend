@@ -11,13 +11,13 @@ function App() {
     <div className="app-root">
       {/* Top navigation bar */}
       <header className="app-header">
-        <div className="header-left">
+        <Link to="/" className="header-left header-left-link">
           <div className="logo-circle" />
           <div className="logo-text">
             <div className="logo-name">Growth Tutoring</div>
             <div className="logo-tagline">Learning that sticks</div>
           </div>
-        </div>
+        </Link>
 
         <nav className="header-nav">
           <Link to="/about" className="nav-link">About Us</Link>
