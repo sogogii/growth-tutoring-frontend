@@ -36,6 +36,7 @@ function App() {
         </nav>
 
         <div className="header-right">
+          {/* FIX THIS CODE AFTER IMPLEMENTATION */}
           <Link to="/coming-soon" button className="btn btn-primary">Get Matched Today</Link>
           <button className="btn btn-ghost">Sign in</button>
           <button className="btn btn-outline">Register</button>

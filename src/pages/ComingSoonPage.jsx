@@ -1,3 +1,5 @@
+/* Redirect to this page for any features unreleased */
+
 import { Link } from 'react-router-dom'
 
 function ComingSoonPage() {
