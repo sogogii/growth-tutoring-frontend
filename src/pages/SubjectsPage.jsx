@@ -1,4 +1,4 @@
-import './SubjectsPage.css'
+import './styles/SubjectsPage.css'
 
 const SUBJECTS = [
   {

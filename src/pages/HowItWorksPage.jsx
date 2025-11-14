@@ -1,4 +1,4 @@
-import './HowItWorksPage.css'
+import './styles/HowItWorksPage.css'
 
 function HowItWorksPage() {
   return (
