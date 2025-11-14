@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function AboutPage() {
   return (
     <div className="about-page">
@@ -76,7 +78,9 @@ function AboutPage() {
           </li>
         </ul>
 
-        <button className="about-cta-button">Find Tutor</button>
+        <Link to="/coming-soon" className="about-cta-button">
+          Find Tutor
+        </Link>
       </section>
 
       {/* Community Impact Program */}
@@ -93,7 +97,9 @@ function AboutPage() {
           available through online learning.
         </p>
 
-        <button className="about-cta-button">See Openings</button>
+        <Link to="/coming-soon" className="about-cta-button">
+          See Openings
+        </Link>
       </section>
     </div>
   )

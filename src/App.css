@@ -564,12 +564,12 @@
 .about-paragraph {
   font-size: 14px;
   color: #374151;
-  margin: 4px 0;
+  margin: 4px 0 12px 0;
   text-align: left;
 }
 
 .about-list {
-  margin: 8px 0 0 18px;
+  margin: 8px 0 12px 18px;
   padding: 0;
   font-size: 14px;
   color: #374151;
@@ -593,6 +593,7 @@
   color: #111827;
   font-size: 13px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .about-cta-button:hover {
