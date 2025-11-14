@@ -4,8 +4,10 @@ import AboutPage from './pages/AboutPage'
 import SubjectsPage from './pages/SubjectsPage'
 import TutorsPage from './pages/TutorsPage'
 import ContactPage from './pages/ContactPage'
+import ComingSoonPage from './pages/ComingSoonPage'
+
 import './App.css'
-import logo from './assets/company-logo.png'
+import logo from './assets/company-logo.png' 
 
 function App() {
   return (
@@ -34,7 +36,7 @@ function App() {
         </nav>
 
         <div className="header-right">
-          <button className="btn btn-primary">Get Matched Today</button>
+          <Link to="/coming-soon" button className="btn btn-primary">Get Matched Today</Link>
           <button className="btn btn-ghost">Sign in</button>
           <button className="btn btn-outline">Register</button>
         </div>
@@ -48,6 +50,7 @@ function App() {
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/coming-soon" element={<ComingSoonPage />} />
         </Routes>
       </main>
 

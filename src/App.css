@@ -100,6 +100,7 @@
   background: none;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
     box-shadow 0.15s ease;
+  text-decoration: none;
 }
 
 .btn-primary {
@@ -610,3 +611,68 @@
   }
 }
 
+
+/* Coming soon page */
+
+.coming-soon-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.coming-soon-card {
+  max-width: 560px;
+  width: 100%;
+  padding: 32px 28px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  text-align: left;
+}
+
+.coming-soon-card h1 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.coming-soon-card p {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 6px 0 12px;
+}
+
+.coming-soon-card ul {
+  margin: 0 0 18px 18px;
+  padding: 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+.coming-soon-card li {
+  margin-bottom: 4px;
+}
+
+.coming-soon-button {
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.coming-soon-contact {
+  font-size: 14px;
+  color: #4b5563;
+  margin-top: 12px;
+}
+
+.contact-link {
+  color: #16a34a; /* green */
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
+}
