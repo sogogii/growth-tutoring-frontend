@@ -1,4 +1,6 @@
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import SubjectsPage from './pages/SubjectsPage'
@@ -9,6 +11,20 @@ import HowItWorksPage from './pages/HowItWorksPage'
 
 import './App.css'
 import logo from './assets/company-logo.png' 
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    })
+  }, [pathname])
+
+  return null
+}
 
 function App() {
   return (
@@ -46,6 +62,7 @@ function App() {
 
       {/* Page content */}
       <main className="app-main">
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
