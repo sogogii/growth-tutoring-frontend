@@ -1,6 +1,7 @@
 /* Redirect to this page for any features unreleased */
 
 import { Link } from 'react-router-dom'
+import './ComingSoonPage.css'
 
 function ComingSoonPage() {
   return (

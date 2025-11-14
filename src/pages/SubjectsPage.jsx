@@ -1,3 +1,5 @@
+import './SubjectsPage.css'
+
 const SUBJECTS = [
   {
     name: 'Mathematics',

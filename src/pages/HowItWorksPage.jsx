@@ -1,3 +1,5 @@
+import './HowItWorksPage.css'
+
 function HowItWorksPage() {
   return (
     <div className="how-page">
