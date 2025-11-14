@@ -5,6 +5,7 @@ import SubjectsPage from './pages/SubjectsPage'
 import TutorsPage from './pages/TutorsPage'
 import ContactPage from './pages/ContactPage'
 import ComingSoonPage from './pages/ComingSoonPage'
+import HowItWorksPage from './pages/HowItWorksPage'
 
 import './App.css'
 import logo from './assets/company-logo.png' 
@@ -30,7 +31,7 @@ function App() {
         <nav className="header-nav">
           <Link to="/about" className="nav-link">About Us</Link>
           <Link to="/tutors" className="nav-link">Our Tutors</Link>
-          <a href="#how-it-works" className="nav-link">How It Works</a>
+          <Link to="/how-it-works" className="nav-link">How It Works</Link>
           <Link to="/subjects" className="nav-link">Subjects</Link>
           <Link to="/contact" className="nav-link">Contact Us</Link>
         </nav>
@@ -50,6 +51,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
         </Routes>
