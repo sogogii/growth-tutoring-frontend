@@ -75,40 +75,74 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="app-footer">
-        <div className="footer-columns">
-          <div className="footer-col">
-            <div className="footer-logo">Growth Tutoring</div>
-            <p className="footer-text">
-              Helping students grow with personalized 1:1 tutoring and clear communication.
-            </p>
+      {/* CHANGE REDIRECTION !!! */}
+      
+      <footer className="site-footer">
+        <div className="footer-top">
+          {/* Brand + socials */}
+          <div className="footer-brand">
+            <div className="footer-logo-row">
+              {/* use whatever logo import you already have */}
+              <img src={logo} alt="Growth Tutoring" className="footer-logo" />
+
+              {/* CHANGE SOCIAL MEDIA ICON LATER !!!*/}
+              <div className="footer-socials">
+                <a href="https://x.com" target="_blank" rel="noreferrer" aria-label="X">
+                  𝕏
+                </a>
+                <a href="https://www.instagram.com/growthtutoringhq/" target="_blank" rel="noreferrer" aria-label="Instagram">
+                  ◎
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube">
+                  ▶
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                  in
+                </a>
+              </div>
+            </div>
           </div>
 
-          <div className="footer-col">
-            <h4>Growth Tutoring</h4>
-            <a href="/about">About us</a>
-            <a href="/contact">Contact us</a>
-            <a href="/tutors">Our tutors</a>
-            <a href="/subjects">Subjects</a>
-          </div>
+          {/* Link columns */}
+          <div className="footer-links-grid">
+            <div className="footer-column">
+              <h4>Growth Tutoring</h4>
+              <Link to="/about">About us</Link>
+              <Link to="/contact">Contact us</Link>
+              <Link to="/tutors">Our tutors</Link>
+              <Link to="/coming-soon">Join Us</Link>
+              <Link to="/coming-soon">FAQ</Link>
+              <Link to="/coming-soon">Technology</Link>
+              <Link to="/how-it-works">How it works</Link>
+            </div>
 
-          <div className="footer-col">
-            <h4>Explore</h4>
-            <span>K–12 Math</span>
-            <span>K–12 English</span>
-            <span>Science</span>
-            <span>Study Skills</span>
-          </div>
+            <div className="footer-column">
+              <h4>Explore</h4>
+              <Link to="/subjects">K-12 Math</Link>
+              <Link to="/subjects">K-12 English</Link>
+              <Link to="/subjects">K-12 Sciences</Link>
+              <Link to="/subjects">Foreign Languages</Link>
+              <Link to="/subjects">Pre College Counseling</Link>
+              <Link to="/subjects">Special Needs Tutoring</Link>
+              <Link to="/coming-soon">Online Courses</Link>
+              <Link to="/coming-soon">Community Impact Program</Link>
+            </div>
 
-          <div className="footer-col">
-            <h4>Resources</h4>
-            <span>Tutor Guidelines</span>
-            <span>Parent Support</span>
-            <span>Safety & Policies</span>
+            <div className="footer-column">
+              <h4>Resources</h4>
+              <Link to="/coming-soon">Tutor Guidelines</Link>
+              <Link to="/coming-soon">Learning Tips</Link>
+              <Link to="/coming-soon">Parent Support</Link>
+              <Link to="/coming-soon">Blog</Link>
+              <Link to="/coming-soon">Safety &amp; Security Policies</Link>
+              <Link to="/coming-soon">Terms of Service</Link>
+              <Link to="/coming-soon">Resource library</Link>
+            </div>
           </div>
         </div>
+
         <div className="footer-bottom">
-          © {new Date().getFullYear()} Growth Tutoring. All rights reserved.
+          <p>© 2025 Growth Tutoring LLC. All rights reserved</p>
         </div>
       </footer>
     </div>
