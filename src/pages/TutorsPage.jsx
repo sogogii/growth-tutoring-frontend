@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './styles/TutorsPage.css'
 
@@ -45,6 +45,14 @@ function TutorsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  const [currentPage, setCurrentPage] = useState(() => {
+    const saved = localStorage.getItem('tutorsPage');
+    return saved ? Number(saved) : 1;
+  });
+  const pageSize = 10 // tutors per page
+
+  const tutorsContentRef = useRef(null)
+
   useEffect(() => {
     const fetchTutors = async () => {
       try {
@@ -83,6 +91,30 @@ function TutorsPage() {
     fetchTutors()
   }, [])
 
+  useEffect(() => {
+    localStorage.setItem('tutorsPage', currentPage);
+  }, [currentPage]);
+
+  // pagination calculations
+  const totalPages = Math.max(1, Math.ceil(tutors.length / pageSize))
+  const startIndex = (currentPage - 1) * pageSize
+  const currentTutors = tutors.slice(startIndex, startIndex + pageSize)
+
+  useEffect(() => {
+    if (!tutorsContentRef.current) return
+
+    const rect = tutorsContentRef.current.getBoundingClientRect()
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+
+    const navbarOffset = 90 
+    const targetY = rect.top + scrollTop - navbarOffset
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }, [currentPage])
+
   return (
     <div className="tutors-page">
       {/* Top banner */}
@@ -91,7 +123,7 @@ function TutorsPage() {
       </section>
 
       {/* Main content */}
-      <section className="tutors-content">
+      <section className="tutors-content" ref={tutorsContentRef}>
         {/* Search bar section */}
         <header className="tutors-search-header">
           <h2>Search For Tutors</h2>
@@ -119,24 +151,19 @@ function TutorsPage() {
 
         {/* Tutor list */}
         <div className="tutors-list">
-
           {loading && <p>Loading tutors...</p>}
-            {error && (
-              <p className="tutors-error">
-                Failed to load tutors: {error}
-              </p>
-            )}
-            {!loading && !error && tutors.length === 0 && (
-              <p>No tutors found yet.</p>
-            )}
 
-            {!loading && !error && tutors.map((tutor) => (
-              <article key={tutor.id} className="tutor-card">
-                {/* existing card JSX */}
-              </article>
-            ))}
+          {error && (
+            <p className="tutors-error">
+              Failed to load tutors: {error}
+            </p>
+          )}
 
-          {tutors.map((tutor) => (
+          {!loading && !error && tutors.length === 0 && (
+            <p>No tutors found yet.</p>
+          )}
+
+          {!loading && !error && currentTutors.map((tutor) => (
             <article key={tutor.id} className="tutor-card">
               <div className="tutor-card-left">
                 <div className="tutor-image-placeholder" aria-hidden="true" />
@@ -145,7 +172,12 @@ function TutorsPage() {
               <div className="tutor-card-main">
                 <div className="tutor-card-header">
                   <span className="tutor-name">{tutor.name}</span>
-                  <StarRating rating={tutor.rating} />
+                  <div className="rating-wrapper">
+                    <StarRating rating={tutor.rating} />
+                    <span className="numeric-rating">
+                      {tutor.rating != null ? tutor.rating.toFixed(2) : '0.00'}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="tutor-meta">
@@ -201,19 +233,35 @@ function TutorsPage() {
           ))}
         </div>
 
-        {/* Pagination */}
-        <footer className="tutors-pagination">
-          <button className="tutors-page-link" disabled>
-            ← Previous
-          </button>
-          <button className="tutors-page-link is-active">1</button>
-          <button className="tutors-page-link">2</button>
-          <button className="tutors-page-link">3</button>
-          <span className="tutors-page-ellipsis">…</span>
-          <button className="tutors-page-link">67</button>
-          <button className="tutors-page-link">68</button>
-          <button className="tutors-page-link">Next →</button>
-        </footer>
+        {!loading && !error && tutors.length > pageSize && (
+          <div className="tutors-pagination">
+            <button
+              className="page-btn"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              ‹ Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`page-btn ${page === currentPage ? 'active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              className="page-btn"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next ›
+            </button>
+          </div>
+        )}
       </section>
     </div>
   )

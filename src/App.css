@@ -13,6 +13,7 @@
   max-width: 1120px;
   margin: 0 auto;
   padding: 32px 16px 64px;
+  align-items: stretch;
 }
 
 /* Header */

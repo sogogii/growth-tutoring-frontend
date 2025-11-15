@@ -4,6 +4,9 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;   
+  max-width: 1120px;   
+  margin: 0 auto; 
 }
 
 .tutors-hero {
@@ -29,6 +32,8 @@
   border-radius: 16px;
   border: 1px solid #e5e7eb;
   padding: 24px 24px 28px;
+  width: 100%;
+  
 }
 
 /* Search header */
@@ -89,7 +94,12 @@
 .tutors-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.5rem; /* same spacing as before */
+  margin-bottom: 2rem;
+  padding: 0;
+  height: auto;       /* ensure flexible height */
+  min-height: auto;   /* override any min-height */
+  width: 100%;
 }
 
 .tutor-card {
@@ -137,6 +147,18 @@
 .tutor-rating {
   color: #facc15;
   font-size: 13px;
+}
+
+.rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* space between stars and number */
+}
+
+.numeric-rating {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555; /* or any color you prefer */
 }
 
 .tutor-meta {
@@ -204,35 +226,38 @@
 /* Pagination */
 
 .tutors-pagination {
-  margin-top: 20px;
   display: flex;
-  align-items: center;
-  gap: 8px;
   justify-content: center;
-  font-size: 12px;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
 }
 
-.tutors-page-link {
+.page-btn {
+  padding: 0.35rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  font-size: 0.9rem;
   cursor: pointer;
+  min-width: 2.25rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.tutors-page-link[disabled] {
+.page-btn:hover:not(:disabled) {
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.page-btn.active {
+  background-color: #7c3aed;
+  color: #fff;
+  border-color: #7c3aed;
+}
+
+.page-btn:disabled {
+  opacity: 0.35;
   cursor: default;
-  opacity: 0.6;
-}
-
-.tutors-page-link.is-active {
-  background: #111827;
-  color: #ffffff;
-  border-color: #111827;
-}
-
-.tutors-page-ellipsis {
-  padding: 0 4px;
 }
 
 /* Responsive */
@@ -258,7 +283,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1200px) {
   .tutors-hero {
     padding: 28px 16px;
   }
