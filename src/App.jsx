@@ -96,7 +96,7 @@ function App() {
                 <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube">
                   ▶
                 </a>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <a href="https://www.linkedin.com/company/growth-tutoring-llc/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
                   in
                 </a>
               </div>
