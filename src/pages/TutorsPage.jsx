@@ -1,109 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './styles/TutorsPage.css'
-
-// THIS WHOLE PAGE SHOULD BE FIXED , CONNECTED TO THE DATABASE
-// THIS IS JUST A MOCKUP!!
-
-const TUTORS = [
-  {
-    id: 'sungokw',
-    name: 'Sungok Woo',
-    rating: 5,
-    joined: 'November 2025',
-    subject: 'K–12 Math',
-    experienceYears: 1,
-    lessonsTaught: 62,
-    education: "Master's in Mathematics @ University of California, Irvine",
-    method: 'Online & In-Person',
-    summary:
-      "Hello, I’m Sungok! I’m currently a PhD student at UCI, and I specialize in teaching AP Calculus and competition math.",
-    rate: 60,
-  },
-  {
-    id: 'jerryz',
-    name: 'Jerry Zhang',
-    rating: 5,
-    joined: 'January 2025',
-    subject: 'K–10 English',
-    experienceYears: 2,
-    lessonsTaught: 100,
-    education: "Bachelor's in English @ University of California, Los Angeles",
-    method: 'Online & In-Person',
-    summary:
-      "Hello, I’m Jerry, and I graduated from UCLA. I help students build strong reading and writing foundations with clear feedback.",
-    rate: 120,
-  },
-  {
-    id: 'mathieuk',
-    name: 'Mathieu Khalaf',
-    rating: 5,
-    joined: 'March 2025',
-    subject: 'Pre College Counseling',
-    experienceYears: 4,
-    lessonsTaught: 200,
-    education: "Master's in Education @ University of California, Irvine",
-    method: 'Online & In-Person',
-    summary:
-      'Hello, I’m Mathieu. I have several years of experience guiding students through college applications, essays, and interviews.',
-    rate: 70,
-  },
-  {
-    id: 'josephl',
-    name: 'Joseph Lu',
-    rating: 5,
-    joined: '2025',
-    subject: 'K–12 Biology',
-    experienceYears: 1,
-    lessonsTaught: 43,
-    education: "Master's in Biology @ University of Southern California",
-    method: 'Online & In-Person',
-    summary:
-      'Hello, I’m Joseph. I enjoy helping students make sense of biology with diagrams, practice questions, and exam strategies.',
-    rate: 50,
-  },
-  {
-    id: 'tylerk',
-    name: 'Tyler Kuwada',
-    rating: 5,
-    joined: 'August 2025',
-    subject: 'K–12 Chemistry',
-    experienceYears: 10,
-    lessonsTaught: 80,
-    education: "Master's in Chemistry @ CSU Long Beach",
-    method: 'Online & In-Person',
-    summary:
-      'Hello, I’m Tyler! I have 10 years of experience teaching chemistry and love breaking down complex concepts into simple steps.',
-    rate: 65,
-  },
-  {
-    id: 'carlq',
-    name: 'Carl Qiao',
-    rating: 5,
-    joined: 'July 2025',
-    subject: 'K–8 Math',
-    experienceYears: 1,
-    lessonsTaught: 51,
-    education: 'Student in Mathematics @ University of California, Irvine',
-    method: 'Online & In-Person',
-    summary:
-      'Hello, I’m Carl! I’m a 3rd-year math student at UCI and focus on helping younger students build strong foundations.',
-    rate: 30,
-  },
-  {
-    id: 'lenap',
-    name: 'Lena Park',
-    rating: 5,
-    joined: 'March 2025',
-    subject: 'K–12 Physics',
-    experienceYears: 3,
-    lessonsTaught: 90,
-    education: "Master's in Aerospace Engineering @ MIT",
-    method: 'Online Only',
-    summary:
-      'Hello, I’m Lena. I love teaching physics with real-world examples and help students gain intuition for challenging topics.',
-    rate: 100,
-  },
-]
 
 function StarRating({ rating }) {
   return (
@@ -114,7 +11,78 @@ function StarRating({ rating }) {
   )
 }
 
+function formatJoined(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr) // joined_at from backend, e.g. "2025-11-01"
+  if (Number.isNaN(d.getTime())) return dateStr // fallback if invalid
+
+  const monthNames = [
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
+  ]
+
+  return `${monthNames[d.getMonth()]} ${d.getFullYear()}`
+}
+
+function formatTeachingMethod(method) {
+  if (!method) return ''
+
+  switch (method) {
+    case 'ONLINE':
+      return 'Online'
+    case 'IN_PERSON':
+      return 'In-Person'
+    case 'HYBRID':
+      return 'Hybrid'
+    default:
+      return method.charAt(0) + method.slice(1).toLowerCase()
+  }
+}
+
 function TutorsPage() {
+
+  const [tutors, setTutors] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/tutors')
+        if (!res.ok) {
+          throw new Error(`HTTP error ${res.status}`)
+        }
+
+        const data = await res.json()
+
+        // map backend fields → frontend shape
+        const mapped = data.map((t) => ({
+          id: t.publicId,
+          name: `${t.firstName} ${t.lastName}`,
+          rating: t.ratingAvg ?? 0,
+          joined: formatJoined(t.joinedAt),
+          subject: t.subjectLabel,
+          experienceYears: t.yearsExperience,
+          lessonsTaught: t.lessonsTaught,
+          education: t.education,
+          teachingMethod: t.teachingMethod, // 'ONLINE', 'IN_PERSON', 'HYBRID'
+          summary: t.bio || '',
+          hourlyRate: t.hourlyRate,
+          profileImageUrl: t.profileImageUrl || null,
+        }))
+
+        setTutors(mapped)
+      } catch (err) {
+        console.error(err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTutors()
+  }, [])
+
   return (
     <div className="tutors-page">
       {/* Top banner */}
@@ -151,7 +119,24 @@ function TutorsPage() {
 
         {/* Tutor list */}
         <div className="tutors-list">
-          {TUTORS.map((tutor) => (
+
+          {loading && <p>Loading tutors...</p>}
+            {error && (
+              <p className="tutors-error">
+                Failed to load tutors: {error}
+              </p>
+            )}
+            {!loading && !error && tutors.length === 0 && (
+              <p>No tutors found yet.</p>
+            )}
+
+            {!loading && !error && tutors.map((tutor) => (
+              <article key={tutor.id} className="tutor-card">
+                {/* existing card JSX */}
+              </article>
+            ))}
+
+          {tutors.map((tutor) => (
             <article key={tutor.id} className="tutor-card">
               <div className="tutor-card-left">
                 <div className="tutor-image-placeholder" aria-hidden="true" />
@@ -184,7 +169,7 @@ function TutorsPage() {
                     <strong>Education:</strong> {tutor.education}
                   </span>
                   <span>
-                    <strong>Method:</strong> {tutor.method}
+                    <strong>Method:</strong> {formatTeachingMethod(tutor.teachingMethod)}
                   </span>
                 </div>
 
@@ -201,7 +186,7 @@ function TutorsPage() {
 
               <div className="tutor-card-right">
                 <div className="tutor-rate">
-                  <span className="tutor-rate-amount">${tutor.rate}</span>
+                  <span className="tutor-rate-amount">${tutor.hourlyRate}</span>
                   <span className="tutor-rate-unit">/hr</span>
                 </div>
                 <button
