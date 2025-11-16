@@ -34,6 +34,7 @@
   padding: 24px 24px 28px;
   width: 100%;
   
+  min-width: 1120px;
 }
 
 /* Search header */
