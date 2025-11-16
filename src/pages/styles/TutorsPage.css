@@ -44,6 +44,7 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
+  position: relative; /* so menu can be positioned absolutely */
 }
 
 .tutors-search-header h2 {
@@ -301,4 +302,56 @@
   .tutor-meta span {
     white-space: normal;
   }
+}
+
+/* Sort */
+
+.tutors-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tutors-sort-select {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  outline: none;
+}
+
+.tutors-sort-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+  padding: 6px 0;
+  z-index: 20;
+  min-width: 180px;
+}
+
+.tutors-sort-option {
+  width: 100%;
+  text-align: left;
+  padding: 8px 14px;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.tutors-sort-option:hover {
+  background: #f3f4f6;
+}
+
+.tutors-sort-option.active {
+  font-weight: 600;
+  background: #eef2ff;
 }

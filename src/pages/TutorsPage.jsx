@@ -50,6 +50,14 @@ function TutorsPage() {
 
   const tutorsContentRef = useRef(null)
 
+  const [sortOption, setSortOption] = useState('ratingDesc')
+  const [isSortOpen, setIsSortOpen] = useState(false)
+
+  const handleSortChange = (value) => {
+    setSortOption(value)
+    setIsSortOpen(false)    // close dropdown after choosing
+  }
+
   useEffect(() => {
     const fetchTutors = async () => {
       try {
@@ -92,10 +100,27 @@ function TutorsPage() {
     localStorage.setItem('tutorsPage', currentPage);
   }, [currentPage]);
 
+  const num = (v) => (v == null ? 0 : Number(v))
+
+  // Sort tutors first
+  const sortedTutors = [...tutors].sort((a, b) => {
+    switch (sortOption) {
+      case 'ratingDesc':
+        return num(b.rating) - num(a.rating)
+      case 'rateAsc':
+        return num(a.hourlyRate) - num(b.hourlyRate)
+      case 'experienceDesc':
+        return num(b.experienceYears) - num(a.experienceYears)
+      case 'lessonsDesc':
+        return num(b.lessonsTaught) - num(a.lessonsTaught)
+      default:
+        return 0
+    }
+  })
   // pagination calculations
-  const totalPages = Math.max(1, Math.ceil(tutors.length / pageSize))
+  const totalPages = Math.max(1, Math.ceil(sortedTutors.length / pageSize))
   const startIndex = (currentPage - 1) * pageSize
-  const currentTutors = tutors.slice(startIndex, startIndex + pageSize)
+  const currentTutors = sortedTutors.slice(startIndex, startIndex + pageSize)
 
   useEffect(() => {
     if (!tutorsContentRef.current) return
@@ -112,6 +137,10 @@ function TutorsPage() {
     })
   }, [currentPage])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [sortOption])
+
   return (
     <div className="tutors-page">
       {/* Top banner */}
@@ -124,14 +153,19 @@ function TutorsPage() {
         {/* Search bar section */}
         <header className="tutors-search-header">
           <h2>Search For Tutors</h2>
+
           <div className="tutors-search-row">
             <input
               className="tutors-search-input"
               type="text"
               placeholder="You can type in tutor's name, subject, etc..."
             />
-            <button type="button" className="tutors-filter-button" aria-label="Filter tutors">
-              {/* simple funnel icon using SVG */}
+            <button
+              type="button"
+              className="tutors-filter-button"
+              aria-label="Sort tutors"
+              onClick={() => setIsSortOpen((open) => !open)}
+            >
               <svg
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -144,6 +178,39 @@ function TutorsPage() {
               </svg>
             </button>
           </div>
+
+          {isSortOpen && (
+            <div className="tutors-sort-menu">
+              <button
+                type="button"
+                className={`tutors-sort-option ${sortOption === 'ratingDesc' ? 'active' : ''}`}
+                onClick={() => handleSortChange('ratingDesc')}
+              >
+                Best rating
+              </button>
+              <button
+                type="button"
+                className={`tutors-sort-option ${sortOption === 'rateAsc' ? 'active' : ''}`}
+                onClick={() => handleSortChange('rateAsc')}
+              >
+                Lowest price
+              </button>
+              <button
+                type="button"
+                className={`tutors-sort-option ${sortOption === 'experienceDesc' ? 'active' : ''}`}
+                onClick={() => handleSortChange('experienceDesc')}
+              >
+                Most experience
+              </button>
+              <button
+                type="button"
+                className={`tutors-sort-option ${sortOption === 'lessonsDesc' ? 'active' : ''}`}
+                onClick={() => handleSortChange('lessonsDesc')}
+              >
+                Most lessons taught
+              </button>
+            </div>
+          )}
         </header>
 
         {/* Tutor list */}
