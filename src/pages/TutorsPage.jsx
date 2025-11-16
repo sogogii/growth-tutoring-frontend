@@ -45,11 +45,13 @@ function TutorsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  /* Pagination */
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 10 // tutors per page
 
   const tutorsContentRef = useRef(null)
 
+  /* sorting */
   const [sortOption, setSortOption] = useState('ratingDesc')
   const [isSortOpen, setIsSortOpen] = useState(false)
 
@@ -57,6 +59,9 @@ function TutorsPage() {
     setSortOption(value)
     setIsSortOpen(false)    // close dropdown after choosing
   }
+
+  /* search */
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const fetchTutors = async () => {
@@ -101,9 +106,26 @@ function TutorsPage() {
   }, [currentPage]);
 
   const num = (v) => (v == null ? 0 : Number(v))
+  const normalizedQuery = searchQuery.trim().toLowerCase()
+
+  const filteredTutors = normalizedQuery
+  ? tutors.filter((t) => {
+      const text = [
+        t.name,
+        t.subject,
+        t.summary,
+        t.education,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+
+      return text.includes(normalizedQuery)
+    })
+  : tutors
 
   // Sort tutors first
-  const sortedTutors = [...tutors].sort((a, b) => {
+  const sortedTutors = [...filteredTutors].sort((a, b) => {
     switch (sortOption) {
       case 'ratingDesc':
         return num(b.rating) - num(a.rating)
@@ -117,7 +139,8 @@ function TutorsPage() {
         return 0
     }
   })
-  // pagination calculations
+
+  // paginate
   const totalPages = Math.max(1, Math.ceil(sortedTutors.length / pageSize))
   const startIndex = (currentPage - 1) * pageSize
   const currentTutors = sortedTutors.slice(startIndex, startIndex + pageSize)
@@ -129,7 +152,7 @@ function TutorsPage() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop
 
     const navbarOffset = 90 
-    const targetY = rect.top + scrollTop - navbarOffset
+    /* const targetY = rect.top + scrollTop - navbarOffset */
 
     window.scrollTo({
       top: 0,
@@ -140,6 +163,10 @@ function TutorsPage() {
   useEffect(() => {
     setCurrentPage(1)
   }, [sortOption])
+
+    useEffect(() => {
+    setCurrentPage(1)
+  }, [sortOption, searchQuery])
 
   return (
     <div className="tutors-page">
@@ -159,6 +186,8 @@ function TutorsPage() {
               className="tutors-search-input"
               type="text"
               placeholder="You can type in tutor's name, subject, etc..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button
               type="button"
@@ -227,6 +256,12 @@ function TutorsPage() {
             <p>No tutors found yet.</p>
           )}
 
+          {!loading && !error && tutors.length > 0 && filteredTutors.length === 0 && (
+            <div className="tutors-empty-message">
+              No tutors match your search.
+            </div>
+          )}
+
           {!loading && !error && currentTutors.map((tutor) => (
             <article key={tutor.id} className="tutor-card">
               <div className="tutor-card-left">
@@ -274,7 +309,7 @@ function TutorsPage() {
                 </p>
 
                 <div className="tutor-card-actions">
-                  <Link to="/coming-soon" className="btn tutor-learn-more">
+                  <Link to={`/tutors/${tutor.id}`} className="btn tutor-learn-more">
                     Learn More
                   </Link>
                 </div>

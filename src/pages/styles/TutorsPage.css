@@ -55,7 +55,8 @@
 
 .tutors-search-row {
   margin: 0 auto;
-  max-width: 640px;
+  width: 100%;
+  max-width: 900px;
   display: flex;
   align-items: stretch;
   gap: 0;
@@ -354,4 +355,12 @@
 .tutors-sort-option.active {
   font-weight: 600;
   background: #eef2ff;
+}
+
+/* search */
+.tutors-empty-message {
+  text-align: center;
+  margin: 40px 0;      
+  font-size: 18px;
+  color: #374151;
 }

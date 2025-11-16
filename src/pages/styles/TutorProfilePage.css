@@ -1,0 +1,147 @@
+.tutor-profile-page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 0 40px;
+}
+
+.tutor-profile-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 24px;
+}
+
+.tutor-profile-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.tutor-profile-left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.tutor-profile-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.tutor-profile-photo.placeholder {
+  background: #f3f4f6;
+  border: 1px dashed #d1d5db;
+}
+
+.tutor-profile-name {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.tutor-profile-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tutor-profile-rating {
+  color: #facc15;
+}
+
+.tutor-profile-rating-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.tutor-profile-subject {
+  margin-top: 4px;
+  color: #6b7280;
+}
+
+.tutor-profile-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.tutor-profile-rate .amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.tutor-profile-rate .unit {
+  font-size: 12px;
+  color: #4b5563;
+  margin-left: 2px;
+}
+
+.tutor-profile-cta {
+  margin-top: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #7c3aed;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tutor-profile-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.tutor-profile-section h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.tutor-profile-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tutor-profile-list li {
+  margin-bottom: 4px;
+}
+
+.tutor-profile-section {
+  margin-bottom: 24px;
+}
+
+.tutor-profile-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tutor-profile-back {
+  font-size: 14px;
+  color: #7c3aed;
+  text-decoration: none;
+}
+
+@media (max-width: 800px) {
+  .tutor-profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tutor-profile-right {
+    align-items: flex-start;
+  }
+
+  .tutor-profile-section-grid {
+    grid-template-columns: 1fr;
+  }
+}

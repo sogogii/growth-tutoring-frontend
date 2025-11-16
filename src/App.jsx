@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import SubjectsPage from './pages/SubjectsPage'
 import TutorsPage from './pages/TutorsPage'
+import TutorProfilePage from './pages/TutorProfilePage'
 import ContactPage from './pages/ContactPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/HowItWorksPage'
@@ -68,6 +69,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
+          <Route path="/tutors/:id" element={<TutorProfilePage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
