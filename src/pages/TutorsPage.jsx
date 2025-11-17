@@ -3,18 +3,19 @@ import { Link } from 'react-router-dom'
 import './styles/TutorsPage.css'
 
 function StarRating({ rating }) {
+  const r = rating ?? 0
   return (
     <span className="tutor-rating">
-      {'★'.repeat(rating)}
-      {'☆'.repeat(5 - rating)}
+      {'★'.repeat(r)}
+      {'☆'.repeat(5 - r)}
     </span>
   )
 }
 
 function formatJoined(dateStr) {
   if (!dateStr) return ''
-  const d = new Date(dateStr) // joined_at from backend, e.g. "2025-11-01"
-  if (Number.isNaN(d.getTime())) return dateStr // fallback if invalid
+  const d = new Date(dateStr)
+  if (Number.isNaN(d.getTime())) return dateStr
 
   const monthNames = [
     'January','February','March','April','May','June',
@@ -40,28 +41,17 @@ function formatTeachingMethod(method) {
 }
 
 function TutorsPage() {
-
   const [tutors, setTutors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  /* Pagination */
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 10 // tutors per page
+  const pageSize = 10
+
+  const [sortOption, setSortOption] = useState('ratingDesc')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const tutorsContentRef = useRef(null)
-
-  /* sorting */
-  const [sortOption, setSortOption] = useState('ratingDesc')
-  const [isSortOpen, setIsSortOpen] = useState(false)
-
-  const handleSortChange = (value) => {
-    setSortOption(value)
-    setIsSortOpen(false)    // close dropdown after choosing
-  }
-
-  /* search */
-  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const fetchTutors = async () => {
@@ -73,7 +63,6 @@ function TutorsPage() {
 
         const data = await res.json()
 
-        // map backend fields → frontend shape
         const mapped = data.map((t) => ({
           id: t.publicId,
           name: `${t.firstName} ${t.lastName}`,
@@ -83,7 +72,7 @@ function TutorsPage() {
           experienceYears: t.yearsExperience,
           lessonsTaught: t.lessonsTaught,
           education: t.education,
-          teachingMethod: t.teachingMethod, // 'ONLINE', 'IN_PERSON', 'HYBRID'
+          teachingMethod: t.teachingMethod,
           summary: t.bio || '',
           hourlyRate: t.hourlyRate,
           profileImageUrl: t.profileImageUrl || null,
@@ -101,30 +90,53 @@ function TutorsPage() {
     fetchTutors()
   }, [])
 
+  // remember last page
   useEffect(() => {
-    localStorage.setItem('tutorsPage', currentPage);
-  }, [currentPage]);
+    localStorage.setItem('tutorsPage', currentPage.toString())
+  }, [currentPage])
+
+  // go back to page 1 when search or sort changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, sortOption])
+
+  // scroll to top of content on page change
+  useEffect(() => {
+    if (!tutorsContentRef.current) return
+
+    const rect = tutorsContentRef.current.getBoundingClientRect()
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const navbarOffset = 90
+    const targetY = rect.top + scrollTop - navbarOffset
+
+    window.scrollTo({
+      top: targetY,
+      behavior: 'smooth',
+    })
+  }, [currentPage])
+
+  // ------- filtering + sorting + pagination -------
 
   const num = (v) => (v == null ? 0 : Number(v))
+
   const normalizedQuery = searchQuery.trim().toLowerCase()
 
   const filteredTutors = normalizedQuery
-  ? tutors.filter((t) => {
-      const text = [
-        t.name,
-        t.subject,
-        t.summary,
-        t.education,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
+    ? tutors.filter((t) => {
+        const text = [
+          t.name,
+          t.subject,
+          t.summary,
+          t.education,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase()
 
-      return text.includes(normalizedQuery)
-    })
-  : tutors
+        return text.includes(normalizedQuery)
+      })
+    : tutors
 
-  // Sort tutors first
   const sortedTutors = [...filteredTutors].sort((a, b) => {
     switch (sortOption) {
       case 'ratingDesc':
@@ -140,33 +152,9 @@ function TutorsPage() {
     }
   })
 
-  // paginate
   const totalPages = Math.max(1, Math.ceil(sortedTutors.length / pageSize))
   const startIndex = (currentPage - 1) * pageSize
   const currentTutors = sortedTutors.slice(startIndex, startIndex + pageSize)
-
-  useEffect(() => {
-    if (!tutorsContentRef.current) return
-
-    const rect = tutorsContentRef.current.getBoundingClientRect()
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-
-    const navbarOffset = 90 
-    /* const targetY = rect.top + scrollTop - navbarOffset */
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
-  }, [currentPage])
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [sortOption])
-
-    useEffect(() => {
-    setCurrentPage(1)
-  }, [sortOption, searchQuery])
 
   return (
     <div className="tutors-page">
@@ -177,190 +165,198 @@ function TutorsPage() {
 
       {/* Main content */}
       <section className="tutors-content" ref={tutorsContentRef}>
-        {/* Search bar section */}
-        <header className="tutors-search-header">
-          <h2>Search For Tutors</h2>
+        <div className="tutors-layout">
+          {/* LEFT SIDEBAR */}
+          <aside className="tutors-sidebar">
+            <h2 className="tutors-sidebar-title">Filter Search</h2>
 
-          <div className="tutors-search-row">
-            <input
-              className="tutors-search-input"
-              type="text"
-              placeholder="You can type in tutor's name, subject, etc..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button
-              type="button"
-              className="tutors-filter-button"
-              aria-label="Sort tutors"
-              onClick={() => setIsSortOpen((open) => !open)}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="tutors-filter-icon"
+            <div className="tutors-sidebar-section">
+              <h3>Sort by</h3>
+              <button
+                type="button"
+                className={`tutors-sort-chip ${
+                  sortOption === 'ratingDesc' ? 'active' : ''
+                }`}
+                onClick={() => setSortOption('ratingDesc')}
               >
-                <path
-                  d="M4 4h16l-6 7v5l-4 2v-7L4 4z"
-                  fill="currentColor"
+                ⭐ Best rating
+              </button>
+              <button
+                type="button"
+                className={`tutors-sort-chip ${
+                  sortOption === 'rateAsc' ? 'active' : ''
+                }`}
+                onClick={() => setSortOption('rateAsc')}
+              >
+                💰 Lowest price
+              </button>
+              <button
+                type="button"
+                className={`tutors-sort-chip ${
+                  sortOption === 'experienceDesc' ? 'active' : ''
+                }`}
+                onClick={() => setSortOption('experienceDesc')}
+              >
+                ⏳ Most experience
+              </button>
+              <button
+                type="button"
+                className={`tutors-sort-chip ${
+                  sortOption === 'lessonsDesc' ? 'active' : ''
+                }`}
+                onClick={() => setSortOption('lessonsDesc')}
+              >
+                📚 Most lessons taught
+              </button>
+            </div>
+
+            {/* Placeholders for future filters */}
+            <div className="tutors-sidebar-section muted">
+              <h3>More filters (coming soon)</h3>
+              <p>Subject, grade level, location, and more.</p>
+            </div>
+          </aside>
+
+          {/* RIGHT MAIN AREA */}
+          <div className="tutors-main">
+            {/* Search bar */}
+            <header className="tutors-search-header">
+              <h2>Search For Tutors</h2>
+              <div className="tutors-search-row">
+                <input
+                  className="tutors-search-input"
+                  type="text"
+                  placeholder="You can type in tutor's name, subject, etc..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-              </svg>
-            </button>
-          </div>
-
-          {isSortOpen && (
-            <div className="tutors-sort-menu">
-              <button
-                type="button"
-                className={`tutors-sort-option ${sortOption === 'ratingDesc' ? 'active' : ''}`}
-                onClick={() => handleSortChange('ratingDesc')}
-              >
-                Best rating
-              </button>
-              <button
-                type="button"
-                className={`tutors-sort-option ${sortOption === 'rateAsc' ? 'active' : ''}`}
-                onClick={() => handleSortChange('rateAsc')}
-              >
-                Lowest price
-              </button>
-              <button
-                type="button"
-                className={`tutors-sort-option ${sortOption === 'experienceDesc' ? 'active' : ''}`}
-                onClick={() => handleSortChange('experienceDesc')}
-              >
-                Most experience
-              </button>
-              <button
-                type="button"
-                className={`tutors-sort-option ${sortOption === 'lessonsDesc' ? 'active' : ''}`}
-                onClick={() => handleSortChange('lessonsDesc')}
-              >
-                Most lessons taught
-              </button>
-            </div>
-          )}
-        </header>
-
-        {/* Tutor list */}
-        <div className="tutors-list">
-          {loading && <p>Loading tutors...</p>}
-
-          {error && (
-            <p className="tutors-error">
-              Failed to load tutors: {error}
-            </p>
-          )}
-
-          {!loading && !error && tutors.length === 0 && (
-            <p>No tutors found yet.</p>
-          )}
-
-          {!loading && !error && tutors.length > 0 && filteredTutors.length === 0 && (
-            <div className="tutors-empty-message">
-              No tutors match your search.
-            </div>
-          )}
-
-          {!loading && !error && currentTutors.map((tutor) => (
-            <article key={tutor.id} className="tutor-card">
-              <div className="tutor-card-left">
-                <div className="tutor-image-placeholder" aria-hidden="true" />
               </div>
+            </header>
 
-              <div className="tutor-card-main">
-                <div className="tutor-card-header">
-                  <span className="tutor-name">{tutor.name}</span>
-                  <div className="rating-wrapper">
-                    <StarRating rating={tutor.rating} />
-                    <span className="numeric-rating">
-                      {tutor.rating != null ? tutor.rating.toFixed(2) : '0.00'}
-                    </span>
+            {/* Tutor list */}
+            <div className="tutors-list">
+              {loading && <p>Loading tutors...</p>}
+
+              {error && (
+                <p className="tutors-error">
+                  Failed to load tutors: {error}
+                </p>
+              )}
+
+              {!loading && !error && tutors.length === 0 && (
+                <p className="tutors-empty-text">No tutors found yet.</p>
+              )}
+
+              {!loading && !error && tutors.length > 0 && filteredTutors.length === 0 && (
+                <div className="tutors-empty-wrapper">
+                  <div className="tutors-empty-text">
+                    No tutors match your search.
                   </div>
                 </div>
+              )}
 
-                <div className="tutor-meta">
-                  <span>
-                    <strong>Joined:</strong> {tutor.joined}
-                  </span>
-                  <span>
-                    <strong>Subject:</strong> {tutor.subject}
-                  </span>
-                  <span>
-                    <strong>Experience:</strong> {tutor.experienceYears} year
-                    {tutor.experienceYears > 1 ? 's' : ''}
-                  </span>
-                  <span>
-                    <strong>Lessons Taught:</strong> {tutor.lessonsTaught}
-                  </span>
-                </div>
+              {!loading && !error && currentTutors.map((tutor) => (
+                <article key={tutor.id} className="tutor-card">
+                  <div className="tutor-card-left">
+                    <div className="tutor-image-placeholder" aria-hidden="true" />
+                  </div>
 
-                <div className="tutor-meta">
-                  <span>
-                    <strong>Education:</strong> {tutor.education}
-                  </span>
-                  <span>
-                    <strong>Method:</strong> {formatTeachingMethod(tutor.teachingMethod)}
-                  </span>
-                </div>
+                  <div className="tutor-card-main">
+                    <div className="tutor-card-header">
+                      <span className="tutor-name">{tutor.name}</span>
+                      <div className="rating-wrapper">
+                        <StarRating rating={tutor.rating} />
+                        <span className="numeric-rating">
+                          {tutor.rating != null ? tutor.rating.toFixed(2) : '0.00'}
+                        </span>
+                      </div>
+                    </div>
 
-                <p className="tutor-summary">
-                  <strong>Summary:</strong> {tutor.summary}
-                </p>
+                    <div className="tutor-meta">
+                      <span>
+                        <strong>Joined:</strong> {tutor.joined}
+                      </span>
+                      <span>
+                        <strong>Subject:</strong> {tutor.subject}
+                      </span>
+                      <span>
+                        <strong>Experience:</strong> {tutor.experienceYears} year
+                        {tutor.experienceYears > 1 ? 's' : ''}
+                      </span>
+                      <span>
+                        <strong>Lessons Taught:</strong> {tutor.lessonsTaught}
+                      </span>
+                    </div>
 
-                <div className="tutor-card-actions">
-                  <Link to={`/tutors/${tutor.id}`} className="btn tutor-learn-more">
-                    Learn More
-                  </Link>
-                </div>
-              </div>
+                    <div className="tutor-meta">
+                      <span>
+                        <strong>Education:</strong> {tutor.education}
+                      </span>
+                      <span>
+                        <strong>Method:</strong> {formatTeachingMethod(tutor.teachingMethod)}
+                      </span>
+                    </div>
 
-              <div className="tutor-card-right">
-                <div className="tutor-rate">
-                  <span className="tutor-rate-amount">${tutor.hourlyRate}</span>
-                  <span className="tutor-rate-unit">/hr</span>
-                </div>
+                    <p className="tutor-summary">
+                      <strong>Summary:</strong> {tutor.summary}
+                    </p>
+
+                    <div className="tutor-card-actions">
+                      <Link to={`/tutors/${tutor.id}`} className="btn tutor-learn-more">
+                        Learn More
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="tutor-card-right">
+                    <div className="tutor-rate">
+                      <span className="tutor-rate-amount">${tutor.hourlyRate}</span>
+                      <span className="tutor-rate-unit">/hr</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="tutor-chat-button"
+                      aria-label={`Message ${tutor.name}`}
+                    >
+                      💬
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {!loading && !error && sortedTutors.length > pageSize && (
+              <div className="tutors-pagination">
                 <button
-                  type="button"
-                  className="tutor-chat-button"
-                  aria-label={`Message ${tutor.name}`}
+                  className="page-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
                 >
-                  💬
+                  ‹ Prev
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    className={`page-btn ${page === currentPage ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  className="page-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                >
+                  Next ›
                 </button>
               </div>
-            </article>
-          ))}
-        </div>
-
-        {!loading && !error && tutors.length > pageSize && (
-          <div className="tutors-pagination">
-            <button
-              className="page-btn"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
-              ‹ Prev
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                className={`page-btn ${page === currentPage ? 'active' : ''}`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
-
-            <button
-              className="page-btn"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              Next ›
-            </button>
+            )}
           </div>
-        )}
+        </div>
       </section>
     </div>
   )
