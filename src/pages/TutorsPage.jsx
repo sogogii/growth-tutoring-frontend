@@ -64,14 +64,12 @@ function TutorsPage() {
         const data = await res.json()
 
         const mapped = data.map((t) => ({
-          id: t.publicId,
+          id: t.userId,
           name: `${t.firstName} ${t.lastName}`,
           rating: t.ratingAvg ?? 0,
           joined: formatJoined(t.joinedAt),
           subject: t.subjectLabel,
           experienceYears: t.yearsExperience,
-          lessonsTaught: t.lessonsTaught,
-          education: t.education,
           teachingMethod: t.teachingMethod,
           summary: t.bio || '',
           hourlyRate: t.hourlyRate,
@@ -90,17 +88,14 @@ function TutorsPage() {
     fetchTutors()
   }, [])
 
-  // remember last page
   useEffect(() => {
     localStorage.setItem('tutorsPage', currentPage.toString())
   }, [currentPage])
 
-  // go back to page 1 when search or sort changes
   useEffect(() => {
     setCurrentPage(1)
   }, [searchQuery, sortOption])
 
-  // scroll to top of content on page change
   useEffect(() => {
     if (!tutorsContentRef.current) return
 
@@ -115,10 +110,7 @@ function TutorsPage() {
     })
   }, [currentPage])
 
-  // ------- filtering + sorting + pagination -------
-
   const num = (v) => (v == null ? 0 : Number(v))
-
   const normalizedQuery = searchQuery.trim().toLowerCase()
 
   const filteredTutors = normalizedQuery
@@ -127,7 +119,6 @@ function TutorsPage() {
           t.name,
           t.subject,
           t.summary,
-          t.education,
         ]
           .filter(Boolean)
           .join(' ')
@@ -145,8 +136,6 @@ function TutorsPage() {
         return num(a.hourlyRate) - num(b.hourlyRate)
       case 'experienceDesc':
         return num(b.experienceYears) - num(a.experienceYears)
-      case 'lessonsDesc':
-        return num(b.lessonsTaught) - num(a.lessonsTaught)
       default:
         return 0
     }
@@ -199,18 +188,8 @@ function TutorsPage() {
               >
                 ⏳ Most experience
               </button>
-              <button
-                type="button"
-                className={`tutors-sort-chip ${
-                  sortOption === 'lessonsDesc' ? 'active' : ''
-                }`}
-                onClick={() => setSortOption('lessonsDesc')}
-              >
-                📚 Most lessons taught
-              </button>
             </div>
 
-            {/* Placeholders for future filters */}
             <div className="tutors-sidebar-section muted">
               <h3>More filters (coming soon)</h3>
               <p>Subject, grade level, location, and more.</p>
@@ -284,15 +263,6 @@ function TutorsPage() {
                         {tutor.experienceYears > 1 ? 's' : ''}
                       </span>
                       <span>
-                        <strong>Lessons Taught:</strong> {tutor.lessonsTaught}
-                      </span>
-                    </div>
-
-                    <div className="tutor-meta">
-                      <span>
-                        <strong>Education:</strong> {tutor.education}
-                      </span>
-                      <span>
                         <strong>Method:</strong> {formatTeachingMethod(tutor.teachingMethod)}
                       </span>
                     </div>
@@ -300,7 +270,6 @@ function TutorsPage() {
                     <p className="tutor-summary">
                       <strong>Summary:</strong> {tutor.summary}
                     </p>
-
                     <div className="tutor-card-actions">
                       <Link to={`/tutors/${tutor.id}`} className="btn tutor-learn-more">
                         Learn More

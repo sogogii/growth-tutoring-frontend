@@ -1,6 +1,5 @@
 import './styles/SubjectsPage.css'
 
-// Later on, we connect this with database
 const SUBJECTS = [
   {
     name: 'Mathematics',
