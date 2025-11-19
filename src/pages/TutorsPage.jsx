@@ -83,7 +83,7 @@ function TutorsPage() {
       } finally {
         setLoading(false)
       }
-    }
+    } 
 
     fetchTutors()
   }, [])

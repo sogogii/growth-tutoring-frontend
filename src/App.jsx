@@ -1,5 +1,6 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+// src/App.jsx
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
@@ -7,11 +8,14 @@ import SubjectsPage from './pages/SubjectsPage'
 import TutorsPage from './pages/TutorsPage'
 import TutorProfilePage from './pages/TutorProfilePage'
 import ContactPage from './pages/ContactPage'
+import SignupPage from './pages/login/SignupPage'
+import SignupChoicePage from './pages/login/SignupChoicePage'
+import LoginPage from './pages/login/LoginPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/HowItWorksPage'
 
 import './App.css'
-import logo from './assets/company-logo.png' 
+import logo from './assets/company-logo.png'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -28,15 +32,29 @@ function ScrollToTop() {
 }
 
 function App() {
+  // Load current user from localStorage on first render
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem('currentUser')
+    return saved ? JSON.parse(saved) : null
+  })
+
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser')
+    setCurrentUser(null)
+    navigate('/') // go back to homepage
+  }
+
   return (
     <div className="app-root">
       {/* Top navigation bar */}
       <header className="app-header">
         <Link to="/" className="header-left header-left-link">
-          <img 
-            src={logo} 
-            alt="Growth Tutoring Logo" 
-            className="logo-image" 
+          <img
+            src={logo}
+            alt="Growth Tutoring Logo"
+            className="logo-image"
           />
 
           <div className="logo-text">
@@ -46,18 +64,56 @@ function App() {
         </Link>
 
         <nav className="header-nav">
-          <Link to="/about" className="nav-link">About Us</Link>
-          <Link to="/tutors" className="nav-link">Our Tutors</Link>
-          <Link to="/how-it-works" className="nav-link">How It Works</Link>
-          <Link to="/subjects" className="nav-link">Subjects</Link>
-          <Link to="/contact" className="nav-link">Contact Us</Link>
+          <Link to="/about" className="nav-link">
+            About Us
+          </Link>
+          <Link to="/tutors" className="nav-link">
+            Our Tutors
+          </Link>
+          <Link to="/how-it-works" className="nav-link">
+            How It Works
+          </Link>
+          <Link to="/subjects" className="nav-link">
+            Subjects
+          </Link>
+          <Link to="/contact" className="nav-link">
+            Contact Us
+          </Link>
         </nav>
 
         <div className="header-right">
-          {/* FIX THIS CODE AFTER IMPLEMENTATION */}
-          <Link to="/coming-soon" button className="btn btn-primary">Get Matched Today</Link>
-          <Link to="/login" className="btn btn-ghost">Sign In</Link>
-          <Link to="/signup" className="btn btn-outline">Register</Link>
+          <Link to="/coming-soon" className="btn btn-primary">
+            Get Matched Today
+          </Link>
+
+          {currentUser ? (
+            <div className="header-user-section">
+              <span className="user-greeting">
+                Hi, {currentUser.firstName}!
+              </span>
+
+              <Link to="/my-profile" className="user-link">
+                My Profile
+              </Link>
+
+              <button
+                type="button"
+                className="logout-button"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-ghost">
+                Sign In
+              </Link>
+              <Link to="/signup" className="btn btn-outline">
+                Register
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -70,35 +126,64 @@ function App() {
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
           <Route path="/tutors/:id" element={<TutorProfilePage />} />
+          {/* Step 1: choose Tutor vs Student */}
+          <Route path="/signup" element={<SignupChoicePage />} />
+
+          {/* Step 2: actual forms */}
+          <Route path="/signup/tutor" element={<SignupPage fixedRole="TUTOR" />} />
+          <Route path="/signup/student" element={<SignupPage fixedRole="STUDENT" />} />
+          {/* pass setCurrentUser so LoginPage can update header + localStorage */}
+          <Route
+            path="/login"
+            element={<LoginPage setCurrentUser={setCurrentUser} />}
+          />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
+          {/* temporary: My Profile uses ComingSoon page */}
+          <Route path="/my-profile" element={<ComingSoonPage />} />
         </Routes>
       </main>
 
       {/* Footer */}
-      {/* CHANGE REDIRECTION !!! */}
-      
       <footer className="site-footer">
         <div className="footer-top">
           {/* Brand + socials */}
           <div className="footer-brand">
             <div className="footer-logo-row">
-              {/* use whatever logo import you already have */}
               <img src={logo} alt="Growth Tutoring" className="footer-logo" />
 
-              {/* CHANGE SOCIAL MEDIA ICON LATER !!!*/}
               <div className="footer-socials">
-                <a href="https://x.com" target="_blank" rel="noreferrer" aria-label="X">
+                <a
+                  href="https://x.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="X"
+                >
                   𝕏
                 </a>
-                <a href="https://www.instagram.com/growthtutoringhq/" target="_blank" rel="noreferrer" aria-label="Instagram">
+                <a
+                  href="https://www.instagram.com/growthtutoringhq/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                >
                   ◎
                 </a>
-                <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube">
+                <a
+                  href="https://youtube.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="YouTube"
+                >
                   ▶
                 </a>
-                <a href="https://www.linkedin.com/company/growth-tutoring-llc/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <a
+                  href="https://www.linkedin.com/company/growth-tutoring-llc/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                >
                   in
                 </a>
               </div>

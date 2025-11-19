@@ -572,3 +572,51 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* /////// Header after login */
+
+/* Right side wrapper */
+.header-user-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Greeting text */
+.user-greeting {
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #344054; /* subtle gray */
+}
+
+/* "My Profile" link */
+.user-link {
+  font-size: 15px;
+  color: #4f46e5; /* soft purple-blue */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.user-link:hover {
+  text-decoration: underline;
+}
+
+/* Logout pill button */
+.logout-button {
+  padding: 8px 18px;
+  background-color: white;
+  border: 1px solid #d0d5dd;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #667085;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.logout-button:hover {
+  background-color: #f9fafb;
+  border-color: #98a2b3;
+  color: #344054;
+}
