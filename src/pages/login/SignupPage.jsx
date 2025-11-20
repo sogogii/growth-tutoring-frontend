@@ -1,5 +1,17 @@
 import { useState } from 'react'
 
+const SUBJECT_OPTIONS = [
+  'K-12 Math',
+  'K-12 English',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Foreign Languages',
+  'Pre College Counseling',
+  'Special needs tutoring',
+  'Community Impact Program',
+]
+
 function SignupPage({ fixedRole }) {
   const [form, setForm] = useState({
     firstName: '',
@@ -8,20 +20,31 @@ function SignupPage({ fixedRole }) {
     birthday: '',
     password: '',
     confirmPassword: '',
-    userUid: '',     // user-chosen ID / username
+    userUid: '',
+    subjects: [], // for tutors only
   })
 
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const roleToSend = fixedRole || 'TUTOR' // default if somehow missing
-  const roleLabel =
-    roleToSend === 'STUDENT' ? 'Student' : 'Tutor'
+  const roleToSend = fixedRole || 'TUTOR'
+  const roleLabel = roleToSend === 'STUDENT' ? 'Student' : 'Tutor'
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((f) => ({ ...f, [name]: value }))
+  }
+
+  // Toggle subject on/off when button is clicked
+  const toggleSubject = (subject) => {
+    setForm((prev) => {
+      const exists = prev.subjects.includes(subject)
+      const subjects = exists
+        ? prev.subjects.filter((s) => s !== subject)
+        : [...prev.subjects, subject]
+      return { ...prev, subjects }
+    })
   }
 
   const handleSubmit = async (e) => {
@@ -44,6 +67,11 @@ function SignupPage({ fixedRole }) {
       return
     }
 
+    if (roleToSend === 'TUTOR' && form.subjects.length === 0) {
+      setError('Please select at least one subject you can teach')
+      return
+    }
+
     setLoading(true)
     try {
       const res = await fetch('http://localhost:8080/api/auth/signup', {
@@ -53,10 +81,14 @@ function SignupPage({ fixedRole }) {
           firstName: form.firstName,
           lastName: form.lastName,
           email: form.email,
-          birthday: form.birthday,       // "YYYY-MM-DD"
+          birthday: form.birthday, // "YYYY-MM-DD"
           password: form.password,
-          role: roleToSend,              // TUTOR or STUDENT
-          userUid: form.userUid,         // chosen ID
+          role: roleToSend,        // TUTOR or STUDENT
+          userUid: form.userUid,
+          subjectLabel:
+            roleToSend === 'TUTOR'
+              ? form.subjects.join(', ')
+              : null,
         }),
       })
 
@@ -153,6 +185,33 @@ function SignupPage({ fixedRole }) {
             required
           />
         </div>
+
+        {/* TUTOR-ONLY SUBJECT TOGGLES */}
+        {roleToSend === 'TUTOR' && (
+          <div className="auth-row">
+            <label>Subjects you can teach</label>
+            <div className="subject-toggle-group">
+              {SUBJECT_OPTIONS.map((subject) => {
+                const selected = form.subjects.includes(subject)
+                return (
+                  <button
+                    key={subject}
+                    type="button"
+                    className={`subject-toggle ${
+                      selected ? 'selected' : ''
+                    }`}
+                    onClick={() => toggleSubject(subject)}
+                  >
+                    {subject}
+                  </button>
+                )
+              })}
+            </div>
+            <small className="field-hint">
+              Click to select or unselect each subject.
+            </small>
+          </div>
+        )}
 
         {error && <p className="auth-error">{error}</p>}
         {success && <p className="auth-success">{success}</p>}
