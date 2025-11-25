@@ -69,3 +69,12 @@
   color: #9ca3af;
   margin: -4px 0 8px 160px;
 }
+
+.profile-textarea {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  resize: vertical;
+}
