@@ -26,7 +26,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     subjects: [],
     hourlyRate: '',
     teachingMethod: 'ONLINE',
-    summary: '',              // 👈 NEW
+    summary: '',            
   })
 
   const [loading, setLoading] = useState(true)
@@ -44,7 +44,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     subjects: false,
     hourlyRate: false,
     teachingMethod: false,
-    summary: false,           // 👈 NEW
+    summary: false,          
   })
 
   useEffect(() => {
@@ -89,7 +89,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
               hourlyRate:
                 tData.hourlyRate != null ? String(tData.hourlyRate) : '',
               teachingMethod: tData.teachingMethod || 'ONLINE',
-              summary: tData.bio || '',        // 👈 NEW (using bio as summary)
+              summary: tData.bio || '',      
             })
           }
         }
@@ -236,25 +236,25 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
   }
 
   if (!currentUser) {
-    return <div className="auth-page">Please log in to view your profile.</div>
+    return <div className="my-profile-page">Please log in to view your profile.</div>
   }
 
   if (loading) {
-    return <div className="auth-page">Loading profile...</div>
+    return <div className="my-profile-page">Loading profile...</div>
   }
 
   if (error && !form) {
-    return <div className="auth-page">Error: {error}</div>
+    return <div className="my-profile-page">Error: {error}</div>
   }
 
   if (!form) {
-    return <div className="auth-page">No profile data found.</div>
+    return <div className="my-profile-page">No profile data found.</div>
   }
 
   const avatarSrc = form.profileImageUrl || DEFAULT_AVATAR
 
   return (
-    <div className="auth-page">
+    <div className="my-profile-page">
       <h1>My Profile</h1>
 
       <div className="profile-layout">

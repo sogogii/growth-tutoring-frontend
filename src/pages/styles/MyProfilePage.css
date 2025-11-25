@@ -94,3 +94,8 @@
 .primary-button:hover {
   background: #f59e0b;
 }
+
+.my-profile-page {
+  padding: 40px 32px;
+  min-height: 100vh;
+}

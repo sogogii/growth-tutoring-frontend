@@ -1,0 +1,451 @@
+/* ========= Shared auth layout (Login + Signup) ========= */
+
+.auth-page {
+  min-height: calc(100vh - 80px); /* header height buffer */
+  padding: 64px 16px 88px;
+  background: #faf6eb; /* soft warm background like tutors banner */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 960px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #ece5d8;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.05);
+  padding: 40px 48px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  column-gap: 40px;
+  row-gap: 32px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* Stack on small screens */
+@media (max-width: 860px) {
+  .auth-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 28px 22px 32px;
+  }
+}
+
+/* ========= Left side (headline / description / links) ========= */
+
+.auth-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9a7f4a;
+  margin-bottom: 8px;
+}
+
+.auth-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.auth-bullet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.auth-bullet-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.auth-bullet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+.auth-secondary-link {
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.auth-secondary-link a {
+  color: #16a34a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-secondary-link a:hover {
+  text-decoration: underline;
+}
+
+/* ========= Right side (form) ========= */
+
+.auth-right {
+  border-left: 1px solid #f1ebe0;
+  padding-left: 32px;
+}
+
+@media (max-width: 860px) {
+  .auth-right {
+    border-left: none;
+    border-top: 1px solid #f1ebe0;
+    padding-left: 0;
+    padding-top: 24px;
+  }
+}
+
+.auth-form-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.auth-form-caption {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.auth-form {
+  margin-top: 10px;
+}
+
+/* Fields */
+
+.auth-row {
+  display: flex;
+  gap: 16px;
+}
+
+.auth-row > .auth-field {
+  flex: 1;
+}
+
+.auth-field {
+  margin-bottom: 16px;
+}
+
+.auth-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.auth-field input,
+.auth-field select,
+.auth-field textarea {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  color: #111827;
+  background: #f9fafb;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.auth-field textarea {
+  border-radius: 16px;
+  min-height: 88px;
+  resize: vertical;
+}
+
+.auth-field input::placeholder,
+.auth-field textarea::placeholder {
+  color: #9ca3af;
+}
+
+.auth-field input:focus,
+.auth-field select:focus,
+.auth-field textarea:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.22);
+  background: #ffffff;
+}
+
+/* Role toggle / tabs (if you have login vs sign-up or tutor vs student buttons) */
+
+.auth-toggle {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: #f3f4ff;
+  border: 1px solid #e0e7ff;
+  margin-bottom: 18px;
+}
+
+.auth-toggle button {
+  border: none;
+  background: transparent;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.auth-toggle button.is-active {
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(148, 163, 184, 0.45);
+  color: #7c3aed;
+}
+
+/* Subjects list (for tutor signup) */
+
+.subjects-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.subject-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 0.8rem;
+  color: #4b5563;
+  cursor: pointer;
+  user-select: none;
+}
+
+.subject-pill input[type='checkbox'] {
+  display: none;
+}
+
+.subject-pill.is-selected {
+  border-color: #a855f7;
+  background: #faf5ff;
+  color: #6d28d9;
+}
+
+/* Helper text */
+
+.auth-helper {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+/* Error / success messages */
+
+.auth-error,
+.auth-success {
+  font-size: 0.85rem;
+  margin: 6px 0 2px;
+}
+
+.auth-error {
+  color: #b91c1c;
+}
+
+.auth-success {
+  color: #15803d;
+}
+
+/* Remember / checkbox row */
+
+.auth-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 16px;
+  font-size: 0.83rem;
+  color: #6b7280;
+}
+
+.auth-inline-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-inline input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+}
+
+/* Primary button */
+
+.auth-card button[type='submit'],
+.auth-submit {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #22c55e; /* green like “Get Matched Today” */
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+  transition: transform 0.04s ease, box-shadow 0.08s ease,
+    background 0.12s ease;
+}
+
+.auth-card button[type='submit']:hover,
+.auth-submit:hover {
+  background: #16a34a;
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.4);
+  transform: translateY(-1px);
+}
+
+.auth-card button[type='submit']:active,
+.auth-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+}
+
+.auth-card button[type='submit'][disabled],
+.auth-submit[disabled] {
+  opacity: 0.65;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Link under the button (e.g., “Already have an account?”) */
+
+.auth-footer-text {
+  margin-top: 14px;
+  font-size: 0.86rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.auth-footer-text a {
+  color: #7c3aed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer-text a:hover {
+  text-decoration: underline;
+}
+
+/* ========= Signup Choice Page ========= */
+
+.signup-choice-page {
+  padding: 48px 16px 64px; /* reduced padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  min-height: auto;   /* ← this is the important part */
+}
+
+.signup-choice-page h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.signup-choice-subtitle {
+  font-size: 0.98rem;
+  color: #6b7280;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+/* container that holds tutor + student options */
+.signup-choice-grid {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* base card style for both buttons */
+.signup-choice-card {
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  text-align: left;
+  cursor: pointer;
+  background: #ffffff;
+  transition: box-shadow 0.12s ease, transform 0.06s ease,
+    border-color 0.12s ease, background 0.12s ease;
+}
+
+.signup-choice-card h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.signup-choice-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #4b5563;
+}
+
+/* small screen: stack text vertically inside card */
+@media (max-width: 640px) {
+  .signup-choice-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* TUTOR card – warm yellow like your site highlight */
+.signup-choice-card.tutor-card {
+  background: #fef3c7;
+  border-color: #facc15;
+}
+
+.signup-choice-card.tutor-card:hover {
+  box-shadow: 0 10px 28px rgba(250, 204, 21, 0.35);
+  transform: translateY(-1px);
+}
+
+/* STUDENT card – soft cool / grayish to contrast tutor card */
+.signup-choice-card.student-card {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.signup-choice-card.student-card:hover {
+  box-shadow: 0 10px 28px rgba(129, 140, 248, 0.35);
+  transform: translateY(-1px);
+}

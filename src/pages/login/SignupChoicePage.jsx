@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import './styles/SignupChoicePage.css' // optional, if you want custom styles
+import './styles/SignupPage.css' 
 
 function SignupChoicePage() {
   const navigate = useNavigate()
