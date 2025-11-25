@@ -175,7 +175,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                 ? Number(tutorForm.hourlyRate)
                 : null,
               teachingMethod: tutorForm.teachingMethod,
-              bio: tutorForm.summary,               // 👈 NEW
+              bio: tutorForm.summary,   
             }),
           }
         )
@@ -200,7 +200,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
               ? String(updatedTutor.hourlyRate)
               : '',
           teachingMethod: updatedTutor.teachingMethod || 'ONLINE',
-          summary: updatedTutor.bio || '',        // 👈 NEW
+          summary: updatedTutor.bio || '',       
         })
       }
 
@@ -540,8 +540,12 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
             {error && <p className="auth-error">{error}</p>}
             {success && <p className="auth-success">{success}</p>}
 
-            <button type="submit" disabled={saving}>
-              {saving ? 'Saving…' : 'Save changes'}
+            <button
+              type="submit"
+              disabled={saving}
+              className="primary-button"
+            >
+              {saving ? 'Saving…' : 'Update Profile'}
             </button>
           </form>
         </div>

@@ -78,3 +78,19 @@
   font-size: 14px;
   resize: vertical;
 }
+
+.primary-button {
+  margin-top: 14px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #f59e0b;
+  background: #fbbf24;
+  color: #111827;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.primary-button:hover {
+  background: #f59e0b;
+}
