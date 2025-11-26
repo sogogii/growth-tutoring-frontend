@@ -67,6 +67,7 @@ function TutorsPage() {
           id: t.userId,
           name: `${t.firstName} ${t.lastName}`,
           rating: t.ratingAvg ?? 0,
+          ratingCount: t.ratingCount ?? 0,
           joined: formatJoined(t.joinedAt),
           subject: t.subjectLabel,
           experienceYears: t.yearsExperience,
@@ -247,6 +248,7 @@ function TutorsPage() {
                         <StarRating rating={tutor.rating} />
                         <span className="numeric-rating">
                           {tutor.rating != null ? tutor.rating.toFixed(2) : '0.00'}
+                          {' '}({tutor.ratingCount ?? 0})
                         </span>
                       </div>
                     </div>
