@@ -18,6 +18,9 @@ import HowItWorksPage from './pages/HowItWorksPage'
 import './App.css'
 import logo from './assets/company-logo.png'
 
+const IDLE_TIMEOUT_MINUTES = 30
+const IDLE_TIMEOUT_MS = IDLE_TIMEOUT_MINUTES * 60 * 1000
+
 function ScrollToTop() {
   const { pathname } = useLocation()
 
@@ -41,11 +44,52 @@ function App() {
 
   const navigate = useNavigate()
 
-  const handleLogout = () => {
+  const handleLogout = (isIdle = false) => {
     localStorage.removeItem('currentUser')
+    localStorage.removeItem('lastActivityAt')
     setCurrentUser(null)
     navigate('/') // go back to homepage
+
+    if (isIdle) {
+      // You can remove the alert later if you don't like it
+      alert(
+        `You have been logged out after ${IDLE_TIMEOUT_MINUTES} minutes of inactivity.`
+      )
+    }
   }
+
+  // --- Idle timeout: track activity + auto-logout when idle ---
+  useEffect(() => {
+    if (!currentUser) return
+
+    // When user is logged in, set/update last activity immediately
+    localStorage.setItem('lastActivityAt', String(Date.now()))
+
+    const updateActivity = () => {
+      localStorage.setItem('lastActivityAt', String(Date.now()))
+    }
+
+    const events = ['click', 'keydown', 'mousemove', 'scroll', 'touchstart']
+    events.forEach((evt) => window.addEventListener(evt, updateActivity))
+
+    const intervalId = setInterval(() => {
+      const lastActivity = localStorage.getItem('lastActivityAt')
+      if (!lastActivity) return
+
+      const last = parseInt(lastActivity, 10)
+      if (Number.isNaN(last)) return
+
+      const now = Date.now()
+      if (now - last >= IDLE_TIMEOUT_MS) {
+        handleLogout(true)
+      }
+    }, 60 * 1000) // check every minute
+
+    return () => {
+      events.forEach((evt) => window.removeEventListener(evt, updateActivity))
+      clearInterval(intervalId)
+    }
+  }, [currentUser]) // re-attach listeners whenever login state changes
 
   return (
     <div className="app-root">
@@ -100,7 +144,7 @@ function App() {
               <button
                 type="button"
                 className="logout-button"
-                onClick={handleLogout}
+                onClick={() => handleLogout(false)}
               >
                 Logout
               </button>
@@ -134,13 +178,21 @@ function App() {
           <Route path="/signup" element={<SignupChoicePage />} />
 
           {/* Step 2: actual forms */}
-          <Route path="/signup/tutor" element={<SignupPage fixedRole="TUTOR" />} />
-          <Route path="/signup/student" element={<SignupPage fixedRole="STUDENT" />} />
-          {/* pass setCurrentUser so LoginPage can update header + localStorage */}
+          <Route
+            path="/signup/tutor"
+            element={<SignupPage fixedRole="TUTOR" />}
+          />
+          <Route
+            path="/signup/student"
+            element={<SignupPage fixedRole="STUDENT" />}
+          />
+
+          {/* Login page needs to update currentUser & localStorage */}
           <Route
             path="/login"
             element={<LoginPage setCurrentUser={setCurrentUser} />}
           />
+
           <Route
             path="/my-profile"
             element={
@@ -150,11 +202,10 @@ function App() {
               />
             }
           />
+
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
-          {/* temporary: My Profile uses ComingSoon page */}
-          <Route path="/my-profile" element={<ComingSoonPage />} />
         </Routes>
       </main>
 

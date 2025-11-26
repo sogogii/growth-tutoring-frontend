@@ -39,9 +39,22 @@ function LoginPage({ setCurrentUser }) {
 
       const data = await res.json()
 
+      const userObj = {
+        userId: data.userId,
+        userUid: data.userUid,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role, // should already be "TUTOR" or "STUDENT"
+      }
+
       if (setCurrentUser) {
         setCurrentUser(data)
       }
+
+      localStorage.setItem('currentUser', JSON.stringify(userObj))
+      localStorage.setItem('lastActivityAt', String(Date.now()))
+
 
       navigate('/') // go to homepage or dashboard
     } catch (err) {
