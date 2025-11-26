@@ -269,7 +269,7 @@ function TutorProfilePage({ currentUser }) {
 
     try {
       const res = await fetch(
-        `${API_BASE}/api/tutors/user/${userId}/reviews/${review.id}`,
+        `${API_BASE}/api/tutors/user/${userId}/reviews/${review.id}?studentUserId=${currentUser.userId}`,
         {
           method: 'DELETE',
         }
