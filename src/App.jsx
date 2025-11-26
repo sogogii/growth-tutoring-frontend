@@ -126,7 +126,10 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/tutors" element={<TutorsPage />} />
-          <Route path="/tutors/:id" element={<TutorProfilePage />} />
+          <Route
+            path="/tutors/:id"
+            element={<TutorProfilePage currentUser={currentUser} />}
+          />
           {/* Step 1: choose Tutor vs Student */}
           <Route path="/signup" element={<SignupChoicePage />} />
 
