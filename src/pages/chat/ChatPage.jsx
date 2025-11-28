@@ -13,12 +13,14 @@ function ChatPage({ currentUser }) {
   const [error, setError] = useState(null)
   const [sending, setSending] = useState(false)
   const [text, setText] = useState('')
-  const bottomRef = useRef(null)
+
+  const scrollContainerRef = useRef(null)
+  const hasInitialScrolledRef = useRef(false)
 
   const scrollToBottom = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
+    const el = scrollContainerRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
   }
 
   // fetch messages + poll
@@ -30,7 +32,6 @@ function ChatPage({ currentUser }) {
     const fetchMessages = async () => {
       try {
         if (isCancelled) return
-        setLoading((prev) => (messages.length === 0 ? true : prev))
         setError(null)
 
         const res = await fetch(
@@ -43,9 +44,18 @@ function ChatPage({ currentUser }) {
         }
 
         const data = await res.json()
-        if (!isCancelled) {
-          setMessages(data)
-        }
+        if (isCancelled) return
+
+        // only update if actually changed to avoid extra renders
+        setMessages((prev) => {
+          if (
+            prev.length === data.length &&
+            prev[prev.length - 1]?.id === data[data.length - 1]?.id
+          ) {
+            return prev
+          }
+          return data
+        })
       } catch (err) {
         console.error(err)
         if (!isCancelled) {
@@ -67,9 +77,12 @@ function ChatPage({ currentUser }) {
     }
   }, [conversationId])
 
-  // auto scroll when messages change
+  // scroll down ONLY once after the first batch of messages loads
   useEffect(() => {
-    scrollToBottom()
+    if (!hasInitialScrolledRef.current && messages.length > 0) {
+      scrollToBottom()
+      hasInitialScrolledRef.current = true
+    }
   }, [messages])
 
   if (!currentUser) {
@@ -106,6 +119,9 @@ function ChatPage({ currentUser }) {
       const newMsg = await res.json()
       setMessages((prev) => [...prev, newMsg])
       setText('')
+
+      // when YOU send a message, force scroll to bottom
+      scrollToBottom()
     } catch (err) {
       console.error(err)
       setError(err.message || 'Failed to send message')
@@ -124,8 +140,9 @@ function ChatPage({ currentUser }) {
         className="profile-section"
         style={{ display: 'flex', flexDirection: 'column', height: '70vh' }}
       >
-        {/* Messages list */}
+        {/* Messages */}
         <div
+          ref={scrollContainerRef}
           style={{
             flex: 1,
             overflowY: 'auto',
@@ -168,11 +185,9 @@ function ChatPage({ currentUser }) {
               </div>
             )
           })}
-
-          <div ref={bottomRef} />
         </div>
 
-        {/* Input form */}
+        {/* Input */}
         <form
           onSubmit={handleSend}
           style={{
