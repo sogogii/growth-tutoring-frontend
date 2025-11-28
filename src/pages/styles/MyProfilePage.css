@@ -38,10 +38,10 @@
 
 .profile-value {
   font-size: 14px;
-  padding: 6px 10px;
+
   border-radius: 6px;
   background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  border: 0;
 }
 
 .profile-value.read-only {
@@ -98,4 +98,12 @@
 .my-profile-page {
   padding: 40px 32px;
   min-height: 100vh;
+}
+
+.profile-card-subtitle {
+  margin-bottom: 12px;
+}
+
+.profile-card-actions {
+  margin-bottom: 16px;
 }

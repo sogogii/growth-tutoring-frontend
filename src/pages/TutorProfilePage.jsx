@@ -1,3 +1,4 @@
+// src/pages/TutorProfilePage.jsx
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import './styles/TutorProfilePage.css'
@@ -10,8 +11,8 @@ function formatJoined(dateStr) {
   if (Number.isNaN(d.getTime())) return dateStr
 
   const monthNames = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December'
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
   ]
 
   return `${monthNames[d.getMonth()]} ${d.getFullYear()}`
@@ -59,8 +60,11 @@ function TutorProfilePage({ currentUser }) {
   const [editingReviewId, setEditingReviewId] = useState(null)
   const [openMenuReviewId, setOpenMenuReviewId] = useState(null)
 
-
   const isStudent = currentUser?.role === 'STUDENT'
+
+  // NEW: state for student–tutor link
+  const [linkStatus, setLinkStatus] = useState('NONE') // NONE | PENDING | ACCEPTED | DECLINED
+  const [linkLoading, setLinkLoading] = useState(false)
 
   // --- load tutor info ---
   const loadTutor = async (userId) => {
@@ -129,6 +133,25 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
+  // --- load current relationship status (student ↔ tutor) ---
+  const loadLinkStatus = async (studentUserId, tutorUserId) => {
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/student-tutor-links/status?studentUserId=${studentUserId}&tutorUserId=${tutorUserId}`
+      )
+      if (!res.ok) {
+        // if 404 or other, just treat as NONE
+        setLinkStatus('NONE')
+        return
+      }
+      const data = await res.json()
+      setLinkStatus(data.status || 'NONE')
+    } catch (err) {
+      console.error(err)
+      setLinkStatus('NONE')
+    }
+  }
+
   useEffect(() => {
     const userId = Number(id)
     setLoading(true)
@@ -136,8 +159,12 @@ function TutorProfilePage({ currentUser }) {
     setReviewsSuccess(null)
     loadTutor(userId)
     loadReviews(userId)
+
+    if (isStudent && currentUser) {
+      loadLinkStatus(currentUser.userId, userId)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [id, isStudent, currentUser])
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault()
@@ -163,7 +190,7 @@ function TutorProfilePage({ currentUser }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: currentUser.userId,            // student userId
+            userId: currentUser.userId, // student userId
             rating: Number(myRating),
             comment: myComment.trim(),
           }),
@@ -181,6 +208,47 @@ function TutorProfilePage({ currentUser }) {
       await loadReviews(userId)
     } catch (err) {
       console.error(err)
+      setReviewsError(err.message)
+    } finally {
+      setSavingReview(false)
+    }
+  }
+
+  const handleDeleteReview = async (review) => {
+    if (!isStudent || !currentUser) return
+
+    const confirmed = window.confirm('Delete your review?')
+    if (!confirmed) return
+
+    const userId = tutor?.userId ?? Number(id)
+
+    setSavingReview(true)
+    setReviewsError(null)
+    setReviewsSuccess(null)
+
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/tutors/user/${userId}/reviews/${review.id}?studentUserId=${currentUser.userId}`,
+        {
+          method: 'DELETE',
+        }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to delete review')
+      }
+
+      setReviewsSuccess('Your review has been deleted.')
+      setOpenMenuReviewId(null)
+      setEditingReviewId(null)
+      setMyRating('')
+      setMyComment('')
+      setShowReviewForm(false)
+
+      await loadTutor(userId)
+      await loadReviews(userId)
+    } catch (err) {
       setReviewsError(err.message)
     } finally {
       setSavingReview(false)
@@ -255,47 +323,40 @@ function TutorProfilePage({ currentUser }) {
     </div>
   )
 
-  const handleDeleteReview = async (review) => {
-    if (!isStudent || !currentUser) return
+  // --- handle "Add Tutor" request ---
+  const handleAddTutorRequest = async () => {
+    if (!isStudent || !currentUser) {
+      alert('Please log in as a student to add this tutor.')
+      return
+    }
 
-    const confirmed = window.confirm('Delete your review?')
-    if (!confirmed) return
+    const tutorUserId = tutor?.userId ?? Number(id)
 
-    const userId = tutor?.userId ?? Number(id)
-
-    setSavingReview(true)
-    setReviewsError(null)
-    setReviewsSuccess(null)
-
+    setLinkLoading(true)
     try {
-      const res = await fetch(
-        `${API_BASE}/api/tutors/user/${userId}/reviews/${review.id}?studentUserId=${currentUser.userId}`,
-        {
-          method: 'DELETE',
-        }
-      )
+      const res = await fetch(`${API_BASE}/api/student-tutor-links`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentUserId: currentUser.userId,
+          tutorUserId,
+        }),
+      })
 
       if (!res.ok) {
         const text = await res.text()
-        throw new Error(text || 'Failed to delete review')
+        throw new Error(text || 'Failed to send request')
       }
 
-      setReviewsSuccess('Your review has been deleted.')
-      setOpenMenuReviewId(null)
-      setEditingReviewId(null)
-      setMyRating('')
-      setMyComment('')
-      setShowReviewForm(false)
-
-      await loadTutor(userId)
-      await loadReviews(userId)
+      // backend sets/returns PENDING; refresh status
+      await loadLinkStatus(currentUser.userId, tutorUserId)
     } catch (err) {
-      setReviewsError(err.message)
+      console.error(err)
+      alert(err.message || 'Failed to send request')
     } finally {
-      setSavingReview(false)
+      setLinkLoading(false)
     }
   }
-
 
   if (loading) {
     return (
@@ -331,8 +392,26 @@ function TutorProfilePage({ currentUser }) {
   const hasMyReview = Boolean(myReview)
 
   const otherReviews = hasMyReview
-  ? reviews.filter((r) => r.id !== myReview.id)
-  : reviews
+    ? reviews.filter((r) => r.id !== myReview.id)
+    : reviews
+
+  // text for Add Tutor button based on status
+  const addTutorLabel = (() => {
+    switch (linkStatus) {
+      case 'PENDING':
+        return 'Request Sent'
+      case 'ACCEPTED':
+        return 'Tutor Added'
+      // after declined, we just show the original label again
+      case 'DECLINED':
+        return 'Add Tutor'
+      default:
+        return 'Add Tutor'
+    }
+  })()
+
+  const addTutorDisabled =
+    linkLoading || linkStatus === 'PENDING' || linkStatus === 'ACCEPTED'
 
   return (
     <div className="tutor-profile-page">
@@ -369,6 +448,17 @@ function TutorProfilePage({ currentUser }) {
             <button type="button" className="tutor-profile-cta">
               Contact Tutor
             </button>
+
+            {isStudent && (
+              <button
+                type="button"
+                className="tutor-profile-secondary-cta"
+                onClick={handleAddTutorRequest}
+                disabled={addTutorDisabled}
+              >
+                {linkLoading ? 'Sending…' : addTutorLabel}
+              </button>
+            )}
           </div>
         </div>
 
@@ -500,7 +590,7 @@ function TutorProfilePage({ currentUser }) {
                 {/* --- Other students' reviews --- */}
                 <div className="reviews-subsection">
                   <h3 className="reviews-subtitle">
-                    {hasMyReview ? "Other students' reviews" : "Student reviews"}
+                    {hasMyReview ? "Other students' reviews" : 'Student reviews'}
                   </h3>
 
                   {otherReviews.length === 0 ? (

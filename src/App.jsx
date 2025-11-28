@@ -1,6 +1,6 @@
 // src/App.jsx
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
@@ -15,11 +15,19 @@ import MyProfilePage from './pages/MyProfilePage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/HowItWorksPage'
 
+// relationship pages
+import MyStudentsPage from './pages/MyStudentsPage'
+import MyTutorsPage from './pages/MyTutorsPage'
+
 import './App.css'
 import logo from './assets/company-logo.png'
 
 const IDLE_TIMEOUT_MINUTES = 30
 const IDLE_TIMEOUT_MS = IDLE_TIMEOUT_MINUTES * 60 * 1000
+
+const RAW_API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -36,33 +44,36 @@ function ScrollToTop() {
 }
 
 function App() {
-  // Load current user from localStorage on first render
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('currentUser')
     return saved ? JSON.parse(saved) : null
   })
 
+  const [pendingStudentCount, setPendingStudentCount] = useState(0)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+
   const navigate = useNavigate()
+  const userMenuRef = useRef(null)
 
   const handleLogout = (isIdle = false) => {
     localStorage.removeItem('currentUser')
     localStorage.removeItem('lastActivityAt')
     setCurrentUser(null)
+    setPendingStudentCount(0)
+    setIsUserMenuOpen(false)
     navigate('/') // go back to homepage
 
     if (isIdle) {
-      // You can remove the alert later if you don't like it
       alert(
         `You have been logged out after ${IDLE_TIMEOUT_MINUTES} minutes of inactivity.`
       )
     }
   }
 
-  // --- Idle timeout: track activity + auto-logout when idle ---
+  // --- Idle timeout ---
   useEffect(() => {
     if (!currentUser) return
 
-    // When user is logged in, set/update last activity immediately
     localStorage.setItem('lastActivityAt', String(Date.now()))
 
     const updateActivity = () => {
@@ -83,13 +94,66 @@ function App() {
       if (now - last >= IDLE_TIMEOUT_MS) {
         handleLogout(true)
       }
-    }, 60 * 1000) // check every minute
+    }, 60 * 1000)
 
     return () => {
       events.forEach((evt) => window.removeEventListener(evt, updateActivity))
       clearInterval(intervalId)
     }
-  }, [currentUser]) // re-attach listeners whenever login state changes
+  }, [currentUser])
+
+  // --- Pending student requests (for tutors) ---
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== 'TUTOR') {
+      setPendingStudentCount(0)
+      return
+    }
+
+    const loadPendingCount = async () => {
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
+        )
+        if (!res.ok) {
+          setPendingStudentCount(0)
+          return
+        }
+        const data = await res.json()
+        setPendingStudentCount(Array.isArray(data) ? data.length : 0)
+      } catch (err) {
+        console.error(err)
+        setPendingStudentCount(0)
+      }
+    }
+
+    loadPendingCount()
+  }, [currentUser])
+
+  // --- Close dropdown when clicking outside ---
+  useEffect(() => {
+    if (!isUserMenuOpen) return
+
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isUserMenuOpen])
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen((open) => !open)
+  }
+
+  const goTo = (path) => {
+    navigate(path)
+    setIsUserMenuOpen(false)
+  }
+
+  const avatarUrl = currentUser?.profileImageUrl || currentUser?.profile_image_url
+  const avatarInitial = currentUser?.firstName?.[0] || 'M'
 
   return (
     <div className="app-root">
@@ -132,22 +196,109 @@ function App() {
           </Link>
 
           {currentUser ? (
-            <div className="header-user-section">
-              <span className="user-greeting">
-                Hi, {currentUser.firstName}!
-              </span>
-
-              <Link to="/my-profile" className="user-link">
-                My Profile
-              </Link>
-
+            <div className="header-user-section" ref={userMenuRef}>
               <button
                 type="button"
-                className="logout-button"
-                onClick={() => handleLogout(false)}
+                className="user-menu-toggle"
+                onClick={toggleUserMenu}
               >
-                Logout
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={currentUser.firstName}
+                    className="user-avatar"
+                  />
+                ) : (
+                  <div className="user-avatar user-avatar-fallback">
+                    {avatarInitial}
+                  </div>
+                )}
+                <span className="user-menu-label">Me</span>
+                <span
+                  className={`user-menu-caret ${
+                    isUserMenuOpen ? 'open' : ''
+                  }`}
+                >
+                  ▾
+                </span>
               </button>
+
+              {isUserMenuOpen && (
+                <div className="user-menu-dropdown">
+                  <div className="user-menu-top">
+                    <div className="user-menu-top-main">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={currentUser.firstName}
+                          className="user-menu-avatar-lg"
+                        />
+                      ) : (
+                        <div className="user-menu-avatar-lg user-avatar-fallback">
+                          {avatarInitial}
+                        </div>
+                      )}
+                      <div>
+                        <div className="user-menu-name">
+                          {currentUser.firstName} {currentUser.lastName}
+                        </div>
+                        <div className="user-menu-role">
+                          {currentUser.role === 'TUTOR'
+                            ? 'Tutor'
+                            : currentUser.role === 'STUDENT'
+                              ? 'Student'
+                              : currentUser.role}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="user-menu-view-profile"
+                      onClick={() => goTo('/my-profile')}
+                    >
+                      View profile
+                    </button>
+                  </div>
+
+                  <div className="user-menu-section">
+                    <div className="user-menu-section-title">Account</div>
+                    {currentUser.role === 'TUTOR' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => goTo('/my-students')}
+                      >
+                        My students
+                        {pendingStudentCount > 0 && (
+                          <span className="notif-badge">
+                            {pendingStudentCount}
+                          </span>
+                        )}
+                      </button>
+                    )}
+                    {currentUser.role === 'STUDENT' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => goTo('/my-tutors')}
+                      >
+                        My tutors
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="user-menu-section user-menu-section-border">
+                    <button
+                      type="button"
+                      className="user-menu-signout"
+                      onClick={() => handleLogout(false)}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <>
@@ -174,6 +325,7 @@ function App() {
             path="/tutors/:id"
             element={<TutorProfilePage currentUser={currentUser} />}
           />
+
           {/* Step 1: choose Tutor vs Student */}
           <Route path="/signup" element={<SignupChoicePage />} />
 
@@ -203,6 +355,16 @@ function App() {
             }
           />
 
+          {/* relationship pages */}
+          <Route
+            path="/my-students"
+            element={<MyStudentsPage currentUser={currentUser} />}
+          />
+          <Route
+            path="/my-tutors"
+            element={<MyTutorsPage currentUser={currentUser} />}
+          />
+
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
@@ -212,7 +374,6 @@ function App() {
       {/* Footer */}
       <footer className="site-footer">
         <div className="footer-top">
-          {/* Brand + socials */}
           <div className="footer-brand">
             <div className="footer-logo-row">
               <img src={logo} alt="Growth Tutoring" className="footer-logo" />
@@ -254,7 +415,6 @@ function App() {
             </div>
           </div>
 
-          {/* Link columns */}
           <div className="footer-links-grid">
             <div className="footer-column">
               <h4>Growth Tutoring</h4>
