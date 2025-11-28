@@ -14,6 +14,8 @@ import LoginPage from './pages/login/LoginPage'
 import MyProfilePage from './pages/MyProfilePage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/HowItWorksPage'
+import ChatListPage from './pages/chat/ChatListPage'
+import ChatPage from './pages/chat/ChatPage'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -286,6 +288,17 @@ function App() {
                         My tutors
                       </button>
                     )}
+
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => {
+                          navigate('/messages')
+                          setIsUserMenuOpen(false)
+                        }}
+                      >
+                        Messages
+                      </button>
                   </div>
 
                   <div className="user-menu-section user-menu-section-border">
@@ -367,6 +380,16 @@ function App() {
 
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<ContactPage />} />
+
+          <Route
+            path="/messages"
+            element={<ChatListPage currentUser={currentUser} />}
+          />
+          <Route
+            path="/chat/:conversationId"
+            element={<ChatPage currentUser={currentUser} />}
+          />
+
           <Route path="/coming-soon" element={<ComingSoonPage />} />
         </Routes>
       </main>

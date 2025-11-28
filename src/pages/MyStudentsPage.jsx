@@ -1,5 +1,5 @@
-// src/pages/MyStudentsPage.jsx
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './styles/MyProfilePage.css'
 
 const RAW_API_BASE_URL =
@@ -7,35 +7,44 @@ const RAW_API_BASE_URL =
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function MyStudentsPage({ currentUser }) {
-  const [acceptedStudents, setAcceptedStudents] = useState([])
-  const [pendingRequests, setPendingRequests] = useState([])
+  const [pendingStudents, setPendingStudents] = useState([])
+  const [matchedStudents, setMatchedStudents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [decisionLoadingId, setDecisionLoadingId] = useState(null)
+  const [chatLoadingId, setChatLoadingId] = useState(null)
 
-  // load accepted + pending
+  const navigate = useNavigate()
+
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'TUTOR') return
+    if (!currentUser || currentUser.role !== 'TUTOR') {
+      setLoading(false)
+      return
+    }
 
-    const loadData = async () => {
-      setLoading(true)
-      setError(null)
-
+    const fetchData = async () => {
       try {
-        // accepted students
-        const acceptedRes = await fetch(
-          `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
-        )
-        const acceptedData = acceptedRes.ok ? await acceptedRes.json() : []
+        setLoading(true)
+        setError(null)
 
-        // pending requests (with linkId)
         const pendingRes = await fetch(
           `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
         )
-        const pendingData = pendingRes.ok ? await pendingRes.json() : []
+        if (!pendingRes.ok) {
+          throw new Error(await pendingRes.text())
+        }
+        const pending = await pendingRes.json()
 
-        setAcceptedStudents(acceptedData)
-        setPendingRequests(pendingData)
+        const matchedRes = await fetch(
+          `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
+        )
+        if (!matchedRes.ok) {
+          throw new Error(await matchedRes.text())
+        }
+        const matched = await matchedRes.json()
+
+        setPendingStudents(pending)
+        setMatchedStudents(matched)
       } catch (err) {
         console.error(err)
         setError(err.message || 'Failed to load students')
@@ -44,145 +53,192 @@ function MyStudentsPage({ currentUser }) {
       }
     }
 
-    loadData()
+    fetchData()
   }, [currentUser])
 
   const handleDecision = async (linkId, decision) => {
-    if (!currentUser) return
-
-    setDecisionLoadingId(linkId)
-    setError(null)
-
     try {
+      setDecisionLoadingId(linkId)
       const res = await fetch(
         `${API_BASE}/api/student-tutor-links/${linkId}/decision`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ decision }), // "ACCEPT" or "DECLINE"
+          body: JSON.stringify({ decision }),
         }
       )
 
       if (!res.ok) {
         const text = await res.text()
-        throw new Error(text || 'Failed to update request')
+        alert(text || 'Failed to update request')
+        return
       }
 
-      // refresh both lists
-      const [acceptedRes, pendingRes] = await Promise.all([
-        fetch(`${API_BASE}/api/tutors/user/${currentUser.userId}/students`),
-        fetch(
-          `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
-        ),
-      ])
-
-      const [acceptedData, pendingData] = await Promise.all([
-        acceptedRes.ok ? acceptedRes.json() : [],
-        pendingRes.ok ? pendingRes.json() : [],
-      ])
-
-      setAcceptedStudents(acceptedData)
-      setPendingRequests(pendingData)
+      // reload lists
+      const pendingRes = await fetch(
+        `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
+      )
+      const matchedRes = await fetch(
+        `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
+      )
+      setPendingStudents(await pendingRes.json())
+      setMatchedStudents(await matchedRes.json())
     } catch (err) {
       console.error(err)
-      setError(err.message || 'Failed to update request')
+      alert(err.message || 'Failed to update request')
     } finally {
       setDecisionLoadingId(null)
     }
   }
 
+  const handleOpenChat = async (studentUserId) => {
+    if (!currentUser) return
+    try {
+      setChatLoadingId(studentUserId)
+
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversation?studentUserId=${studentUserId}&tutorUserId=${currentUser.userId}`,
+        { method: 'POST' }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        alert(text || 'Failed to start conversation')
+        return
+      }
+
+      const conv = await res.json()
+      navigate(`/chat/${conv.id}`)
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to start conversation')
+    } finally {
+      setChatLoadingId(null)
+    }
+  }
+
   if (!currentUser) {
-    return <div className="my-profile-page">Please log in first.</div>
+    return (
+      <div className="my-profile-page">
+        <h1>My Students</h1>
+        <p className="profile-value">Please sign in to view your students.</p>
+      </div>
+    )
   }
 
   if (currentUser.role !== 'TUTOR') {
     return (
       <div className="my-profile-page">
-        Only tutors can view this page.
+        <h1>My Students</h1>
+        <p className="profile-value">
+          This page is only available for tutor accounts.
+        </p>
       </div>
     )
-  }
-
-  if (loading) {
-    return <div className="my-profile-page">Loading your students…</div>
   }
 
   return (
     <div className="my-profile-page">
       <h1>My Students</h1>
 
+      {loading && <p className="profile-value">Loading your students…</p>}
       {error && <p className="auth-error">{error}</p>}
 
-      {/* Pending requests */}
-      <section className="profile-section">
-        <h2 className="profile-section-title">Pending requests</h2>
-        {pendingRequests.length === 0 ? (
-          <p className="profile-value">You have no pending student requests.</p>
-        ) : (
-          <div className="profile-list">
-            {pendingRequests.map((req) => (
-              <div key={req.linkId} className="profile-card">
-                <div className="profile-card-main">
-                  <div className="profile-card-title">
-                    {req.firstName} {req.lastName}
-                  </div>
-                  <div className="profile-card-subtitle">
-                    {req.email} • User ID: {req.userUid}
-                  </div>
-                </div>
+      {!loading && !error && (
+        <>
+          {/* Pending requests */}
+          <section className="profile-section">
+            <h2 className="profile-section-title">Pending requests</h2>
 
-                <div className="profile-card-actions">
-                  <button
-                    type="button"
-                    className="primary-button"
-                    disabled={decisionLoadingId === req.linkId}
-                    onClick={() => handleDecision(req.linkId, 'ACCEPT')}
-                  >
-                    {decisionLoadingId === req.linkId
-                      ? 'Accepting…'
-                      : 'Accept'}
-                  </button>
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    disabled={decisionLoadingId === req.linkId}
-                    onClick={() => handleDecision(req.linkId, 'DECLINE')}
-                  >
-                    {decisionLoadingId === req.linkId
-                      ? 'Declining…'
-                      : 'Decline'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+            {pendingStudents.length === 0 ? (
+              <p className="profile-value">
+                You don&apos;t have any pending requests.
+              </p>
+            ) : (
+              <div className="profile-list">
+                {pendingStudents.map((student) => (
+                  <div key={student.linkId} className="profile-card">
+                    <div className="profile-card-main">
+                      <div>
+                        <div className="profile-card-title">
+                          {student.firstName} {student.lastName}
+                        </div>
+                        <div className="profile-card-subtitle">
+                          {student.email} • User ID: {student.userUid}
+                        </div>
+                      </div>
 
-      {/* Accepted students */}
-      <section className="profile-section">
-        <h2 className="profile-section-title">Matched students</h2>
-        {acceptedStudents.length === 0 ? (
-          <p className="profile-value">
-            You don&apos;t have any matched students yet.
-          </p>
-        ) : (
-          <div className="profile-list">
-            {acceptedStudents.map((s) => (
-              <div key={s.userId} className="profile-card">
-                <div className="profile-card-main">
-                  <div className="profile-card-title">
-                    {s.firstName} {s.lastName}
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          disabled={decisionLoadingId === student.linkId}
+                          onClick={() =>
+                            handleDecision(student.linkId, 'ACCEPT')
+                          }
+                        >
+                          {decisionLoadingId === student.linkId
+                            ? 'Accepting…'
+                            : 'Accept'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-sm"
+                          disabled={decisionLoadingId === student.linkId}
+                          onClick={() =>
+                            handleDecision(student.linkId, 'DECLINE')
+                          }
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="profile-card-subtitle">
-                    {s.email} • User ID: {s.userUid}
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+            )}
+          </section>
+
+          {/* Matched students */}
+          <section className="profile-section">
+            <h2 className="profile-section-title">Matched students</h2>
+
+            {matchedStudents.length === 0 ? (
+              <p className="profile-value">
+                You don&apos;t have any matched students yet.
+              </p>
+            ) : (
+              <div className="profile-list">
+                {matchedStudents.map((student) => (
+                  <div key={student.userId} className="profile-card">
+                    <div className="profile-card-main">
+                      <div>
+                        <div className="profile-card-title">
+                          {student.firstName} {student.lastName}
+                        </div>
+                        <div className="profile-card-subtitle">
+                          {student.email} • User ID: {student.userUid}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => handleOpenChat(student.userId)}
+                        disabled={chatLoadingId === student.userId}
+                      >
+                        {chatLoadingId === student.userId
+                          ? 'Opening…'
+                          : 'Message'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
     </div>
   )
 }

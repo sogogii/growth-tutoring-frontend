@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './styles/MyProfilePage.css'
 
 const RAW_API_BASE_URL =
@@ -6,33 +7,45 @@ const RAW_API_BASE_URL =
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function MyTutorsPage({ currentUser }) {
-  const [matchedTutors, setMatchedTutors] = useState([])
   const [pendingTutors, setPendingTutors] = useState([])
+  const [matchedTutors, setMatchedTutors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [chatLoadingId, setChatLoadingId] = useState(null)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'STUDENT') return
+    if (!currentUser || currentUser.role !== 'STUDENT') {
+      setLoading(false)
+      return
+    }
 
-    const loadData = async () => {
-      setLoading(true)
-      setError(null)
-
+    const fetchData = async () => {
       try {
-        const [matchedRes, pendingRes] = await Promise.all([
-          fetch(`${API_BASE}/api/students/user/${currentUser.userId}/tutors`),
-          fetch(
-            `${API_BASE}/api/students/user/${currentUser.userId}/tutor-requests`
-          ),
-        ])
+        setLoading(true)
+        setError(null)
 
-        const [matchedData, pendingData] = await Promise.all([
-          matchedRes.ok ? matchedRes.json() : [],
-          pendingRes.ok ? pendingRes.json() : [],
-        ])
+        // pending tutor requests
+        const pendingRes = await fetch(
+          `${API_BASE}/api/students/user/${currentUser.userId}/tutor-requests`
+        )
+        if (!pendingRes.ok) {
+          throw new Error(await pendingRes.text())
+        }
+        const pending = await pendingRes.json()
 
-        setMatchedTutors(matchedData)
-        setPendingTutors(pendingData)
+        // matched tutors
+        const matchedRes = await fetch(
+          `${API_BASE}/api/students/user/${currentUser.userId}/tutors`
+        )
+        if (!matchedRes.ok) {
+          throw new Error(await matchedRes.text())
+        }
+        const matched = await matchedRes.json()
+
+        setPendingTutors(pending)
+        setMatchedTutors(matched)
       } catch (err) {
         console.error(err)
         setError(err.message || 'Failed to load tutors')
@@ -41,86 +54,130 @@ function MyTutorsPage({ currentUser }) {
       }
     }
 
-    loadData()
+    fetchData()
   }, [currentUser])
 
+  const handleOpenChat = async (tutorUserId) => {
+    if (!currentUser) return
+    try {
+      setChatLoadingId(tutorUserId)
+
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutorUserId}`,
+        { method: 'POST' }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        alert(text || 'Failed to start conversation')
+        return
+      }
+
+      const conv = await res.json()
+      navigate(`/chat/${conv.id}`)
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to start conversation')
+    } finally {
+      setChatLoadingId(null)
+    }
+  }
+
   if (!currentUser) {
-    return <div className="my-profile-page">Please log in first.</div>
+    return (
+      <div className="my-profile-page">
+        <h1>My Tutors</h1>
+        <p className="profile-value">Please sign in to view your tutors.</p>
+      </div>
+    )
   }
 
   if (currentUser.role !== 'STUDENT') {
     return (
       <div className="my-profile-page">
-        Only students can view this page.
+        <h1>My Tutors</h1>
+        <p className="profile-value">
+          This page is only available for student accounts.
+        </p>
       </div>
     )
-  }
-
-  if (loading) {
-    return <div className="my-profile-page">Loading your tutors…</div>
   }
 
   return (
     <div className="my-profile-page">
       <h1>My Tutors</h1>
 
+      {loading && <p className="profile-value">Loading your tutors…</p>}
       {error && <p className="auth-error">{error}</p>}
 
-      {/* Pending tutor requests */}
-      <section className="profile-section">
-        <h2 className="profile-section-title">Pending tutor requests</h2>
-        {pendingTutors.length === 0 ? (
-          <p className="profile-value">
-            You don&apos;t have any pending tutor requests.
-          </p>
-        ) : (
-          <div className="profile-list">
-            {pendingTutors.map((tutor) => (
-              <div
-                key={tutor.linkId ?? tutor.id}
-                className="profile-card"
-              >
-                <div className="profile-card-main">
-                  <div className="profile-card-title">
-                    {tutor.firstName} {tutor.lastName}
-                  </div>
-                  <div className="profile-card-subtitle">
-                    {tutor.email} • User ID: {tutor.userUid}
-                  </div>
-                  <div className="profile-card-subtitle">
-                    Status: Waiting for tutor to accept your request
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+      {!loading && !error && (
+        <>
+          {/* Pending tutor requests */}
+          <section className="profile-section">
+            <h2 className="profile-section-title">Pending tutor requests</h2>
 
-      {/* Accepted / matched tutors */}
-      <section className="profile-section">
-        <h2 className="profile-section-title">Matched tutors</h2>
-        {matchedTutors.length === 0 ? (
-          <p className="profile-value">
-            You don&apos;t have any matched tutors yet.
-          </p>
-        ) : (
-          <div className="profile-list">
-            {matchedTutors.map((tutor) => (
-              <div key={tutor.userId} className="profile-card">
-                <div className="profile-card-main">
-                  <div className="profile-card-title">
-                    {tutor.firstName} {tutor.lastName}
+            {pendingTutors.length === 0 ? (
+              <p className="profile-value">
+                You don&apos;t have any pending tutor requests.
+              </p>
+            ) : (
+              <div className="profile-list">
+                {pendingTutors.map((tutor) => (
+                  <div key={tutor.linkId} className="profile-card">
+                    <div className="profile-card-main">
+                      <div className="profile-card-title">
+                        {tutor.firstName} {tutor.lastName}
+                      </div>
+                      <div className="profile-card-subtitle">
+                        {tutor.email} • User ID: {tutor.userUid}
+                      </div>
+                    </div>
                   </div>
-                  <div className="profile-card-subtitle">
-                    {tutor.email} • User ID: {tutor.userUid}
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+            )}
+          </section>
+
+          {/* Matched tutors */}
+          <section className="profile-section">
+            <h2 className="profile-section-title">Matched tutors</h2>
+
+            {matchedTutors.length === 0 ? (
+              <p className="profile-value">
+                You don&apos;t have any matched tutors yet.
+              </p>
+            ) : (
+              <div className="profile-list">
+                {matchedTutors.map((tutor) => (
+                  <div key={tutor.userId} className="profile-card">
+                    <div className="profile-card-main">
+                      <div>
+                        <div className="profile-card-title">
+                          {tutor.firstName} {tutor.lastName}
+                        </div>
+                        <div className="profile-card-subtitle">
+                          {tutor.email} • User ID: {tutor.userUid}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => handleOpenChat(tutor.userId)}
+                        disabled={chatLoadingId === tutor.userId}
+                      >
+                        {chatLoadingId === tutor.userId
+                          ? 'Opening…'
+                          : 'Message'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
     </div>
   )
 }
