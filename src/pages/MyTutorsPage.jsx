@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import './styles/MyProfilePage.css'
+import './styles/MyTutorsPage.css'
 
 const RAW_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
@@ -128,8 +128,13 @@ function MyTutorsPage({ currentUser }) {
                       <div className="profile-card-title">
                         {tutor.firstName} {tutor.lastName}
                       </div>
-                      <div className="profile-card-subtitle">
-                        {tutor.email} • User ID: {tutor.userUid}
+
+                      <div className="profile-card-line">
+                        {tutor.email}
+                      </div>
+
+                      <div className="profile-card-line">
+                        User ID: {tutor.userUid}
                       </div>
                     </div>
                   </div>
@@ -155,8 +160,13 @@ function MyTutorsPage({ currentUser }) {
                         <div className="profile-card-title">
                           {tutor.firstName} {tutor.lastName}
                         </div>
-                        <div className="profile-card-subtitle">
-                          {tutor.email} • User ID: {tutor.userUid}
+
+                        <div className="profile-card-line">
+                          {tutor.email}
+                        </div>
+
+                        <div className="profile-card-line">
+                          User ID: {tutor.userUid}
                         </div>
                       </div>
 

@@ -1,0 +1,126 @@
+/* Root container */
+.my-profile-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 4px 40px;
+}
+
+.my-profile-page h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.auth-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.profile-value {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 4px 0;
+}
+
+/* Sections (Pending / Matched) */
+
+.profile-section {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 18px 18px 20px;
+  margin-top: 16px;
+}
+
+.profile-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* List + cards */
+
+.profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.profile-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 12px 14px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.profile-card:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.profile-card-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.profile-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.profile-card-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.profile-card-line {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+/* Button adjustments for this page */
+
+.profile-card .btn.btn-primary {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Small helper texts */
+.my-profile-page p {
+  margin: 4px 0;
+}
+
+/* Responsive tweaks */
+
+@media (max-width: 640px) {
+  .my-profile-page {
+    padding: 20px 0 32px;
+  }
+
+  .profile-card-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-card .btn.btn-primary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}

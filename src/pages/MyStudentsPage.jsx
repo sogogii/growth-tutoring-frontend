@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import './styles/MyProfilePage.css'
+import './styles/MyStudentsPage.css'
 
 const RAW_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'

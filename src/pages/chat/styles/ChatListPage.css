@@ -1,0 +1,131 @@
+/* Make the chat page wider than the profile page and centered */
+.chat-list-page {
+  width: 900px;           /* wider horizontally */
+  margin: 40px auto;
+  padding: 24px 16px;
+}
+
+/* Title */
+.chat-list-page h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+/* Section wrapper */
+.chat-list-section {
+  margin-top: 8px;
+}
+
+/* Stack chat cards with spacing */
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Chat card button */
+.chat-card {
+  width: 100%;
+  border: none;
+  background: #ffffff;
+  cursor: pointer;
+
+  border-radius: 16px;
+  padding: 14px 18px;
+
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    background-color 0.12s ease-out;
+  text-align: left;
+}
+
+/* Hover + focus states */
+.chat-card:hover,
+.chat-card:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+  background-color: #f8fafc;
+  outline: none;
+}
+
+/* Inner layout: avatar + main text */
+.chat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Avatar container */
+.chat-card-avatar {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Avatar image */
+.chat-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar initials (fallback) */
+.chat-card-avatar-fallback {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+/* Main text area */
+.chat-card-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Name line */
+.chat-card-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Subtitle (small text) */
+.chat-card-subtitle {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Loading / empty text reuse existing classes but make sure they don't get too narrow */
+.chat-list-page .profile-value,
+.chat-list-page .auth-error {
+  max-width: 600px;
+}
+
+/* Slightly tighter on very small screens */
+@media (max-width: 480px) {
+  .chat-list-page {
+    margin: 24px auto;
+    padding: 16px 12px;
+  }
+
+  .chat-card {
+    padding: 12px 14px;
+  }
+
+  .chat-card-avatar {
+    width: 40px;
+    height: 40px;
+  }
+}

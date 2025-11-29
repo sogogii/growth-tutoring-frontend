@@ -333,7 +333,10 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
-          <Route path="/tutors" element={<TutorsPage />} />
+          <Route
+            path="/tutors"
+            element={<TutorsPage currentUser={currentUser} />}
+          />
           <Route
             path="/tutors/:id"
             element={<TutorProfilePage currentUser={currentUser} />}

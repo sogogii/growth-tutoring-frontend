@@ -23,6 +23,74 @@ function ChatPage({ currentUser }) {
     el.scrollTop = el.scrollHeight
   }
 
+  // pick the timestamp field from the message object
+  const getTimestamp = (msg) =>
+    msg.createdAt || msg.sentAt || msg.timestamp || null
+
+  const formatDateLabel = (ts) => {
+    if (!ts) return ''
+    const d = new Date(ts)
+    return d.toLocaleDateString(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  }
+
+  const getDateKey = (ts) => {
+    if (!ts) return ''
+    const d = new Date(ts)
+    // yyyy-mm-dd key
+    return d.toISOString().slice(0, 10)
+  }
+
+  const formatTimeLabel = (ts) => {
+    if (!ts) return ''
+    const d = new Date(ts)
+    return d.toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+  }
+
+  const getSenderInfo = (msg, isMine) => {
+    if (isMine) {
+      const first = currentUser?.firstName || ''
+      const last = currentUser?.lastName || ''
+      const displayName =
+        (first || last) ? `${first} ${last}`.trim() : 'You'
+      const initials = (first || last
+        ? `${first} ${last}`
+        : 'You'
+      )
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((p) => p[0]?.toUpperCase())
+        .join('')
+      const avatarUrl = currentUser?.avatarUrl || null
+      return { displayName, initials, avatarUrl }
+    }
+
+    const first = msg.senderFirstName || ''
+    const last = msg.senderLastName || ''
+    const fallbackName = msg.senderName || 'Tutor'
+    const displayName =
+      (first || last) ? `${first} ${last}`.trim() : fallbackName
+
+    const initials = (displayName || fallbackName)
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase())
+      .join('')
+
+    const avatarUrl = msg.senderAvatarUrl || null
+
+    return { displayName, initials, avatarUrl }
+  }
+
   // fetch messages + poll
   useEffect(() => {
     if (!conversationId) return
@@ -46,7 +114,6 @@ function ChatPage({ currentUser }) {
         const data = await res.json()
         if (isCancelled) return
 
-        // only update if actually changed to avoid extra renders
         setMessages((prev) => {
           if (
             prev.length === data.length &&
@@ -87,7 +154,7 @@ function ChatPage({ currentUser }) {
 
   if (!currentUser) {
     return (
-      <div className="my-profile-page">
+      <div className="my-profile-page chat-page">
         <h1>Chat</h1>
         <p className="profile-value">Please sign in to view this chat.</p>
       </div>
@@ -119,8 +186,6 @@ function ChatPage({ currentUser }) {
       const newMsg = await res.json()
       setMessages((prev) => [...prev, newMsg])
       setText('')
-
-      // when YOU send a message, force scroll to bottom
       scrollToBottom()
     } catch (err) {
       console.error(err)
@@ -130,26 +195,17 @@ function ChatPage({ currentUser }) {
     }
   }
 
+  let lastDateKey = null
+
   return (
-    <div className="my-profile-page">
+    <div className="my-profile-page chat-page">
       <h1>Chat</h1>
 
       {error && <p className="auth-error">{error}</p>}
 
-      <section
-        className="profile-section"
-        style={{ display: 'flex', flexDirection: 'column', height: '70vh' }}
-      >
+      <section className="profile-section chat-section">
         {/* Messages */}
-        <div
-          ref={scrollContainerRef}
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            paddingRight: '4px',
-            marginBottom: '12px',
-          }}
-        >
+        <div ref={scrollContainerRef} className="chat-messages">
           {loading && <p className="profile-value">Loading messages…</p>}
 
           {!loading && messages.length === 0 && (
@@ -158,64 +214,99 @@ function ChatPage({ currentUser }) {
             </p>
           )}
 
-          {messages.map((msg) => {
-            const isMine = msg.senderUserId === currentUser.userId
-            return (
-              <div
-                key={msg.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: isMine ? 'flex-end' : 'flex-start',
-                  marginBottom: '6px',
-                }}
-              >
-                <div
-                  style={{
-                    maxWidth: '70%',
-                    padding: '8px 12px',
-                    borderRadius: '16px',
-                    fontSize: '14px',
-                    lineHeight: 1.4,
-                    backgroundColor: isMine ? '#4f46e5' : '#e5e7eb',
-                    color: isMine ? '#ffffff' : '#111827',
-                  }}
-                >
-                  {msg.content}
+          {!loading &&
+            messages.length > 0 &&
+            messages.map((msg) => {
+              const isMine = msg.senderUserId === currentUser.userId
+              const ts = getTimestamp(msg)
+              const dateKey = getDateKey(ts)
+              const showDateDivider = dateKey && dateKey !== lastDateKey
+              if (dateKey) lastDateKey = dateKey
+
+              const { displayName, initials, avatarUrl } = getSenderInfo(
+                msg,
+                isMine
+              )
+
+              return (
+                <div key={msg.id}>
+                  {showDateDivider && (
+                    <div className="chat-day-divider">
+                      <span>{formatDateLabel(ts)}</span>
+                    </div>
+                  )}
+
+                  <div
+                    className={`chat-message-row ${
+                      isMine ? 'mine' : 'theirs'
+                    }`}
+                  >
+                    {!isMine && (
+                      <div className="chat-avatar">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt={`${displayName}'s avatar`}
+                          />
+                        ) : (
+                          <div className="chat-avatar-fallback">
+                            {initials || '?'}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="chat-bubble-wrapper">
+                      {!isMine && (
+                        <div className="chat-sender-name">
+                          {displayName}
+                        </div>
+                      )}
+                      <div className="chat-bubble">
+                        <div className="chat-bubble-text">
+                          {msg.content}
+                        </div>
+                        <div className="chat-meta">
+                          <span className="chat-time">
+                            {formatTimeLabel(ts)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {isMine && (
+                      <div className="chat-avatar mine-avatar">
+                        {currentUser?.avatarUrl ? (
+                          <img
+                            src={currentUser.avatarUrl}
+                            alt="Your avatar"
+                          />
+                        ) : (
+                          <div className="chat-avatar-fallback">
+                            {getSenderInfo(msg, true).initials || 'Y'}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
         </div>
 
         {/* Input */}
-        <form
-          onSubmit={handleSend}
-          style={{
-            display: 'flex',
-            gap: '8px',
-            borderTop: '1px solid #e5e7eb',
-            paddingTop: '8px',
-          }}
-        >
+        <form onSubmit={handleSend} className="chat-input-row">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={2}
             placeholder="Type your message…"
-            style={{
-              flex: 1,
-              resize: 'none',
-              padding: '8px 10px',
-              borderRadius: '10px',
-              border: '1px solid #d1d5db',
-              fontSize: '14px',
-            }}
+            className="chat-input"
           />
           <button
             type="submit"
             disabled={sending || !text.trim()}
-            className="btn btn-primary"
-            style={{ alignSelf: 'flex-end', whiteSpace: 'nowrap' }}
+            className="chat-send-btn btn btn-primary"
           >
             {sending ? 'Sending…' : 'Send'}
           </button>

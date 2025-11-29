@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import './styles/ChatListPage.css'
 
 const RAW_API_BASE_URL =
@@ -44,7 +44,7 @@ function ChatListPage({ currentUser }) {
 
   if (!currentUser) {
     return (
-      <div className="my-profile-page">
+      <div className="my-profile-page chat-list-page">
         <h1>Messages</h1>
         <p className="profile-value">Please sign in to view your messages.</p>
       </div>
@@ -52,7 +52,7 @@ function ChatListPage({ currentUser }) {
   }
 
   return (
-    <div className="my-profile-page">
+    <div className="my-profile-page chat-list-page">
       <h1>Messages</h1>
 
       {loading && <p className="profile-value">Loading conversations…</p>}
@@ -63,27 +63,52 @@ function ChatListPage({ currentUser }) {
       )}
 
       {!loading && !error && conversations.length > 0 && (
-        <section className="profile-section">
-          <div className="profile-list">
-            {conversations.map((conv) => (
-              <button
-                key={conv.id}
-                type="button"
-                className="profile-card"
-                onClick={() => navigate(`/chat/${conv.id}`)}
-              >
-                <div className="profile-card-main">
-                  <div className="profile-card-title">
-                    {conv.otherName || 'Conversation'}
+        <section className="profile-section chat-list-section">
+          <div className="profile-list chat-list">
+            {conversations.map((conv) => {
+              const displayName =
+                (conv.otherFirstName || conv.otherLastName)
+                  ? `${conv.otherFirstName || ''} ${conv.otherLastName || ''}`.trim()
+                  : conv.otherName || 'Conversation'
+
+              const initials = displayName
+                .split(' ')
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((part) => part[0]?.toUpperCase())
+                .join('')
+
+              return (
+                <button
+                  key={conv.id}
+                  type="button"
+                  className="chat-card"
+                  onClick={() => navigate(`/chat/${conv.id}`)}
+                >
+                  <div className="chat-card-content">
+                    <div className="chat-card-avatar">
+                      {conv.otherAvatarUrl ? (
+                        <img
+                          src={conv.otherAvatarUrl}
+                          alt={`${displayName}'s avatar`}
+                        />
+                      ) : (
+                        <div className="chat-card-avatar-fallback">
+                          {initials || '?'}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="chat-card-main">
+                      <div className="chat-card-name">{displayName}</div>
+                      <div className="chat-card-subtitle">
+                        Tap to open chat
+                      </div>
+                    </div>
                   </div>
-                  <div className="profile-card-subtitle">
-                    {conv.otherUserId
-                      ? `User ID: ${conv.otherUserId}`
-                      : 'Tap to open chat'}
-                  </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              )
+            })}
           </div>
         </section>
       )}

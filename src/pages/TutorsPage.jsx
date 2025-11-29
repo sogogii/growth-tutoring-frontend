@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './styles/TutorsPage.css'
+
+const RAW_API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function StarRating({ rating }) {
   const r = rating ?? 0
@@ -40,7 +44,7 @@ function formatTeachingMethod(method) {
   }
 }
 
-function TutorsPage() {
+function TutorsPage({ currentUser }) {
   const [tutors, setTutors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -52,6 +56,39 @@ function TutorsPage() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const tutorsContentRef = useRef(null)
+
+  const navigate = useNavigate()
+
+  const handleOpenChat = async (tutorUserId) => {
+    if (!currentUser) {
+      alert('Please sign in to start a conversation.')
+      navigate('/login')
+      return
+    }
+
+    try {
+      // studentUserId = currentUser.userId  
+      // tutorUserId   = id of clicked tutor  
+
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutorUserId}`,
+        { method: 'POST' }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        alert(text || 'Failed to start a conversation.')
+        return
+      }
+
+      const conv = await res.json()
+      navigate(`/chat/${conv.id}`) // go to chat page
+
+    } catch (err) {
+      console.error(err)
+      alert('Error starting chat.')
+    }
+  }
 
   useEffect(() => {
     const fetchTutors = async () => {
@@ -288,6 +325,7 @@ function TutorsPage() {
                       type="button"
                       className="tutor-chat-button"
                       aria-label={`Message ${tutor.name}`}
+                      onClick={() => handleOpenChat(tutor.id)} 
                     >
                       💬
                     </button>
