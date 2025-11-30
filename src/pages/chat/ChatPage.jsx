@@ -6,7 +6,7 @@ const RAW_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
-function ChatPage({ currentUser }) {
+function ChatPage({ currentUser, refreshUnreadCount }) {
   const { conversationId } = useParams()
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
@@ -194,6 +194,29 @@ function ChatPage({ currentUser }) {
       setSending(false)
     }
   }
+
+  useEffect(() => {
+    if (!currentUser || !conversationId) return
+    if (messages.length === 0) return
+
+    const markRead = async () => {
+      try {
+        await fetch(
+          `${API_BASE}/api/chat/conversations/${conversationId}/read?userId=${currentUser.userId}`,
+          { method: 'POST' }
+        )
+
+        // 🔹 Immediately refresh the header badge
+        if (typeof refreshUnreadCount === 'function') {
+          refreshUnreadCount()
+        }
+      } catch (err) {
+        console.error('Failed to mark messages as read', err)
+      }
+    }
+
+    markRead()
+  }, [conversationId, currentUser, messages.length, refreshUnreadCount])
 
   let lastDateKey = null
 

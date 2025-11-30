@@ -82,7 +82,7 @@ function TutorsPage({ currentUser }) {
       }
 
       const conv = await res.json()
-      navigate(`/chat/${conv.id}`) // go to chat page
+      navigate(`/chat/${conv.id}`) 
 
     } catch (err) {
       console.error(err)

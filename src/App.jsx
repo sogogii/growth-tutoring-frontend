@@ -1,6 +1,5 @@
-// src/App.jsx
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'  // 👈 added useCallback
 
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
@@ -52,6 +51,7 @@ function App() {
   })
 
   const [pendingStudentCount, setPendingStudentCount] = useState(0)
+  const [messageCount, setMessageCount] = useState(0)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
   const navigate = useNavigate()
@@ -130,6 +130,35 @@ function App() {
 
     loadPendingCount()
   }, [currentUser])
+
+  // reusable function to fetch unread count
+  const refreshUnreadCount = useCallback(async () => {
+    if (!currentUser) {
+      setMessageCount(0)
+      return
+    }
+
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/chat/unread-count?userId=${currentUser.userId}`
+      )
+      if (!res.ok) {
+        console.error('Failed to load unread count')
+        setMessageCount(0)
+        return
+      }
+      const data = await res.json()
+      setMessageCount(typeof data === 'number' ? data : 0)
+    } catch (err) {
+      console.error('Error loading unread count', err)
+      setMessageCount(0)
+    }
+  }, [currentUser])
+
+  // still call it once when user/login changes
+  useEffect(() => {
+    refreshUnreadCount()
+  }, [refreshUnreadCount])
 
   // --- Close dropdown when clicking outside ---
   useEffect(() => {
@@ -289,16 +318,23 @@ function App() {
                       </button>
                     )}
 
-                      <button
-                        type="button"
-                        className="user-menu-link"
-                        onClick={() => {
-                          navigate('/messages')
-                          setIsUserMenuOpen(false)
-                        }}
-                      >
+                    <button
+                      type="button"
+                      className="user-menu-link"
+                      onClick={() => {
+                        navigate('/messages')
+                        setIsUserMenuOpen(false)
+                      }}
+                    >
+                      <span className="user-link-badge">
                         Messages
-                      </button>
+                        {messageCount > 0 && (
+                          <span className="notif-badge">
+                            {messageCount > 9 ? '9+' : messageCount}
+                          </span>
+                        )}
+                      </span>
+                    </button>
                   </div>
 
                   <div className="user-menu-section user-menu-section-border">
@@ -390,7 +426,12 @@ function App() {
           />
           <Route
             path="/chat/:conversationId"
-            element={<ChatPage currentUser={currentUser} />}
+            element={
+              <ChatPage
+                currentUser={currentUser}
+                refreshUnreadCount={refreshUnreadCount}
+              />
+            }
           />
 
           <Route path="/coming-soon" element={<ComingSoonPage />} />
