@@ -6,6 +6,19 @@ const RAW_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
+function getInitials(name) {
+  if (!name) return '?'
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+function formatTime(isoString) {
+  if (!isoString) return ''
+  const d = new Date(isoString)
+  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+}
+
 function ChatListPage({ currentUser }) {
   const [conversations, setConversations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -30,7 +43,18 @@ function ChatListPage({ currentUser }) {
         }
 
         const data = await res.json()
-        setConversations(data)
+
+        // Sort by most recent message (defensive; backend already sorts)
+        const sorted = [...data].sort((a, b) => {
+          const ta = a.lastMessageCreatedAt
+          const tb = b.lastMessageCreatedAt
+          if (!ta && !tb) return 0
+          if (!ta) return 1
+          if (!tb) return -1
+          return new Date(tb) - new Date(ta)
+        })
+
+        setConversations(sorted)
       } catch (err) {
         console.error(err)
         setError(err.message || 'Failed to load conversations')
@@ -44,39 +68,39 @@ function ChatListPage({ currentUser }) {
 
   if (!currentUser) {
     return (
-      <div className="my-profile-page chat-list-page">
+      <div className="chat-list-page">
         <h1>Messages</h1>
-        <p className="profile-value">Please sign in to view your messages.</p>
+        <p className="chat-list-empty">Please sign in to view your messages.</p>
       </div>
     )
   }
 
   return (
-    <div className="my-profile-page chat-list-page">
+    <div className="chat-list-page">
       <h1>Messages</h1>
 
-      {loading && <p className="profile-value">Loading conversations…</p>}
-      {error && <p className="auth-error">{error}</p>}
+      {loading && (
+        <p className="chat-list-empty">Loading conversations…</p>
+      )}
+      {error && <p className="chat-list-error">{error}</p>}
 
       {!loading && !error && conversations.length === 0 && (
-        <p className="profile-value">You don&apos;t have any conversations yet.</p>
+        <p className="chat-list-empty">
+          You don&apos;t have any conversations yet.
+        </p>
       )}
 
       {!loading && !error && conversations.length > 0 && (
-        <section className="profile-section chat-list-section">
-          <div className="profile-list chat-list">
+        <section className="chat-list-section">
+          <div className="chat-list">
             {conversations.map((conv) => {
-              const displayName =
-                (conv.otherFirstName || conv.otherLastName)
-                  ? `${conv.otherFirstName || ''} ${conv.otherLastName || ''}`.trim()
-                  : conv.otherName || 'Conversation'
-
-              const initials = displayName
-                .split(' ')
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((part) => part[0]?.toUpperCase())
-                .join('')
+              const hasMessages = !!conv.lastMessageCreatedAt
+              const lastText = hasMessages
+                ? conv.lastMessageContent || ''
+                : 'No messages yet'
+              const timeLabel = hasMessages
+                ? formatTime(conv.lastMessageCreatedAt)
+                : ''
 
               return (
                 <button
@@ -87,25 +111,34 @@ function ChatListPage({ currentUser }) {
                 >
                   <div className="chat-card-content">
                     <div className="chat-card-avatar">
-                      {conv.otherAvatarUrl ? (
-                        <img
-                          src={conv.otherAvatarUrl}
-                          alt={`${displayName}'s avatar`}
-                        />
-                      ) : (
-                        <div className="chat-card-avatar-fallback">
-                          {initials || '?'}
-                        </div>
-                      )}
+                      <span className="chat-card-avatar-fallback">
+                        {getInitials(conv.otherName || 'Conversation')}
+                      </span>
                     </div>
 
                     <div className="chat-card-main">
-                      <div className="chat-card-name">{displayName}</div>
+                      <div className="chat-card-header">
+                        <span className="chat-card-name">
+                          {conv.otherName || 'Conversation'}
+                        </span>
+                        {timeLabel && (
+                          <span className="chat-card-time">{timeLabel}</span>
+                        )}
+                      </div>
+
                       <div className="chat-card-subtitle">
-                        Tap to open chat
+                        {lastText.length > 70
+                          ? `${lastText.slice(0, 70)}…`
+                          : lastText}
                       </div>
                     </div>
                   </div>
+
+                  {conv.unreadCount > 0 && (
+                    <span className="chat-card-unread">
+                      {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
+                    </span>
+                  )}
                 </button>
               )
             })}
