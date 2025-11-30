@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import './styles/ChatPage.css'
 
 const RAW_API_BASE_URL =
@@ -8,6 +8,10 @@ const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function ChatPage({ currentUser, refreshUnreadCount }) {
   const { conversationId } = useParams()
+  const location = useLocation()
+  const otherNameFromList = location.state?.otherName
+  const headerTitle = otherNameFromList || 'Chat'
+
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -23,7 +27,6 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     el.scrollTop = el.scrollHeight
   }
 
-  // pick the timestamp field from the message object
   const getTimestamp = (msg) =>
     msg.createdAt || msg.sentAt || msg.timestamp || null
 
@@ -41,7 +44,6 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
   const getDateKey = (ts) => {
     if (!ts) return ''
     const d = new Date(ts)
-    // yyyy-mm-dd key
     return d.toISOString().slice(0, 10)
   }
 
@@ -60,10 +62,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
       const last = currentUser?.lastName || ''
       const displayName =
         (first || last) ? `${first} ${last}`.trim() : 'You'
-      const initials = (first || last
-        ? `${first} ${last}`
-        : 'You'
-      )
+      const initials = (first || last ? `${first} ${last}` : 'You')
         .split(' ')
         .filter(Boolean)
         .slice(0, 2)
@@ -144,7 +143,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     }
   }, [conversationId])
 
-  // scroll down ONLY once after the first batch of messages loads
+  // scroll to bottom once after first load
   useEffect(() => {
     if (!hasInitialScrolledRef.current && messages.length > 0) {
       scrollToBottom()
@@ -154,15 +153,14 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
 
   if (!currentUser) {
     return (
-      <div className="my-profile-page chat-page">
-        <h1>Chat</h1>
-        <p className="profile-value">Please sign in to view this chat.</p>
+      <div className="chat-page">
+        <h1>{headerTitle}</h1>
+        <p className="chat-info">Please sign in to view this chat.</p>
       </div>
     )
   }
 
-  const handleSend = async (e) => {
-    e.preventDefault()
+  const sendMessage = async () => {
     if (!text.trim() || sending) return
 
     try {
@@ -195,6 +193,12 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     }
   }
 
+  const handleSend = async (e) => {
+    e.preventDefault()
+    await sendMessage()
+  }
+
+  // mark read
   useEffect(() => {
     if (!currentUser || !conversationId) return
     if (messages.length === 0) return
@@ -206,7 +210,6 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
           { method: 'POST' }
         )
 
-        // 🔹 Immediately refresh the header badge
         if (typeof refreshUnreadCount === 'function') {
           refreshUnreadCount()
         }
@@ -221,18 +224,18 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
   let lastDateKey = null
 
   return (
-    <div className="my-profile-page chat-page">
-      <h1>Chat</h1>
+    <div className="chat-page">
+      <h1>{headerTitle}</h1>
 
-      {error && <p className="auth-error">{error}</p>}
+      {error && <p className="chat-error">{error}</p>}
 
-      <section className="profile-section chat-section">
-        {/* Messages */}
+      <section className="chat-section">
+        {/* messages */}
         <div ref={scrollContainerRef} className="chat-messages">
-          {loading && <p className="profile-value">Loading messages…</p>}
+          {loading && <p className="chat-info">Loading messages…</p>}
 
           {!loading && messages.length === 0 && (
-            <p className="profile-value">
+            <p className="chat-info">
               No messages yet. Say hello to start the conversation!
             </p>
           )}
@@ -317,7 +320,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
             })}
         </div>
 
-        {/* Input */}
+        {/* input */}
         <form onSubmit={handleSend} className="chat-input-row">
           <textarea
             value={text}
@@ -325,6 +328,12 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
             rows={2}
             placeholder="Type your message…"
             className="chat-input"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                sendMessage()
+              }
+            }}
           />
           <button
             type="submit"

@@ -17,12 +17,9 @@ function MyStudentsPage({ currentUser }) {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'TUTOR') {
-      setLoading(false)
-      return
-    }
+    const fetchStudents = async () => {
+      if (!currentUser) return
 
-    const fetchData = async () => {
       try {
         setLoading(true)
         setError(null)
@@ -30,21 +27,21 @@ function MyStudentsPage({ currentUser }) {
         const pendingRes = await fetch(
           `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
         )
-        if (!pendingRes.ok) {
-          throw new Error(await pendingRes.text())
-        }
-        const pending = await pendingRes.json()
-
         const matchedRes = await fetch(
           `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
         )
-        if (!matchedRes.ok) {
-          throw new Error(await matchedRes.text())
-        }
-        const matched = await matchedRes.json()
 
-        setPendingStudents(pending)
-        setMatchedStudents(matched)
+        if (!pendingRes.ok || !matchedRes.ok) {
+          const text =
+            (await pendingRes.text()) || (await matchedRes.text()) || ''
+          throw new Error(text || 'Failed to load students')
+        }
+
+        const pendingData = await pendingRes.json()
+        const matchedData = await matchedRes.json()
+
+        setPendingStudents(pendingData)
+        setMatchedStudents(matchedData)
       } catch (err) {
         console.error(err)
         setError(err.message || 'Failed to load students')
@@ -53,12 +50,14 @@ function MyStudentsPage({ currentUser }) {
       }
     }
 
-    fetchData()
+    fetchStudents()
   }, [currentUser])
 
   const handleDecision = async (linkId, decision) => {
+    if (!currentUser) return
     try {
       setDecisionLoadingId(linkId)
+
       const res = await fetch(
         `${API_BASE}/api/student-tutor-links/${linkId}/decision`,
         {
@@ -74,13 +73,14 @@ function MyStudentsPage({ currentUser }) {
         return
       }
 
-      // reload lists
+      // refresh lists
       const pendingRes = await fetch(
         `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
       )
       const matchedRes = await fetch(
         `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
       )
+
       setPendingStudents(await pendingRes.json())
       setMatchedStudents(await matchedRes.json())
     } catch (err) {
@@ -91,13 +91,13 @@ function MyStudentsPage({ currentUser }) {
     }
   }
 
-  const handleOpenChat = async (studentUserId) => {
+  const handleOpenChat = async (student) => {
     if (!currentUser) return
     try {
-      setChatLoadingId(studentUserId)
+      setChatLoadingId(student.userId)
 
       const res = await fetch(
-        `${API_BASE}/api/chat/conversation?studentUserId=${studentUserId}&tutorUserId=${currentUser.userId}`,
+        `${API_BASE}/api/chat/conversation?studentUserId=${student.userId}&tutorUserId=${currentUser.userId}`,
         { method: 'POST' }
       )
 
@@ -108,7 +108,9 @@ function MyStudentsPage({ currentUser }) {
       }
 
       const conv = await res.json()
-      navigate(`/chat/${conv.id}`)
+      navigate(`/chat/${conv.id}`, {
+        state: { otherName: `${student.firstName} ${student.lastName}` },
+      })
     } catch (err) {
       console.error(err)
       alert(err.message || 'Failed to start conversation')
@@ -118,15 +120,6 @@ function MyStudentsPage({ currentUser }) {
   }
 
   if (!currentUser) {
-    return (
-      <div className="my-profile-page">
-        <h1>My Students</h1>
-        <p className="profile-value">Please sign in to view your students.</p>
-      </div>
-    )
-  }
-
-  if (currentUser.role !== 'TUTOR') {
     return (
       <div className="my-profile-page">
         <h1>My Students</h1>
@@ -146,14 +139,11 @@ function MyStudentsPage({ currentUser }) {
 
       {!loading && !error && (
         <>
-          {/* Pending requests */}
+          {/* Pending students */}
           <section className="profile-section">
-            <h2 className="profile-section-title">Pending requests</h2>
-
+            <h2>Pending requests</h2>
             {pendingStudents.length === 0 ? (
-              <p className="profile-value">
-                You don&apos;t have any pending requests.
-              </p>
+              <p className="profile-value">You have no pending requests.</p>
             ) : (
               <div className="profile-list">
                 {pendingStudents.map((student) => (
@@ -164,32 +154,34 @@ function MyStudentsPage({ currentUser }) {
                           {student.firstName} {student.lastName}
                         </div>
                         <div className="profile-card-subtitle">
-                          {student.email} • User ID: {student.userUid}
+                          {student.email}
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', gap: '8px' }}>
+                      <div className="my-students-actions">
                         <button
                           type="button"
-                          className="btn btn-primary"
+                          className="btn btn-secondary"
                           disabled={decisionLoadingId === student.linkId}
                           onClick={() =>
                             handleDecision(student.linkId, 'ACCEPT')
                           }
                         >
                           {decisionLoadingId === student.linkId
-                            ? 'Accepting…'
+                            ? 'Updating…'
                             : 'Accept'}
                         </button>
                         <button
                           type="button"
-                          className="btn btn-outline-sm"
+                          className="btn btn-danger"
                           disabled={decisionLoadingId === student.linkId}
                           onClick={() =>
                             handleDecision(student.linkId, 'DECLINE')
                           }
                         >
-                          Decline
+                          {decisionLoadingId === student.linkId
+                            ? 'Updating…'
+                            : 'Decline'}
                         </button>
                       </div>
                     </div>
@@ -201,12 +193,9 @@ function MyStudentsPage({ currentUser }) {
 
           {/* Matched students */}
           <section className="profile-section">
-            <h2 className="profile-section-title">Matched students</h2>
-
+            <h2>Matched students</h2>
             {matchedStudents.length === 0 ? (
-              <p className="profile-value">
-                You don&apos;t have any matched students yet.
-              </p>
+              <p className="profile-value">You have no matched students.</p>
             ) : (
               <div className="profile-list">
                 {matchedStudents.map((student) => (
@@ -224,7 +213,7 @@ function MyStudentsPage({ currentUser }) {
                       <button
                         type="button"
                         className="btn btn-primary"
-                        onClick={() => handleOpenChat(student.userId)}
+                        onClick={() => handleOpenChat(student)}
                         disabled={chatLoadingId === student.userId}
                       >
                         {chatLoadingId === student.userId

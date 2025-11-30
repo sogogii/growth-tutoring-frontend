@@ -11,41 +11,34 @@ function MyTutorsPage({ currentUser }) {
   const [matchedTutors, setMatchedTutors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [decisionLoadingId, setDecisionLoadingId] = useState(null)
   const [chatLoadingId, setChatLoadingId] = useState(null)
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== 'STUDENT') {
-      setLoading(false)
-      return
-    }
+    const fetchTutors = async () => {
+      if (!currentUser) return
 
-    const fetchData = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        // pending tutor requests
         const pendingRes = await fetch(
           `${API_BASE}/api/students/user/${currentUser.userId}/tutor-requests`
         )
-        if (!pendingRes.ok) {
-          throw new Error(await pendingRes.text())
-        }
-        const pending = await pendingRes.json()
-
-        // matched tutors
         const matchedRes = await fetch(
           `${API_BASE}/api/students/user/${currentUser.userId}/tutors`
         )
-        if (!matchedRes.ok) {
-          throw new Error(await matchedRes.text())
-        }
-        const matched = await matchedRes.json()
 
-        setPendingTutors(pending)
-        setMatchedTutors(matched)
+        if (!pendingRes.ok || !matchedRes.ok) {
+          const text =
+            (await pendingRes.text()) || (await matchedRes.text()) || ''
+          throw new Error(text || 'Failed to load tutors')
+        }
+
+        setPendingTutors(await pendingRes.json())
+        setMatchedTutors(await matchedRes.json())
       } catch (err) {
         console.error(err)
         setError(err.message || 'Failed to load tutors')
@@ -54,16 +47,54 @@ function MyTutorsPage({ currentUser }) {
       }
     }
 
-    fetchData()
+    fetchTutors()
   }, [currentUser])
 
-  const handleOpenChat = async (tutorUserId) => {
+  const handleDecision = async (linkId, decision) => {
     if (!currentUser) return
+
     try {
-      setChatLoadingId(tutorUserId)
+      setDecisionLoadingId(linkId)
 
       const res = await fetch(
-        `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutorUserId}`,
+        `${API_BASE}/api/student-tutor-links/${linkId}/decision`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ decision }),
+        }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        alert(text || 'Failed to update request')
+        return
+      }
+
+      const pendingRes = await fetch(
+        `${API_BASE}/api/students/user/${currentUser.userId}/tutor-requests`
+      )
+      const matchedRes = await fetch(
+        `${API_BASE}/api/students/user/${currentUser.userId}/tutors`
+      )
+
+      setPendingTutors(await pendingRes.json())
+      setMatchedTutors(await matchedRes.json())
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to update request')
+    } finally {
+      setDecisionLoadingId(null)
+    }
+  }
+
+  const handleOpenChat = async (tutor) => {
+    if (!currentUser) return
+    try {
+      setChatLoadingId(tutor.userId)
+
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutor.userId}`,
         { method: 'POST' }
       )
 
@@ -74,7 +105,9 @@ function MyTutorsPage({ currentUser }) {
       }
 
       const conv = await res.json()
-      navigate(`/chat/${conv.id}`)
+      navigate(`/chat/${conv.id}`, {
+        state: { otherName: `${tutor.firstName} ${tutor.lastName}` },
+      })
     } catch (err) {
       console.error(err)
       alert(err.message || 'Failed to start conversation')
@@ -84,15 +117,6 @@ function MyTutorsPage({ currentUser }) {
   }
 
   if (!currentUser) {
-    return (
-      <div className="my-profile-page">
-        <h1>My Tutors</h1>
-        <p className="profile-value">Please sign in to view your tutors.</p>
-      </div>
-    )
-  }
-
-  if (currentUser.role !== 'STUDENT') {
     return (
       <div className="my-profile-page">
         <h1>My Tutors</h1>
@@ -112,29 +136,53 @@ function MyTutorsPage({ currentUser }) {
 
       {!loading && !error && (
         <>
-          {/* Pending tutor requests */}
+          {/* Pending tutors */}
           <section className="profile-section">
-            <h2 className="profile-section-title">Pending tutor requests</h2>
-
+            <h2>Pending requests</h2>
             {pendingTutors.length === 0 ? (
-              <p className="profile-value">
-                You don&apos;t have any pending tutor requests.
-              </p>
+              <p className="profile-value">You have no pending requests.</p>
             ) : (
               <div className="profile-list">
                 {pendingTutors.map((tutor) => (
                   <div key={tutor.linkId} className="profile-card">
                     <div className="profile-card-main">
-                      <div className="profile-card-title">
-                        {tutor.firstName} {tutor.lastName}
+                      <div>
+                        <div className="profile-card-title">
+                          {tutor.firstName} {tutor.lastName}
+                        </div>
+                        <div className="profile-card-line">
+                          {tutor.email}
+                        </div>
+                        <div className="profile-card-line">
+                          User ID: {tutor.userUid}
+                        </div>
                       </div>
 
-                      <div className="profile-card-line">
-                        {tutor.email}
-                      </div>
-
-                      <div className="profile-card-line">
-                        User ID: {tutor.userUid}
+                      <div className="my-tutors-actions">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          disabled={decisionLoadingId === tutor.linkId}
+                          onClick={() =>
+                            handleDecision(tutor.linkId, 'ACCEPT')
+                          }
+                        >
+                          {decisionLoadingId === tutor.linkId
+                            ? 'Updating…'
+                            : 'Accept'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          disabled={decisionLoadingId === tutor.linkId}
+                          onClick={() =>
+                            handleDecision(tutor.linkId, 'DECLINE')
+                          }
+                        >
+                          {decisionLoadingId === tutor.linkId
+                            ? 'Updating…'
+                            : 'Decline'}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -145,12 +193,9 @@ function MyTutorsPage({ currentUser }) {
 
           {/* Matched tutors */}
           <section className="profile-section">
-            <h2 className="profile-section-title">Matched tutors</h2>
-
+            <h2>Matched tutors</h2>
             {matchedTutors.length === 0 ? (
-              <p className="profile-value">
-                You don&apos;t have any matched tutors yet.
-              </p>
+              <p className="profile-value">You have no matched tutors.</p>
             ) : (
               <div className="profile-list">
                 {matchedTutors.map((tutor) => (
@@ -173,7 +218,7 @@ function MyTutorsPage({ currentUser }) {
                       <button
                         type="button"
                         className="btn btn-primary"
-                        onClick={() => handleOpenChat(tutor.userId)}
+                        onClick={() => handleOpenChat(tutor)}
                         disabled={chatLoadingId === tutor.userId}
                       >
                         {chatLoadingId === tutor.userId

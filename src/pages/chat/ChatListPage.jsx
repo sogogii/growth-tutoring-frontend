@@ -107,7 +107,11 @@ function ChatListPage({ currentUser }) {
                   key={conv.id}
                   type="button"
                   className="chat-card"
-                  onClick={() => navigate(`/chat/${conv.id}`)}
+                  onClick={() =>
+                    navigate(`/chat/${conv.id}`, {
+                      state: { otherName: conv.otherName },
+                    })
+                  }
                 >
                   <div className="chat-card-content">
                     <div className="chat-card-avatar">
@@ -117,7 +121,7 @@ function ChatListPage({ currentUser }) {
                     </div>
 
                     <div className="chat-card-main">
-                      <div className="chat-card-header">
+                      <div className="chat-card-top">
                         <span className="chat-card-name">
                           {conv.otherName || 'Conversation'}
                         </span>
@@ -127,9 +131,7 @@ function ChatListPage({ currentUser }) {
                       </div>
 
                       <div className="chat-card-subtitle">
-                        {lastText.length > 70
-                          ? `${lastText.slice(0, 70)}…`
-                          : lastText}
+                        {lastText.length > 70 ? `${lastText.slice(0, 70)}…` : lastText}
                       </div>
                     </div>
                   </div>
