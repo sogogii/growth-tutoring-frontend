@@ -20,6 +20,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
 
   const scrollContainerRef = useRef(null)
   const hasInitialScrolledRef = useRef(false)
+  const shouldScrollToBottomRef = useRef(false) // 👈 NEW
 
   const scrollToBottom = () => {
     const el = scrollContainerRef.current
@@ -143,11 +144,20 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     }
   }, [conversationId])
 
-  // scroll to bottom once after first load
   useEffect(() => {
-    if (!hasInitialScrolledRef.current && messages.length > 0) {
+    if (messages.length === 0) return
+
+    // First time messages load → jump to bottom
+    if (!hasInitialScrolledRef.current) {
       scrollToBottom()
       hasInitialScrolledRef.current = true
+      return
+    }
+
+    // After sending a message → scroll to bottom once
+    if (shouldScrollToBottomRef.current) {
+      scrollToBottom()
+      shouldScrollToBottomRef.current = false
     }
   }, [messages])
 
@@ -184,7 +194,8 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
       const newMsg = await res.json()
       setMessages((prev) => [...prev, newMsg])
       setText('')
-      scrollToBottom()
+
+      shouldScrollToBottomRef.current = true
     } catch (err) {
       console.error(err)
       setError(err.message || 'Failed to send message')

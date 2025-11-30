@@ -115,6 +115,8 @@ function MyTutorsPage({ currentUser }) {
                             <span className="profile-card-line">{tutor.email}</span>
                             <span className="profile-card-line">User ID: {tutor.userUid}</span>
                           </div>
+
+                          <span className="pending-note">Waiting for tutor’s decision…</span>
                         </div>
                       </div>
                     </div>
