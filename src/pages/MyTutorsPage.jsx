@@ -11,7 +11,6 @@ function MyTutorsPage({ currentUser }) {
   const [matchedTutors, setMatchedTutors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [decisionLoadingId, setDecisionLoadingId] = useState(null)
   const [chatLoadingId, setChatLoadingId] = useState(null)
 
   const navigate = useNavigate()
@@ -49,44 +48,6 @@ function MyTutorsPage({ currentUser }) {
 
     fetchTutors()
   }, [currentUser])
-
-  const handleDecision = async (linkId, decision) => {
-    if (!currentUser) return
-
-    try {
-      setDecisionLoadingId(linkId)
-
-      const res = await fetch(
-        `${API_BASE}/api/student-tutor-links/${linkId}/decision`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ decision }),
-        }
-      )
-
-      if (!res.ok) {
-        const text = await res.text()
-        alert(text || 'Failed to update request')
-        return
-      }
-
-      const pendingRes = await fetch(
-        `${API_BASE}/api/students/user/${currentUser.userId}/tutor-requests`
-      )
-      const matchedRes = await fetch(
-        `${API_BASE}/api/students/user/${currentUser.userId}/tutors`
-      )
-
-      setPendingTutors(await pendingRes.json())
-      setMatchedTutors(await matchedRes.json())
-    } catch (err) {
-      console.error(err)
-      alert(err.message || 'Failed to update request')
-    } finally {
-      setDecisionLoadingId(null)
-    }
-  }
 
   const handleOpenChat = async (tutor) => {
     if (!currentUser) return
@@ -136,7 +97,6 @@ function MyTutorsPage({ currentUser }) {
 
       {!loading && !error && (
         <>
-          {/* Pending tutors */}
           <section className="profile-section">
             <h2>Pending requests</h2>
             {pendingTutors.length === 0 ? (
@@ -150,39 +110,12 @@ function MyTutorsPage({ currentUser }) {
                         <div className="profile-card-title">
                           {tutor.firstName} {tutor.lastName}
                         </div>
-                        <div className="profile-card-line">
-                          {tutor.email}
+                        <div className="profile-card-details-row">
+                          <div className="profile-card-details-left">
+                            <span className="profile-card-line">{tutor.email}</span>
+                            <span className="profile-card-line">User ID: {tutor.userUid}</span>
+                          </div>
                         </div>
-                        <div className="profile-card-line">
-                          User ID: {tutor.userUid}
-                        </div>
-                      </div>
-
-                      <div className="my-tutors-actions">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          disabled={decisionLoadingId === tutor.linkId}
-                          onClick={() =>
-                            handleDecision(tutor.linkId, 'ACCEPT')
-                          }
-                        >
-                          {decisionLoadingId === tutor.linkId
-                            ? 'Updating…'
-                            : 'Accept'}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-danger"
-                          disabled={decisionLoadingId === tutor.linkId}
-                          onClick={() =>
-                            handleDecision(tutor.linkId, 'DECLINE')
-                          }
-                        >
-                          {decisionLoadingId === tutor.linkId
-                            ? 'Updating…'
-                            : 'Decline'}
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -191,7 +124,6 @@ function MyTutorsPage({ currentUser }) {
             )}
           </section>
 
-          {/* Matched tutors */}
           <section className="profile-section">
             <h2>Matched tutors</h2>
             {matchedTutors.length === 0 ? (
@@ -205,11 +137,7 @@ function MyTutorsPage({ currentUser }) {
                         <div className="profile-card-title">
                           {tutor.firstName} {tutor.lastName}
                         </div>
-
-                        <div className="profile-card-line">
-                          {tutor.email}
-                        </div>
-
+                        <div className="profile-card-line">{tutor.email}</div>
                         <div className="profile-card-line">
                           User ID: {tutor.userUid}
                         </div>

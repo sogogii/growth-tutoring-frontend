@@ -124,3 +124,22 @@
     justify-content: center;
   }
 }
+
+.profile-card-details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.profile-card-details-left {
+  display: flex;
+  gap: 16px;
+}
+
+.pending-note {
+  color: #d97706;       
+  font-size: 0.9rem;
+  white-space: nowrap;  
+  margin-left: 16px;
+}
