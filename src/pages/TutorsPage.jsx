@@ -60,7 +60,7 @@ function TutorsPage({ currentUser }) {
 
   const navigate = useNavigate()
 
-  const handleOpenChat = async (tutorUserId) => {
+  const handleOpenChat = async (tutorUserId, tutorName) => {
     if (!currentUser) {
       alert('Please sign in to start a conversation.')
       navigate('/login')
@@ -83,8 +83,12 @@ function TutorsPage({ currentUser }) {
       }
 
       const conv = await res.json()
-      navigate(`/chat/${conv.id}`) 
-
+      navigate(`/chat/${conv.id}`, {
+        state: { 
+          otherName: tutorName,
+          otherUserId: tutorUserId  // Add this
+        }
+      })
     } catch (err) {
       console.error(err)
       alert('Error starting chat.')
@@ -328,7 +332,7 @@ function TutorsPage({ currentUser }) {
                       type="button"
                       className="tutor-chat-button"
                       aria-label={`Message ${tutor.name}`}
-                      onClick={() => handleOpenChat(tutor.id)} 
+                      onClick={() => handleOpenChat(tutor.id, tutor.name)}  // Pass both id and name
                     >
                       💬
                     </button>

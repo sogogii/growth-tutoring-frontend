@@ -109,7 +109,10 @@ function MyStudentsPage({ currentUser }) {
 
       const conv = await res.json()
       navigate(`/chat/${conv.id}`, {
-        state: { otherName: `${student.firstName} ${student.lastName}` },
+        state: { 
+          otherName: `${student.firstName} ${student.lastName}`,
+          otherUserId: student.userId  
+        }
       })
     } catch (err) {
       console.error(err)

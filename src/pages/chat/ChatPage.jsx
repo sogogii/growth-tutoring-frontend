@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import './styles/ChatPage.css'
 
 const RAW_API_BASE_URL =
@@ -9,7 +9,10 @@ const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 function ChatPage({ currentUser, refreshUnreadCount }) {
   const { conversationId } = useParams()
   const location = useLocation()
+  const navigate = useNavigate()
+  
   const otherNameFromList = location.state?.otherName
+  const otherUserIdFromList = location.state?.otherUserId
   const headerTitle = otherNameFromList || 'Chat'
 
   const [messages, setMessages] = useState([])
@@ -17,10 +20,11 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
   const [error, setError] = useState(null)
   const [sending, setSending] = useState(false)
   const [text, setText] = useState('')
+  const [otherUserId, setOtherUserId] = useState(otherUserIdFromList || null)
 
   const scrollContainerRef = useRef(null)
   const hasInitialScrolledRef = useRef(false)
-  const shouldScrollToBottomRef = useRef(false) // 👈 NEW
+  const shouldScrollToBottomRef = useRef(false)
 
   const scrollToBottom = () => {
     const el = scrollContainerRef.current
@@ -91,6 +95,12 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     return { displayName, initials, avatarUrl }
   }
 
+  // Handle click on avatar/name to go to profile
+  const handleProfileClick = () => {
+    if (!otherUserId) return
+    navigate(`/tutors/${otherUserId}`)
+  }
+
   // fetch messages + poll
   useEffect(() => {
     if (!conversationId) return
@@ -123,6 +133,16 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
           }
           return data
         })
+
+        // Extract the other user's ID from the first message (if we don't have it)
+        if (!otherUserId && data.length > 0 && currentUser) {
+          const firstOtherMessage = data.find(
+            (msg) => msg.senderUserId !== currentUser.userId
+          )
+          if (firstOtherMessage) {
+            setOtherUserId(firstOtherMessage.senderUserId)
+          }
+        }
       } catch (err) {
         console.error(err)
         if (!isCancelled) {
@@ -142,24 +162,45 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
       isCancelled = true
       clearInterval(id)
     }
-  }, [conversationId])
+  }, [conversationId, currentUser, otherUserId])
 
   useEffect(() => {
     if (messages.length === 0) return
 
-    // First time messages load → jump to bottom
     if (!hasInitialScrolledRef.current) {
       scrollToBottom()
       hasInitialScrolledRef.current = true
       return
     }
 
-    // After sending a message → scroll to bottom once
     if (shouldScrollToBottomRef.current) {
       scrollToBottom()
       shouldScrollToBottomRef.current = false
     }
   }, [messages])
+
+  // mark read
+  useEffect(() => {
+    if (!currentUser || !conversationId) return
+    if (messages.length === 0) return
+
+    const markRead = async () => {
+      try {
+        await fetch(
+          `${API_BASE}/api/chat/conversations/${conversationId}/read?userId=${currentUser.userId}`,
+          { method: 'POST' }
+        )
+
+        if (typeof refreshUnreadCount === 'function') {
+          refreshUnreadCount()
+        }
+      } catch (err) {
+        console.error('Failed to mark messages as read', err)
+      }
+    }
+
+    markRead()
+  }, [conversationId, currentUser, messages.length, refreshUnreadCount])
 
   if (!currentUser) {
     return (
@@ -209,39 +250,25 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     await sendMessage()
   }
 
-  // mark read
-  useEffect(() => {
-    if (!currentUser || !conversationId) return
-    if (messages.length === 0) return
-
-    const markRead = async () => {
-      try {
-        await fetch(
-          `${API_BASE}/api/chat/conversations/${conversationId}/read?userId=${currentUser.userId}`,
-          { method: 'POST' }
-        )
-
-        if (typeof refreshUnreadCount === 'function') {
-          refreshUnreadCount()
-        }
-      } catch (err) {
-        console.error('Failed to mark messages as read', err)
-      }
-    }
-
-    markRead()
-  }, [conversationId, currentUser, messages.length, refreshUnreadCount])
-
   let lastDateKey = null
 
   return (
     <div className="chat-page">
-      <h1>{headerTitle}</h1>
+      {/* MAKE HEADER TITLE CLICKABLE */}
+      <h1 
+        onClick={handleProfileClick}
+        style={{ 
+          cursor: otherUserId ? 'pointer' : 'default',
+          display: 'inline-block'
+        }}
+        className="chat-page-title-clickable"
+      >
+        {headerTitle}
+      </h1>
 
       {error && <p className="chat-error">{error}</p>}
 
       <section className="chat-section">
-        {/* messages */}
         <div ref={scrollContainerRef} className="chat-messages">
           {loading && <p className="chat-info">Loading messages…</p>}
 
@@ -279,7 +306,11 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
                     }`}
                   >
                     {!isMine && (
-                      <div className="chat-avatar">
+                      <div 
+                        className="chat-avatar"
+                        onClick={handleProfileClick}
+                        style={{ cursor: 'pointer' }}
+                      >
                         {avatarUrl ? (
                           <img
                             src={avatarUrl}
@@ -295,7 +326,11 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
 
                     <div className="chat-bubble-wrapper">
                       {!isMine && (
-                        <div className="chat-sender-name">
+                        <div 
+                          className="chat-sender-name"
+                          onClick={handleProfileClick}
+                          style={{ cursor: 'pointer' }}
+                        >
                           {displayName}
                         </div>
                       )}
@@ -331,7 +366,6 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
             })}
         </div>
 
-        {/* input */}
         <form onSubmit={handleSend} className="chat-input-row">
           <textarea
             value={text}
