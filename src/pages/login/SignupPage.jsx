@@ -1,4 +1,3 @@
-// src/pages/SignupPage.jsx
 import { useState } from 'react'
 import './styles/SignupPage.css'
 
@@ -18,6 +17,8 @@ const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function SignupPage({ fixedRole }) {
+  const [step, setStep] = useState(1) // 1: Form, 2: Verification
+  
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -29,6 +30,7 @@ function SignupPage({ fixedRole }) {
     subjects: [],
   })
 
+  const [verificationCode, setVerificationCode] = useState('')
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -53,7 +55,8 @@ function SignupPage({ fixedRole }) {
     })
   }
 
-  const handleSubmit = async (e) => {
+  // Step 1: Submit form and send verification email
+  const handleSubmitForm = async (e) => {
     e.preventDefault()
     setError(null)
     setSuccess(null)
@@ -71,7 +74,53 @@ function SignupPage({ fixedRole }) {
     setLoading(true)
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      // Send verification code
+      const res = await fetch(`${API_BASE_URL}/api/auth/send-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email }),
+      })
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to send verification code')
+      }
+
+      setSuccess('Verification code sent to your email!')
+      setStep(2) // Move to verification step
+    } catch (err) {
+      console.error(err)
+      setError(err.message || 'Failed to send verification code')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Step 2: Verify code and complete signup
+  const handleVerifyCode = async (e) => {
+    e.preventDefault()
+    setError(null)
+    setSuccess(null)
+    setLoading(true)
+
+    try {
+      // Verify the code
+      const verifyRes = await fetch(`${API_BASE_URL}/api/auth/verify-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email,
+          code: verificationCode,
+        }),
+      })
+
+      if (!verifyRes.ok) {
+        const text = await verifyRes.text()
+        throw new Error(text || 'Invalid verification code')
+      }
+
+      // Now complete the signup
+      const signupRes = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -79,31 +128,64 @@ function SignupPage({ fixedRole }) {
           password: form.password,
           firstName: form.firstName,
           lastName: form.lastName,
-          birthday: form.birthday, // "YYYY-MM-DD"
-          role: roleToSend,        // matches SignupRequest.role
+          birthday: form.birthday,
+          role: roleToSend,
           userUid: form.userUid,
           subjectLabel:
             roleToSend === 'TUTOR' ? form.subjects.join(', ') : null,
         }),
       })
 
-      if (!res.ok) {
-        const text = await res.text()
+      if (!signupRes.ok) {
+        const text = await signupRes.text()
         throw new Error(text || 'Signup failed')
       }
 
-      const data = await res.json()
+      const data = await signupRes.json()
       console.log('Signed up:', data)
 
-      setSuccess('Account created! You can now log in.')
+      setSuccess('Account created successfully! You can now log in.')
+      
+      // Reset form
       setForm((prev) => ({
         ...prev,
         password: '',
         confirmPassword: '',
       }))
+      setVerificationCode('')
+      
+      // Redirect to login after 2 seconds
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 2000)
     } catch (err) {
       console.error(err)
-      setError(err.message || 'Signup failed')
+      setError(err.message || 'Verification failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResendCode = async () => {
+    setError(null)
+    setSuccess(null)
+    setLoading(true)
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/send-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email }),
+      })
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to resend code')
+      }
+
+      setSuccess('New verification code sent!')
+    } catch (err) {
+      setError(err.message || 'Failed to resend code')
     } finally {
       setLoading(false)
     }
@@ -117,8 +199,10 @@ function SignupPage({ fixedRole }) {
           <div className="auth-eyebrow">Create Account</div>
           <h1 className="auth-title">Sign up as {roleLabel}</h1>
           <p className="auth-subtitle">
-            Join Growth Tutoring and connect with families looking for
-            high-quality {roleToSend === 'TUTOR' ? 'tutoring' : 'support'}.
+            {step === 1 
+              ? `Join Growth Tutoring and connect with ${roleToSend === 'TUTOR' ? 'families' : 'tutors'}.`
+              : 'Enter the verification code sent to your email.'
+            }
           </p>
 
           <ul className="auth-bullet-list">
@@ -139,137 +223,214 @@ function SignupPage({ fixedRole }) {
 
         {/* RIGHT SIDE – FORM */}
         <div className="auth-right">
-          <h2 className="auth-form-title">Create your account</h2>
-          <p className="auth-form-caption">
-            Fill in your details below to get started.
-          </p>
+          {step === 1 ? (
+            <>
+              <h2 className="auth-form-title">Create your account</h2>
+              <p className="auth-form-caption">
+                Fill in your details below to get started.
+              </p>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <div className="auth-row">
-              <div className="auth-field">
-                <label htmlFor="firstName">First name</label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  value={form.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <form className="auth-form" onSubmit={handleSubmitForm}>
+                <div className="auth-row">
+                  <div className="auth-field">
+                    <label htmlFor="firstName">First name</label>
+                    <input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      value={form.firstName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
 
-              <div className="auth-field">
-                <label htmlFor="lastName">Last name</label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="auth-field">
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="auth-field">
-              <label htmlFor="userUid">User ID (username)</label>
-              <input
-                id="userUid"
-                name="userUid"
-                type="text"
-                placeholder="e.g. sungok123"
-                value={form.userUid}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="auth-field">
-              <label htmlFor="birthday">Birthday</label>
-              <input
-                id="birthday"
-                name="birthday"
-                type="date"
-                value={form.birthday}
-                onChange={handleChange}
-                required
-              />
-              <div className="auth-helper">
-                This helps us verify age-appropriate tutoring.
-              </div>
-            </div>
-
-            <div className="auth-row">
-              <div className="auth-field">
-                <label htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="auth-field">
-                <label htmlFor="confirmPassword">Confirm password</label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            {roleToSend === 'TUTOR' && (
-              <div className="auth-field">
-                <label>Subjects you can teach</label>
-                <div className="subjects-grid">
-                  {SUBJECT_OPTIONS.map((subj) => {
-                    const isSelected = form.subjects.includes(subj)
-                    return (
-                      <button
-                        type="button"
-                        key={subj}
-                        className={`subject-pill ${
-                          isSelected ? 'is-selected' : ''
-                        }`}
-                        onClick={() => toggleSubject(subj)}
-                      >
-                        {subj}
-                      </button>
-                    )
-                  })}
+                  <div className="auth-field">
+                    <label htmlFor="lastName">Last name</label>
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      value={form.lastName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="auth-helper">
-                  Click to select or unselect each subject.
+
+                <div className="auth-field">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
-              </div>
-            )}
 
-            {error && <p className="auth-error">{error}</p>}
-            {success && <p className="auth-success">{success}</p>}
+                <div className="auth-field">
+                  <label htmlFor="userUid">User ID (username)</label>
+                  <input
+                    id="userUid"
+                    name="userUid"
+                    type="text"
+                    placeholder="e.g. sungok123"
+                    value={form.userUid}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-            <button type="submit" disabled={loading}>
-              {loading ? 'Signing up…' : 'Create account'}
-            </button>
-          </form>
+                <div className="auth-field">
+                  <label htmlFor="birthday">Birthday</label>
+                  <input
+                    id="birthday"
+                    name="birthday"
+                    type="date"
+                    value={form.birthday}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="auth-helper">
+                    This helps us verify age-appropriate tutoring.
+                  </div>
+                </div>
+
+                <div className="auth-row">
+                  <div className="auth-field">
+                    <label htmlFor="password">Password</label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={form.password}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="auth-field">
+                    <label htmlFor="confirmPassword">Confirm password</label>
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {roleToSend === 'TUTOR' && (
+                  <div className="auth-field">
+                    <label>Subjects you can teach</label>
+                    <div className="subjects-grid">
+                      {SUBJECT_OPTIONS.map((subj) => {
+                        const isSelected = form.subjects.includes(subj)
+                        return (
+                          <button
+                            type="button"
+                            key={subj}
+                            className={`subject-pill ${
+                              isSelected ? 'is-selected' : ''
+                            }`}
+                            onClick={() => toggleSubject(subj)}
+                          >
+                            {subj}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <div className="auth-helper">
+                      Click to select or unselect each subject.
+                    </div>
+                  </div>
+                )}
+
+                {error && <p className="auth-error">{error}</p>}
+                {success && <p className="auth-success">{success}</p>}
+
+                <button type="submit" disabled={loading}>
+                  {loading ? 'Sending code…' : 'Continue'}
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <h2 className="auth-form-title">Verify your email</h2>
+              <p className="auth-form-caption">
+                We sent a 6-digit code to <strong>{form.email}</strong>
+              </p>
+
+              <form className="auth-form" onSubmit={handleVerifyCode}>
+                <div className="auth-field">
+                  <label htmlFor="verificationCode">Verification Code</label>
+                  <input
+                    id="verificationCode"
+                    name="verificationCode"
+                    type="text"
+                    maxLength="6"
+                    placeholder="000000"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    required
+                    style={{
+                      fontSize: '24px',
+                      textAlign: 'center',
+                      letterSpacing: '8px'
+                    }}
+                  />
+                </div>
+
+                {error && <p className="auth-error">{error}</p>}
+                {success && <p className="auth-success">{success}</p>}
+
+                <button type="submit" disabled={loading || verificationCode.length !== 6}>
+                  {loading ? 'Verifying…' : 'Verify & Create Account'}
+                </button>
+
+                <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={handleResendCode}
+                    disabled={loading}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#7c3aed',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Resend code
+                  </button>
+                  {' | '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep(1)
+                      setVerificationCode('')
+                      setError(null)
+                      setSuccess(null)
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#7c3aed',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Change email
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </div>
