@@ -1,0 +1,69 @@
+.verification-badge-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: help;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.verification-badge:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.verification-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  margin-bottom: 4px;
+  padding: 10px 14px;
+  background-color: #1f2937;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.verification-badge-wrapper:hover .verification-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.verification-tooltip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.verification-tooltip-description {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.verification-tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #1f2937;
+}

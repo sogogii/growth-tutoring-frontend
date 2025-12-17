@@ -346,3 +346,14 @@
   font-weight: 600;
   margin-bottom: 6px;
 }
+
+.tutor-profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tutor-profile-name {
+  margin: 0;
+}

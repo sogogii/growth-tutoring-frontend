@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import VerificationBadge from '../components/VerificationBadge'
 import './styles/TutorsPage.css'
 
 const RAW_API_BASE_URL =
@@ -112,6 +113,7 @@ function TutorsPage({ currentUser }) {
           summary: t.bio || '',
           hourlyRate: t.hourlyRate,
           profileImageUrl: t.profileImageUrl || null,
+          verificationTier: t.verificationTier || 'TIER_1'
         }))
 
         setTutors(mapped)
@@ -281,6 +283,7 @@ function TutorsPage({ currentUser }) {
                   <div className="tutor-card-main">
                     <div className="tutor-card-header">
                       <span className="tutor-name">{tutor.name}</span>
+                      <VerificationBadge tier={tutor.verificationTier} />  {/* ADD THIS */}
                       <div className="rating-wrapper">
                         <StarRating rating={tutor.rating} />
                         <span className="numeric-rating">

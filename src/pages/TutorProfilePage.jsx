@@ -1,6 +1,7 @@
 // src/pages/TutorProfilePage.jsx
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import VerificationBadge from '../components/VerificationBadge'
 import './styles/TutorProfilePage.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
@@ -87,6 +88,7 @@ function TutorProfilePage({ currentUser }) {
         summary: data.bio || '',
         hourlyRate: data.hourlyRate,
         profileImageUrl: data.profileImageUrl || null,
+        verificationTier: data.verificationTier || 'TIER_1'
       })
     } catch (err) {
       console.error(err)
@@ -429,7 +431,11 @@ function TutorProfilePage({ currentUser }) {
             )}
 
             <div>
-              <h1 className="tutor-profile-name">{tutor.name}</h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <h1 className="tutor-profile-name" style={{ margin: 0 }}>{tutor.name}</h1>
+                <VerificationBadge tier={tutor.verificationTier} />
+              </div>
+              
               <div className="tutor-profile-rating-row">
                 <StarRating rating={tutor.rating} />
                 <span className="tutor-profile-rating-number">

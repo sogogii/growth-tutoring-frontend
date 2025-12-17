@@ -461,3 +461,20 @@
     padding-bottom: 16px;
   }
 }
+
+.tutor-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.verification-badge {
+  white-space: nowrap;
+  transition: transform 0.15s ease;
+}
+
+.verification-badge:hover {
+  transform: translateY(-1px);
+}
