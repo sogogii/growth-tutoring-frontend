@@ -92,9 +92,17 @@
   line-height: 1.35;
 }
 
+/* Button container for matched tutors */
+.profile-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 /* Button adjustments for this page */
 
-.profile-card .btn.btn-primary {
+.profile-card .btn.btn-primary,
+.profile-card .btn.btn-outline {
   padding: 6px 14px;
   font-size: 13px;
   border-radius: 999px;
@@ -118,7 +126,13 @@
     align-items: flex-start;
   }
 
-  .profile-card .btn.btn-primary {
+  .profile-card-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .profile-card .btn.btn-primary,
+  .profile-card .btn.btn-outline {
     width: 100%;
     text-align: center;
     justify-content: center;
@@ -129,7 +143,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
 }
 
 .profile-card-details-left {
@@ -138,7 +151,6 @@
 }
 
 .pending-note {
-
   font-size: 0.8rem;
   white-space: nowrap;  
   margin-left: 24px;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import './styles/MyTutorsPage.css'
 
 const RAW_API_BASE_URL =
@@ -116,7 +116,7 @@ function MyTutorsPage({ currentUser }) {
                             <span className="profile-card-line">User ID: {tutor.userUid}</span>
                           </div>
 
-                          <span className="pending-note">Waiting for tutor’s decision…</span>
+                          <span className="pending-note">Waiting for tutor's decision…</span>
                         </div>
                       </div>
                     </div>
@@ -145,16 +145,24 @@ function MyTutorsPage({ currentUser }) {
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => handleOpenChat(tutor)}
-                        disabled={chatLoadingId === tutor.userId}
-                      >
-                        {chatLoadingId === tutor.userId
-                          ? 'Opening…'
-                          : 'Message'}
-                      </button>
+                      <div className="profile-card-actions">
+                        <Link
+                          to={`/tutors/${tutor.userId}`}
+                          className="btn btn-outline"
+                        >
+                          View Profile
+                        </Link>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={() => handleOpenChat(tutor)}
+                          disabled={chatLoadingId === tutor.userId}
+                        >
+                          {chatLoadingId === tutor.userId
+                            ? 'Opening…'
+                            : 'Message'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

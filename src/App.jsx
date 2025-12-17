@@ -1,5 +1,5 @@
-import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useState, useRef, useCallback } from 'react'  // 👈 added useCallback
+import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { useEffect, useState, useRef, useCallback } from 'react'  
 
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
@@ -15,6 +15,7 @@ import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/HowItWorksPage'
 import ChatListPage from './pages/chat/ChatListPage'
 import ChatPage from './pages/chat/ChatPage'
+import AdminPage from './pages/AdminPage.jsx'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -294,6 +295,16 @@ function App() {
 
                   <div className="user-menu-section">
                     <div className="user-menu-section-title">Account</div>
+
+                    {currentUser?.role === 'ADMIN' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => goTo('/admin')}
+                      >
+                        Admin
+                      </button>
+                    )}
                     {currentUser.role === 'TUTOR' && (
                       <button
                         type="button"
@@ -435,6 +446,17 @@ function App() {
           />
 
           <Route path="/coming-soon" element={<ComingSoonPage />} />
+
+          <Route
+            path="/admin"
+            element={
+              currentUser && currentUser.role === 'ADMIN' ? (
+                <AdminPage currentUser={currentUser} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
         </Routes>
       </main>
 
