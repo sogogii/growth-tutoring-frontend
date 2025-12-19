@@ -10,6 +10,7 @@ import ContactPage from './pages/ContactPage'
 import SignupPage from './pages/login/SignupPage'
 import SignupChoicePage from './pages/login/SignupChoicePage'
 import LoginPage from './pages/login/LoginPage'
+import ForgotPasswordPage from './pages/login/ForgotPasswordPage'
 import MyProfilePage from './pages/MyProfilePage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/HowItWorksPage'
@@ -406,6 +407,18 @@ function App() {
           <Route
             path="/login"
             element={<LoginPage setCurrentUser={setCurrentUser} />}
+          />
+
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+          <Route
+            path="/my-profile"
+            element={
+              <MyProfilePage
+                currentUser={currentUser}
+                setCurrentUser={setCurrentUser}
+              />
+            }
           />
 
           <Route

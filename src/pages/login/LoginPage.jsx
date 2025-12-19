@@ -130,7 +130,9 @@ function LoginPage({ setCurrentUser }) {
             </button>
 
             <div className="auth-footer-text">
-              <span>Forgot your password?</span>
+              <a href="/forgot-password" style={{ color: '#7c3aed', textDecoration: 'none', fontWeight: '600' }}>
+                Forgot your password?
+              </a>
             </div>
           </form>
         </div>
