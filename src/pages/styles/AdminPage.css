@@ -1,0 +1,216 @@
+/* Admin Page Styles */
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.admin-tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #6b7280;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  bottom: -2px;
+}
+
+.admin-tab:hover {
+  color: #111827;
+  background-color: #f9fafb;
+}
+
+.admin-tab.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.admin-users-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-users-table thead {
+  background-color: #f9fafb;
+}
+
+.admin-users-table th,
+.admin-users-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-users-table th {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-users-table td {
+  color: #1f2937;
+}
+
+.admin-users-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.admin-users-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-users-table .btn {
+  margin-right: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* Verification Tier Section */
+.tutors-verification-section {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.section-description {
+  color: #6b7280;
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-suspended {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Tier Badge */
+.tier-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.tier-tier_1 {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 2px solid #93c5fd;
+}
+
+.tier-tier_2 {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 2px solid #6ee7b7;
+}
+
+.tier-tier_3 {
+  background-color: #ede9fe;
+  color: #5b21b6;
+  border: 2px solid #c4b5fd;
+}
+
+/* Tier Buttons */
+.tier-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-tier {
+  padding: 8px 16px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #374151;
+}
+
+.btn-tier:hover:not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.btn-tier.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.btn-tier:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-users-table {
+    font-size: 14px;
+  }
+  
+  .admin-users-table th,
+  .admin-users-table td {
+    padding: 12px 8px;
+  }
+  
+  .tier-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-tier {
+    width: 100%;
+  }
+  
+  .admin-tab {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
