@@ -68,8 +68,8 @@ function MyTutorsPage({ currentUser }) {
       const conv = await res.json()
       navigate(`/chat/${conv.id}`, {
         state: { 
-          otherName: `${student.firstName} ${student.lastName}`,
-          otherUserId: student.userId  // Add this
+          otherName: `${tutor.firstName} ${tutor.lastName}`,  // ✅ FIXED: Changed from 'student' to 'tutor'
+          otherUserId: tutor.userId  // ✅ FIXED: Changed from 'student' to 'tutor'
         }
       })
     } catch (err) {
