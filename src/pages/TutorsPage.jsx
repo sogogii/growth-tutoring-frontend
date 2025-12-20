@@ -18,6 +18,12 @@ const SUBJECT_OPTIONS = [
   'Special needs tutoring',
 ]
 
+const METHOD_OPTIONS = [
+  { value: 'ONLINE', label: 'Online', icon: '💻' },
+  { value: 'HYBRID', label: 'Hybrid', icon: '🔄' },
+  { value: 'IN_PERSON', label: 'In-Person', icon: '👥' },
+]
+
 function StarRating({ rating }) {
   const r = rating ?? 0
   return (
@@ -67,13 +73,17 @@ function TutorsPage({ currentUser }) {
   const [sortOption, setSortOption] = useState('ratingDesc')
   const [searchQuery, setSearchQuery] = useState('')
   
-  // NEW: Price range filter
+  // Price range filter
   const [priceRange, setPriceRange] = useState([0, 150])
-  const [priceExpanded, setPriceExpanded] = useState(false)
+  const [showPricePanel, setShowPricePanel] = useState(false)
   
-  // NEW: Subject filter
+  // Subject filter
   const [selectedSubjects, setSelectedSubjects] = useState([])
-  const [subjectsExpanded, setSubjectsExpanded] = useState(false)
+  const [showSubjectsPanel, setShowSubjectsPanel] = useState(false)
+
+  // Method filter
+  const [selectedMethods, setSelectedMethods] = useState([])
+  const [showMethodsPanel, setShowMethodsPanel] = useState(false)
 
   const tutorsContentRef = useRef(null)
 
@@ -122,11 +132,26 @@ function TutorsPage({ currentUser }) {
     })
   }
 
+  // Toggle method selection
+  const toggleMethod = (method) => {
+    setSelectedMethods(prev => {
+      if (prev.includes(method)) {
+        return prev.filter(m => m !== method)
+      } else {
+        return [...prev, method]
+      }
+    })
+  }
+
   // Clear all filters
   const clearFilters = () => {
     setPriceRange([0, 150])
     setSelectedSubjects([])
+    setSelectedMethods([])
     setSearchQuery('')
+    if (['online', 'hybrid', 'inPerson'].includes(sortOption)) {
+      setSortOption('ratingDesc')
+    }
   }
 
   useEffect(() => {
@@ -172,7 +197,7 @@ function TutorsPage({ currentUser }) {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchQuery, sortOption, priceRange, selectedSubjects])
+  }, [searchQuery, sortOption, priceRange, selectedSubjects, selectedMethods])
 
   useEffect(() => {
     if (!tutorsContentRef.current) return
@@ -224,8 +249,16 @@ function TutorsPage({ currentUser }) {
       })
     : priceFiltered
 
+  // Filter by teaching method
+  const methodFiltered = selectedMethods.length > 0
+    ? subjectFiltered.filter((t) => {
+        if (!t.teachingMethod) return false
+        return selectedMethods.includes(t.teachingMethod)
+      })
+    : subjectFiltered
+
   // Sort
-  const sortedTutors = [...subjectFiltered].sort((a, b) => {
+  const sortedTutors = [...methodFiltered].sort((a, b) => {
     switch (sortOption) {
       case 'ratingDesc':
         return num(b.rating) - num(a.rating)
@@ -244,7 +277,8 @@ function TutorsPage({ currentUser }) {
 
   const activeFiltersCount = 
     (priceRange[0] > 0 || priceRange[1] < 150 ? 1 : 0) +
-    selectedSubjects.length
+    selectedSubjects.length +
+    selectedMethods.length
 
   return (
     <div className="tutors-page">
@@ -294,19 +328,68 @@ function TutorsPage({ currentUser }) {
               </button>
             </div>
 
-            {/* Price range section */}
+            {/* Price Range - NEW: Block style with chevron */}
             <div className="tutors-sidebar-section">
+              <h3>Price Range</h3>
               <button
                 type="button"
-                className="filter-section-header"
-                onClick={() => setPriceExpanded(!priceExpanded)}
+                className={`tutors-sort-chip ${showPricePanel ? 'active' : ''}`}
+                onClick={() => {
+                  setShowPricePanel(!showPricePanel)
+                  setShowSubjectsPanel(false)
+                  setShowMethodsPanel(false)
+                }}
               >
-                <h3>Price Range</h3>
-                <span className={`expand-arrow ${priceExpanded ? 'expanded' : ''}`}>›</span>
+                ${priceRange[0]} - ${priceRange[1]}/hr
+                <span className="filter-chevron">›</span>
               </button>
-              
-              {priceExpanded && (
-                <div className="filter-section-content">
+            </div>
+
+            {/* Method - Block style with chevron */}
+            <div className="tutors-sidebar-section">
+              <h3>Method</h3>
+              <button
+                type="button"
+                className={`tutors-sort-chip ${showMethodsPanel ? 'active' : ''}`}
+                onClick={() => {
+                  setShowMethodsPanel(!showMethodsPanel)
+                  setShowPricePanel(false)
+                  setShowSubjectsPanel(false)
+                }}
+              >
+                {selectedMethods.length > 0 
+                  ? `${selectedMethods.length} selected` 
+                  : 'All methods'}
+                <span className="filter-chevron">›</span>
+              </button>
+            </div>
+
+            {/* Subjects - NEW: Block style with chevron */}
+            <div className="tutors-sidebar-section">
+              <h3>Subjects</h3>
+              <button
+                type="button"
+                className={`tutors-sort-chip ${showSubjectsPanel ? 'active' : ''}`}
+                onClick={() => {
+                  setShowSubjectsPanel(!showSubjectsPanel)
+                  setShowPricePanel(false)
+                  setShowMethodsPanel(false)
+                }}
+              >
+                {selectedSubjects.length > 0 
+                  ? `${selectedSubjects.length} selected` 
+                  : 'All subjects'}
+                <span className="filter-chevron">›</span>
+              </button>
+            </div>
+          </aside>
+
+          {/* EXPANSION PANEL */}
+          {(showPricePanel || showSubjectsPanel || showMethodsPanel) && (
+            <div className="expansion-panel">
+              {showPricePanel && (
+                <div className="panel-content">
+                  <h3 className="panel-title">Adjust Price Range</h3>
                   <div className="price-range-display">
                     ${priceRange[0]} - ${priceRange[1]}/hr
                   </div>
@@ -374,23 +457,43 @@ function TutorsPage({ currentUser }) {
                       />
                     </div>
                   </div>
+                  <button 
+                    className="apply-button"
+                    onClick={() => setShowPricePanel(false)}
+                  >
+                    Apply
+                  </button>
                 </div>
               )}
-            </div>
 
-            {/* Subject filter section */}
-            <div className="tutors-sidebar-section">
-              <button
-                type="button"
-                className="filter-section-header"
-                onClick={() => setSubjectsExpanded(!subjectsExpanded)}
-              >
-                <h3>Subjects</h3>
-                <span className={`expand-arrow ${subjectsExpanded ? 'expanded' : ''}`}>›</span>
-              </button>
-              
-              {subjectsExpanded && (
-                <div className="filter-section-content">
+              {showMethodsPanel && (
+                <div className="panel-content">
+                  <h3 className="panel-title">Select Methods</h3>
+                  <div className="subject-filter-list">
+                    {METHOD_OPTIONS.map((method) => (
+                      <label key={method.value} className="subject-checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={selectedMethods.includes(method.value)}
+                          onChange={() => toggleMethod(method.value)}
+                          className="subject-checkbox"
+                        />
+                        <span>{method.icon} {method.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <button 
+                    className="apply-button"
+                    onClick={() => setShowMethodsPanel(false)}
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+
+              {showSubjectsPanel && (
+                <div className="panel-content">
+                  <h3 className="panel-title">Select Subjects</h3>
                   <div className="subject-filter-list">
                     {SUBJECT_OPTIONS.map((subject) => (
                       <label key={subject} className="subject-checkbox-label">
@@ -404,10 +507,16 @@ function TutorsPage({ currentUser }) {
                       </label>
                     ))}
                   </div>
+                  <button 
+                    className="apply-button"
+                    onClick={() => setShowSubjectsPanel(false)}
+                  >
+                    Apply
+                  </button>
                 </div>
               )}
             </div>
-          </aside>
+          )}
 
           {/* RIGHT MAIN AREA */}
           <div className="tutors-main">
@@ -457,18 +566,31 @@ function TutorsPage({ currentUser }) {
               {!loading && !error && currentTutors.map((tutor) => (
                 <article key={tutor.id} className="tutor-card">
                   <div className="tutor-card-left">
-                    <div className="tutor-image-placeholder" aria-hidden="true" />
+                    {tutor.profileImageUrl ? (
+                      <img 
+                        src={tutor.profileImageUrl} 
+                        alt={tutor.name}
+                        className="tutor-profile-pic"
+                      />
+                    ) : (
+                      <div className="tutor-profile-pic tutor-profile-placeholder">
+                        {tutor.name.charAt(0)}
+                      </div>
+                    )}
                   </div>
 
                   <div className="tutor-card-main">
-                    <div className="tutor-card-header">
-                      <span className="tutor-name">{tutor.name}</span>
+                    <div className="tutor-header">
+                      <h3 className="tutor-name">{tutor.name}</h3>
                       <VerificationBadge tier={tutor.verificationTier} />
-                      <div className="rating-wrapper">
-                        <StarRating rating={tutor.rating} />
-                        <span className="numeric-rating">
-                          {tutor.rating != null ? tutor.rating.toFixed(2) : '0.00'}
-                          {' '}({tutor.ratingCount ?? 0})
+                    </div>
+
+                    <div className="tutor-rating-row">
+                      <StarRating rating={tutor.rating} />
+                      <div className="tutor-rating-count">
+                        <span className="rating-number">{tutor.rating.toFixed(1)}</span>
+                        <span>
+                          ({tutor.ratingCount ?? 0})
                         </span>
                       </div>
                     </div>
@@ -493,7 +615,7 @@ function TutorsPage({ currentUser }) {
                       <strong>Summary:</strong> {tutor.summary}
                     </p>
                     <div className="tutor-card-actions">
-                      <Link to={`/tutors/${tutor.id}`} className="btn tutor-learn-more">
+                      <Link to={`/tutors/${tutor.id}`} className="tutor-learn-more">
                         Learn More
                       </Link>
                     </div>
