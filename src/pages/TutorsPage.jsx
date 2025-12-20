@@ -7,6 +7,17 @@ const RAW_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
+const SUBJECT_OPTIONS = [
+  'K-12 Math',
+  'K-12 English',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Foreign Languages',
+  'Pre College Counseling',
+  'Special needs tutoring',
+]
+
 function StarRating({ rating }) {
   const r = rating ?? 0
   return (
@@ -55,6 +66,14 @@ function TutorsPage({ currentUser }) {
 
   const [sortOption, setSortOption] = useState('ratingDesc')
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // NEW: Price range filter
+  const [priceRange, setPriceRange] = useState([0, 150])
+  const [priceExpanded, setPriceExpanded] = useState(false)
+  
+  // NEW: Subject filter
+  const [selectedSubjects, setSelectedSubjects] = useState([])
+  const [subjectsExpanded, setSubjectsExpanded] = useState(false)
 
   const tutorsContentRef = useRef(null)
 
@@ -68,9 +87,6 @@ function TutorsPage({ currentUser }) {
     }
 
     try {
-      // studentUserId = currentUser.userId  
-      // tutorUserId   = id of clicked tutor  
-
       const res = await fetch(
         `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutorUserId}`,
         { method: 'POST' }
@@ -86,7 +102,7 @@ function TutorsPage({ currentUser }) {
       navigate(`/chat/${conv.id}`, {
         state: { 
           otherName: tutorName,
-          otherUserId: tutorUserId  // Add this
+          otherUserId: tutorUserId
         }
       })
     } catch (err) {
@@ -95,10 +111,28 @@ function TutorsPage({ currentUser }) {
     }
   }
 
+  // Toggle subject selection
+  const toggleSubject = (subject) => {
+    setSelectedSubjects(prev => {
+      if (prev.includes(subject)) {
+        return prev.filter(s => s !== subject)
+      } else {
+        return [...prev, subject]
+      }
+    })
+  }
+
+  // Clear all filters
+  const clearFilters = () => {
+    setPriceRange([0, 150])
+    setSelectedSubjects([])
+    setSearchQuery('')
+  }
+
   useEffect(() => {
     const fetchTutors = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/tutors')
+        const res = await fetch(`${API_BASE}/api/tutors`)
         if (!res.ok) {
           throw new Error(`HTTP error ${res.status}`)
         }
@@ -138,7 +172,7 @@ function TutorsPage({ currentUser }) {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchQuery, sortOption])
+  }, [searchQuery, sortOption, priceRange, selectedSubjects])
 
   useEffect(() => {
     if (!tutorsContentRef.current) return
@@ -157,7 +191,8 @@ function TutorsPage({ currentUser }) {
   const num = (v) => (v == null ? 0 : Number(v))
   const normalizedQuery = searchQuery.trim().toLowerCase()
 
-  const filteredTutors = normalizedQuery
+  // Filter by search query
+  const searchFiltered = normalizedQuery
     ? tutors.filter((t) => {
         const text = [
           t.name,
@@ -172,7 +207,25 @@ function TutorsPage({ currentUser }) {
       })
     : tutors
 
-  const sortedTutors = [...filteredTutors].sort((a, b) => {
+  // Filter by price range
+  const priceFiltered = searchFiltered.filter((t) => {
+    const rate = t.hourlyRate ?? 0
+    return rate >= priceRange[0] && rate <= priceRange[1]
+  })
+
+  // Filter by subjects
+  const subjectFiltered = selectedSubjects.length > 0
+    ? priceFiltered.filter((t) => {
+        if (!t.subject) return false
+        // Check if any selected subject is in the tutor's subjects
+        return selectedSubjects.some(selected => 
+          t.subject.toLowerCase().includes(selected.toLowerCase())
+        )
+      })
+    : priceFiltered
+
+  // Sort
+  const sortedTutors = [...subjectFiltered].sort((a, b) => {
     switch (sortOption) {
       case 'ratingDesc':
         return num(b.rating) - num(a.rating)
@@ -189,6 +242,10 @@ function TutorsPage({ currentUser }) {
   const startIndex = (currentPage - 1) * pageSize
   const currentTutors = sortedTutors.slice(startIndex, startIndex + pageSize)
 
+  const activeFiltersCount = 
+    (priceRange[0] > 0 || priceRange[1] < 150 ? 1 : 0) +
+    selectedSubjects.length
+
   return (
     <div className="tutors-page">
       {/* Top banner */}
@@ -201,8 +258,20 @@ function TutorsPage({ currentUser }) {
         <div className="tutors-layout">
           {/* LEFT SIDEBAR */}
           <aside className="tutors-sidebar">
-            <h2 className="tutors-sidebar-title">Filter Search</h2>
+            <div className="tutors-sidebar-header">
+              <h2 className="tutors-sidebar-title">Filters</h2>
+              {activeFiltersCount > 0 && (
+                <button
+                  type="button"
+                  className="clear-filters-btn"
+                  onClick={clearFilters}
+                >
+                  Clear all ({activeFiltersCount})
+                </button>
+              )}
+            </div>
 
+            {/* Sort by section */}
             <div className="tutors-sidebar-section">
               <h3>Sort by</h3>
               <button
@@ -217,15 +286,6 @@ function TutorsPage({ currentUser }) {
               <button
                 type="button"
                 className={`tutors-sort-chip ${
-                  sortOption === 'rateAsc' ? 'active' : ''
-                }`}
-                onClick={() => setSortOption('rateAsc')}
-              >
-                💰 Lowest price
-              </button>
-              <button
-                type="button"
-                className={`tutors-sort-chip ${
                   sortOption === 'experienceDesc' ? 'active' : ''
                 }`}
                 onClick={() => setSortOption('experienceDesc')}
@@ -234,9 +294,118 @@ function TutorsPage({ currentUser }) {
               </button>
             </div>
 
-            <div className="tutors-sidebar-section muted">
-              <h3>More filters (coming soon)</h3>
-              <p>Subject, grade level, location, and more.</p>
+            {/* Price range section */}
+            <div className="tutors-sidebar-section">
+              <button
+                type="button"
+                className="filter-section-header"
+                onClick={() => setPriceExpanded(!priceExpanded)}
+              >
+                <h3>Price Range</h3>
+                <span className={`expand-arrow ${priceExpanded ? 'expanded' : ''}`}>›</span>
+              </button>
+              
+              {priceExpanded && (
+                <div className="filter-section-content">
+                  <div className="price-range-display">
+                    ${priceRange[0]} - ${priceRange[1]}/hr
+                  </div>
+                  <div className="price-slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="150"
+                      step="5"
+                      value={priceRange[0]}
+                      onChange={(e) => {
+                        const newMin = Number(e.target.value)
+                        if (newMin <= priceRange[1]) {
+                          setPriceRange([newMin, priceRange[1]])
+                        }
+                      }}
+                      className="price-slider"
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="150"
+                      step="5"
+                      value={priceRange[1]}
+                      onChange={(e) => {
+                        const newMax = Number(e.target.value)
+                        if (newMax >= priceRange[0]) {
+                          setPriceRange([priceRange[0], newMax])
+                        }
+                      }}
+                      className="price-slider"
+                    />
+                  </div>
+                  <div className="price-inputs">
+                    <div className="price-input-group">
+                      <label>Min</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="150"
+                        value={priceRange[0]}
+                        onChange={(e) => {
+                          const newMin = Math.max(0, Math.min(150, Number(e.target.value)))
+                          if (newMin <= priceRange[1]) {
+                            setPriceRange([newMin, priceRange[1]])
+                          }
+                        }}
+                        className="price-input"
+                      />
+                    </div>
+                    <div className="price-input-group">
+                      <label>Max</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="150"
+                        value={priceRange[1]}
+                        onChange={(e) => {
+                          const newMax = Math.max(0, Math.min(150, Number(e.target.value)))
+                          if (newMax >= priceRange[0]) {
+                            setPriceRange([priceRange[0], newMax])
+                          }
+                        }}
+                        className="price-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Subject filter section */}
+            <div className="tutors-sidebar-section">
+              <button
+                type="button"
+                className="filter-section-header"
+                onClick={() => setSubjectsExpanded(!subjectsExpanded)}
+              >
+                <h3>Subjects</h3>
+                <span className={`expand-arrow ${subjectsExpanded ? 'expanded' : ''}`}>›</span>
+              </button>
+              
+              {subjectsExpanded && (
+                <div className="filter-section-content">
+                  <div className="subject-filter-list">
+                    {SUBJECT_OPTIONS.map((subject) => (
+                      <label key={subject} className="subject-checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={selectedSubjects.includes(subject)}
+                          onChange={() => toggleSubject(subject)}
+                          className="subject-checkbox"
+                        />
+                        <span>{subject}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </aside>
 
@@ -256,6 +425,13 @@ function TutorsPage({ currentUser }) {
               </div>
             </header>
 
+            {/* Results count */}
+            {!loading && !error && (
+              <div className="tutors-results-count">
+                {sortedTutors.length} tutor{sortedTutors.length !== 1 ? 's' : ''} found
+              </div>
+            )}
+
             {/* Tutor list */}
             <div className="tutors-list">
               {loading && <p>Loading tutors...</p>}
@@ -270,10 +446,10 @@ function TutorsPage({ currentUser }) {
                 <p className="tutors-empty-text">No tutors found yet.</p>
               )}
 
-              {!loading && !error && tutors.length > 0 && filteredTutors.length === 0 && (
+              {!loading && !error && tutors.length > 0 && sortedTutors.length === 0 && (
                 <div className="tutors-empty-wrapper">
                   <div className="tutors-empty-text">
-                    No tutors match your search.
+                    No tutors match your filters.
                   </div>
                 </div>
               )}
@@ -287,7 +463,7 @@ function TutorsPage({ currentUser }) {
                   <div className="tutor-card-main">
                     <div className="tutor-card-header">
                       <span className="tutor-name">{tutor.name}</span>
-                      <VerificationBadge tier={tutor.verificationTier} />  {/* ADD THIS */}
+                      <VerificationBadge tier={tutor.verificationTier} />
                       <div className="rating-wrapper">
                         <StarRating rating={tutor.rating} />
                         <span className="numeric-rating">
@@ -332,7 +508,7 @@ function TutorsPage({ currentUser }) {
                       type="button"
                       className="tutor-chat-button"
                       aria-label={`Message ${tutor.name}`}
-                      onClick={() => handleOpenChat(tutor.id, tutor.name)}  // Pass both id and name
+                      onClick={() => handleOpenChat(tutor.id, tutor.name)}
                     >
                       💬
                     </button>
