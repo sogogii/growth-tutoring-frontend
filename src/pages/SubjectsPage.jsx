@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './styles/SubjectsPage.css'
 
 const SUBJECTS = [
@@ -5,46 +6,64 @@ const SUBJECTS = [
     name: 'Mathematics',
     description:
       'From foundational skills to advanced problem solving. Build confidence in algebra, geometry, calculus, and more.',
-  },
-  {
-    name: 'Special Needs Services',
-    description:
-      'Individualized support tailored to different learning styles and needs, with a focus on structure and clarity.',
-  },
-  {
-    name: 'Chemistry',
-    description:
-      'Support for general chemistry and AP courses, with emphasis on concepts, labs, and exam preparation.',
+    icon: '📐',
+    filterValue: 'K-12 Math'
   },
   {
     name: 'English Reading & Writing',
     description:
       'Improve reading comprehension, grammar, and essay writing with clear feedback and practice.',
+    icon: '📖',
+    filterValue: 'K-12 English'
   },
   {
-    name: 'Biology',
+    name: 'Special Needs Services',
     description:
-      'Help with cell biology, genetics, ecology, and exam strategies for high school and introductory college courses.',
+      'Individualized support tailored to different learning styles and needs, with a focus on structure and clarity.',
+    icon: '🤝',
+    filterValue: 'Special needs tutoring'
   },
   {
     name: 'Physics',
     description:
       'Support with mechanics, waves, and introductory physics topics, focusing on intuition and practice problems.',
+    icon: '⚛️',
+    filterValue: 'Physics'
+  },
+  {
+    name: 'Chemistry',
+    description:
+      'Support for general chemistry and AP courses, with emphasis on concepts, labs, and exam preparation.',
+    icon: '🧪',
+    filterValue: 'Chemistry'
+  },
+  {
+    name: 'Biology',
+    description:
+      'Help with cell biology, genetics, ecology, and exam strategies for high school and introductory college courses.',
+    icon: '🧬',
+    filterValue: 'Biology'
   },
   {
     name: 'Foreign Languages',
     description:
       'Practice vocabulary, grammar, and conversation skills in languages such as Spanish, Mandarin, and more.',
+    icon: '🌍',
+    filterValue: 'Foreign Languages'
   },
   {
     name: 'Pre College Counseling',
     description:
       'Guidance on course planning, applications, essays, and study habits to prepare for college.',
+    icon: '🎓',
+    filterValue: 'Pre College Counseling'
   },
   {
     name: 'Community Impact Program',
     description:
       'Grant-supported tutoring and mentoring opportunities for students who qualify for the Community Impact Program.',
+    icon: '💫',
+    filterValue: null // No filter for this one
   },
 ]
 
@@ -65,13 +84,29 @@ function SubjectsPage() {
 
         <div className="subjects-grid">
           {SUBJECTS.map((subject) => (
-            <article key={subject.name} className="subject-card">
-              <div className="subject-image-placeholder" aria-hidden="true">
-                <span className="subject-image-icon">📚</span>
+            subject.filterValue ? (
+              <Link
+                key={subject.name}
+                to="/tutors"
+                state={{ selectedSubject: subject.filterValue }}
+                className="subject-card"
+              >
+                <div className="subject-icon">
+                  {subject.icon}
+                </div>
+                <h3 className="subject-title">{subject.name}</h3>
+                <p className="subject-description">{subject.description}</p>
+                <div className="subject-link-arrow">→</div>
+              </Link>
+            ) : (
+              <div key={subject.name} className="subject-card subject-card-disabled">
+                <div className="subject-icon">
+                  {subject.icon}
+                </div>
+                <h3 className="subject-title">{subject.name}</h3>
+                <p className="subject-description">{subject.description}</p>
               </div>
-              <h3 className="subject-title">{subject.name}</h3>
-              <p className="subject-description">{subject.description}</p>
-            </article>
+            )
           ))}
         </div>
       </section>

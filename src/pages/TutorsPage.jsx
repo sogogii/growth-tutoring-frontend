@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import VerificationBadge from '../components/VerificationBadge'
 import './styles/TutorsPage.css'
 
@@ -63,6 +63,9 @@ function formatTeachingMethod(method) {
 }
 
 function TutorsPage({ currentUser }) {
+  const location = useLocation()
+  const navigate = useNavigate()
+  
   const [tutors, setTutors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -77,8 +80,13 @@ function TutorsPage({ currentUser }) {
   const [priceRange, setPriceRange] = useState([0, 150])
   const [showPricePanel, setShowPricePanel] = useState(false)
   
-  // Subject filter
-  const [selectedSubjects, setSelectedSubjects] = useState([])
+  // Subject filter - initialize from navigation state if present
+  const [selectedSubjects, setSelectedSubjects] = useState(() => {
+    if (location.state?.selectedSubject) {
+      return [location.state.selectedSubject]
+    }
+    return []
+  })
   const [showSubjectsPanel, setShowSubjectsPanel] = useState(false)
 
   // Method filter
@@ -86,8 +94,6 @@ function TutorsPage({ currentUser }) {
   const [showMethodsPanel, setShowMethodsPanel] = useState(false)
 
   const tutorsContentRef = useRef(null)
-
-  const navigate = useNavigate()
 
   const handleOpenChat = async (tutorUserId, tutorName) => {
     if (!currentUser) {
