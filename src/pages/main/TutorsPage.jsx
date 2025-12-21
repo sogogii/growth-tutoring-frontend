@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import VerificationBadge from '../components/VerificationBadge'
+import VerificationBadge from '../../components/VerificationBadge'
 import './styles/TutorsPage.css'
 
 const RAW_API_BASE_URL =

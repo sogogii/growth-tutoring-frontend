@@ -1,0 +1,213 @@
+/* How It Works Page - Professional Design */
+
+.how-it-works-page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero Section */
+.how-hero-section {
+  position: relative;
+  min-height: 500px;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500"><rect fill="%23374151" width="1200" height="500"/></svg>');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.how-hero-overlay {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.how-hero-title {
+  font-size: 64px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.how-hero-highlight {
+  color: #16a34a;
+  display: inline-block;
+}
+
+/* Content Section */
+.how-content-section {
+  background: white;
+  padding: 80px 20px;
+}
+
+.how-content-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.how-subtitle {
+  font-size: 42px;
+  font-weight: 600;
+  color: #f97316;
+  text-align: center;
+  margin: 0 0 24px 0;
+}
+
+.how-description {
+  font-size: 18px;
+  color: #4b5563;
+  text-align: center;
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto 60px;
+}
+
+/* Steps */
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.how-step-card {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.how-step-card:hover {
+  border-color: #f97316;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.15);
+  transform: translateY(-4px);
+}
+
+.how-step-number {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.how-step-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.how-step-description {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* CTA Section */
+.how-cta-section {
+  text-align: center;
+  padding: 40px 0 0;
+}
+
+.how-cta-button {
+  display: inline-block;
+  padding: 16px 48px;
+  background: #16a34a;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.how-cta-button:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .how-hero-title {
+    font-size: 52px;
+  }
+  
+  .how-subtitle {
+    font-size: 36px;
+  }
+  
+  .how-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .how-hero-section {
+    min-height: 400px;
+    padding: 40px 20px;
+  }
+  
+  .how-hero-title {
+    font-size: 40px;
+  }
+  
+  .how-content-section {
+    padding: 50px 20px;
+  }
+  
+  .how-subtitle {
+    font-size: 28px;
+  }
+  
+  .how-description {
+    font-size: 16px;
+  }
+  
+  .how-steps {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .how-cta-button {
+    padding: 14px 36px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-hero-title {
+    font-size: 32px;
+  }
+  
+  .how-subtitle {
+    font-size: 24px;
+  }
+  
+  .how-step-number {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+  }
+  
+  .how-step-title {
+    font-size: 20px;
+  }
+}

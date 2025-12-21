@@ -2,18 +2,18 @@ import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-r
 import { useEffect, useState, useRef, useCallback } from 'react'  
 
 import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
-import SubjectsPage from './pages/SubjectsPage'
-import TutorsPage from './pages/TutorsPage'
+import AboutPage from './pages/main/AboutPage'
+import SubjectsPage from './pages/main/SubjectsPage'
+import TutorsPage from './pages/main/TutorsPage'
 import TutorProfilePage from './pages/TutorProfilePage'
-import ContactPage from './pages/ContactPage'
+import ContactPage from './pages/main/ContactPage'
 import SignupPage from './pages/login/SignupPage'
 import SignupChoicePage from './pages/login/SignupChoicePage'
 import LoginPage from './pages/login/LoginPage'
 import ForgotPasswordPage from './pages/login/ForgotPasswordPage'
 import MyProfilePage from './pages/MyProfilePage'
 import ComingSoonPage from './pages/ComingSoonPage'
-import HowItWorksPage from './pages/HowItWorksPage'
+import HowItWorksPage from './pages/main/HowItWorksPage'
 import ChatListPage from './pages/chat/ChatListPage'
 import ChatPage from './pages/chat/ChatPage'
 import AdminPage from './pages/AdminPage.jsx'
@@ -58,6 +58,9 @@ function App() {
 
   const navigate = useNavigate()
   const userMenuRef = useRef(null)
+
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false)
+  const howItWorksRef = useRef(null)
 
   const handleLogout = (isIdle = false) => {
     localStorage.removeItem('currentUser')
@@ -105,6 +108,20 @@ function App() {
       clearInterval(intervalId)
     }
   }, [currentUser])
+
+  // Close How It Works dropdown when clicking outside
+  useEffect(() => {
+    if (!isHowItWorksOpen) return
+
+    const handleClickOutside = (e) => {
+      if (howItWorksRef.current && !howItWorksRef.current.contains(e.target)) {
+        setIsHowItWorksOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isHowItWorksOpen])
 
   // --- Pending student requests (for tutors) ---
   useEffect(() => {
@@ -212,9 +229,44 @@ function App() {
           <Link to="/tutors" className="nav-link">
             Our Tutors
           </Link>
-          <Link to="/how-it-works" className="nav-link">
+          <div className="nav-dropdown" ref={howItWorksRef}>
+          <button
+            type="button"
+            className="nav-link nav-dropdown-trigger"
+            onClick={() => setIsHowItWorksOpen(!isHowItWorksOpen)}
+          >
             How It Works
-          </Link>
+            <span className={`nav-dropdown-caret ${isHowItWorksOpen ? 'open' : ''}`}>
+              ▾
+            </span>
+          </button>
+          
+          {isHowItWorksOpen && (
+            <div className="nav-dropdown-menu">
+              <Link
+                to="/how-it-works/students"
+                className="nav-dropdown-item"
+                onClick={() => setIsHowItWorksOpen(false)}
+              >
+                For Students & Parents
+              </Link>
+              <Link
+                to="/how-it-works/tutors"
+                className="nav-dropdown-item"
+                onClick={() => setIsHowItWorksOpen(false)}
+              >
+                For Tutors
+              </Link>
+              <Link
+                to="/how-it-works/cip"
+                className="nav-dropdown-item"
+                onClick={() => setIsHowItWorksOpen(false)}
+              >
+                For CIP
+              </Link>
+            </div>
+          )}
+        </div>
           <Link to="/subjects" className="nav-link">
             Subjects
           </Link>
