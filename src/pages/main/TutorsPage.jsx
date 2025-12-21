@@ -179,7 +179,7 @@ function TutorsPage({ currentUser }) {
           subject: t.subjectLabel,
           experienceYears: t.yearsExperience,
           teachingMethod: t.teachingMethod,
-          summary: t.bio || '',
+          summary: t.headline || '',
           hourlyRate: t.hourlyRate,
           profileImageUrl: t.profileImageUrl || null,
           verificationTier: t.verificationTier || 'TIER_1'

@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react'
 import './styles/MyProfilePage.css'
+import ClickableAvatar from '../components/ClickableAvatar'
 
 const DEFAULT_AVATAR =
   'https://ui-avatars.com/api/?name=User&background=E5E7EB&color=374151'
+
+const RAW_API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 const SUBJECT_OPTIONS = [
   'K-12 Math',
@@ -26,7 +31,8 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     subjects: [],
     hourlyRate: '',
     teachingMethod: 'ONLINE',
-    summary: '',            
+    headline: '',
+    bio: '',
   })
 
   const [loading, setLoading] = useState(true)
@@ -44,7 +50,8 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     subjects: false,
     hourlyRate: false,
     teachingMethod: false,
-    summary: false,          
+    headline: false,
+    bio: false,
   })
 
   useEffect(() => {
@@ -55,7 +62,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
       try {
         // 1) load user profile
         const res = await fetch(
-          `http://localhost:8080/api/users/${currentUser.userId}`
+          `${API_BASE}/api/users/${currentUser.userId}`
         )
         if (!res.ok) {
           throw new Error('Failed to load profile')
@@ -73,7 +80,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
         // 2) if tutor, load tutor profile
         if (currentUser.role === 'TUTOR') {
           const tRes = await fetch(
-            `http://localhost:8080/api/tutors/user/${currentUser.userId}`
+            `${API_BASE}/api/tutors/user/${currentUser.userId}`
           )
           if (tRes.ok) {
             const tData = await tRes.json()
@@ -87,9 +94,12 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
             setTutorForm({
               subjects: subjectsArr,
               hourlyRate:
-                tData.hourlyRate != null ? String(tData.hourlyRate) : '',
+                tData.hourlyRate != null
+                  ? String(tData.hourlyRate)
+                  : '',
               teachingMethod: tData.teachingMethod || 'ONLINE',
-              summary: tData.bio || '',      
+              headline: tData.headline || '',
+              bio: tData.bio || '',
             })
           }
         }
@@ -139,7 +149,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     try {
       // 1) update user profile
       const res = await fetch(
-        `http://localhost:8080/api/users/${currentUser.userId}`,
+        `${API_BASE}/api/users/${currentUser.userId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -165,7 +175,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
       // 2) if tutor, update tutor profile too
       if (currentUser.role === 'TUTOR' && tutorProfile) {
         const tRes = await fetch(
-          `http://localhost:8080/api/tutors/user/${currentUser.userId}`,
+          `${API_BASE}/api/tutors/user/${currentUser.userId}`,
           {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -175,7 +185,8 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                 ? Number(tutorForm.hourlyRate)
                 : null,
               teachingMethod: tutorForm.teachingMethod,
-              bio: tutorForm.summary,   
+              headline: tutorForm.headline,
+              bio: tutorForm.bio,
             }),
           }
         )
@@ -200,11 +211,12 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
               ? String(updatedTutor.hourlyRate)
               : '',
           teachingMethod: updatedTutor.teachingMethod || 'ONLINE',
-          summary: updatedTutor.bio || '',       
+          headline: updatedTutor.headline || '',
+          bio: updatedTutor.bio || '',
         })
       }
 
-      setSuccess('Profile updated successfully.')
+      setSuccess('Profile updated successfully!')
 
       // exit edit mode after save
       setEditing({
@@ -216,7 +228,8 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
         subjects: false,
         hourlyRate: false,
         teachingMethod: false,
-        summary: false,
+        headline: false,
+        bio: false,
       })
 
       // update header / currentUser (firstName, lastName, userUid)
@@ -236,319 +249,492 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
   }
 
   if (!currentUser) {
-    return <div className="my-profile-page">Please log in to view your profile.</div>
+    return (
+      <div className="my-profile-page">
+        <div className="profile-container">
+          <div className="empty-state">
+            <div className="empty-icon">🔒</div>
+            <h2>Access Required</h2>
+            <p>Please log in to view your profile.</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (loading) {
-    return <div className="my-profile-page">Loading profile...</div>
+    return (
+      <div className="my-profile-page">
+        <div className="profile-container">
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p>Loading your profile...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (error && !form) {
-    return <div className="my-profile-page">Error: {error}</div>
+    return (
+      <div className="my-profile-page">
+        <div className="profile-container">
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <h2>Error Loading Profile</h2>
+            <p>{error}</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!form) {
-    return <div className="my-profile-page">No profile data found.</div>
+    return (
+      <div className="my-profile-page">
+        <div className="profile-container">
+          <div className="empty-state">
+            <div className="empty-icon">📋</div>
+            <h2>No Profile Data</h2>
+            <p>No profile data found.</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const avatarSrc = form.profileImageUrl || DEFAULT_AVATAR
 
   return (
     <div className="my-profile-page">
-      <h1>My Profile</h1>
-
-      <div className="profile-layout">
-        <div className="profile-avatar-column">
-          <img
-            src={avatarSrc}
-            alt="Profile"
-            className="profile-avatar"
-          />
+      <div className="profile-container">
+        {/* Header with Avatar */}
+        <div className="profile-header">
+          <div className="profile-header-content">
+            <div className="profile-avatar-section">
+              <ClickableAvatar
+                currentImage={form.profileImageUrl}
+                onImageChange={(imageUrl) => {
+                  setForm(prev => ({ ...prev, profileImageUrl: imageUrl }))
+                }}
+                userName={`${form.firstName} ${form.lastName}`}
+                currentUser={currentUser}   
+                setCurrentUser={setCurrentUser}  
+              />
+              <div className="profile-header-text">
+                <h1 className="profile-name">
+                  {form.firstName} {form.lastName}
+                </h1>
+                <p className="profile-role">
+                  {currentUser.role === 'TUTOR' ? '🎓 Tutor' : '📚 Student'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="profile-form-column">
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {/* Profile picture URL */}
-            <div className="profile-field-row">
-              <label>Profile picture URL</label>
-              {editing.profileImageUrl ? (
-                <input
-                  name="profileImageUrl"
-                  value={form.profileImageUrl}
-                  onChange={handleChange}
-                  placeholder="Paste an image URL"
-                />
-              ) : (
-                <span className="profile-value">
-                  {form.profileImageUrl || 'Not set'}
+        {/* Main Form */}
+        <form className="profile-form" onSubmit={handleSubmit}>
+          {/* Personal Information Section */}
+          <div className="profile-section">
+            <div className="section-header">
+              <h2 className="section-title">Personal Information</h2>
+              <span className="section-subtitle">Your basic account details</span>
+            </div>
+
+            <div className="form-grid">
+
+              {/* First Name */}
+              <div className="form-field">
+                <label className="field-label">
+                  First Name
+                  <button
+                    type="button"
+                    className="edit-btn"
+                    onClick={() => toggleEdit('firstName')}
+                  >
+                    {editing.firstName ? '✓ Done' : '✏️ Edit'}
+                  </button>
+                </label>
+                {editing.firstName ? (
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    className="form-input"
+                    required
+                  />
+                ) : (
+                  <div className="field-value">{form.firstName}</div>
+                )}
+              </div>
+
+              {/* Last Name */}
+              <div className="form-field">
+                <label className="field-label">
+                  Last Name
+                  <button
+                    type="button"
+                    className="edit-btn"
+                    onClick={() => toggleEdit('lastName')}
+                  >
+                    {editing.lastName ? '✓ Done' : '✏️ Edit'}
+                  </button>
+                </label>
+                {editing.lastName ? (
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    className="form-input"
+                    required
+                  />
+                ) : (
+                  <div className="field-value">{form.lastName}</div>
+                )}
+              </div>
+
+              {/* Username */}
+              <div className="form-field">
+                <label className="field-label">
+                  Username
+                  <button
+                    type="button"
+                    className="edit-btn"
+                    onClick={() => toggleEdit('userUid')}
+                  >
+                    {editing.userUid ? '✓ Done' : '✏️ Edit'}
+                  </button>
+                </label>
+                {editing.userUid ? (
+                  <>
+                    <input
+                      type="text"
+                      name="userUid"
+                      value={form.userUid}
+                      onChange={handleChange}
+                      className="form-input"
+                      required
+                    />
+                    <small className="field-hint">Username must be unique</small>
+                  </>
+                ) : (
+                  <div className="field-value">@{form.userUid}</div>
+                )}
+              </div>
+
+              {/* Birthday */}
+              <div className="form-field">
+                <label className="field-label">
+                  Birthday
+                  <button
+                    type="button"
+                    className="edit-btn"
+                    onClick={() => toggleEdit('birthday')}
+                  >
+                    {editing.birthday ? '✓ Done' : '✏️ Edit'}
+                  </button>
+                </label>
+                {editing.birthday ? (
+                  <input
+                    type="date"
+                    name="birthday"
+                    value={form.birthday}
+                    onChange={handleChange}
+                    className="form-input"
+                    required
+                  />
+                ) : (
+                  <div className="field-value">
+                    {new Date(form.birthday).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Tutor-only section */}
+          {currentUser.role === 'TUTOR' && (
+            <div className="profile-section tutor-section">
+              <div className="section-header">
+                <h2 className="section-title">Tutor Profile</h2>
+                <span className="section-subtitle">
+                  Information visible to students
                 </span>
-              )}
-              <button
-                type="button"
-                className="field-edit-button"
-                onClick={() => toggleEdit('profileImageUrl')}
-              >
-                ✏️
-              </button>
-            </div>
+              </div>
 
-            {/* First name */}
-            <div className="profile-field-row">
-              <label>First name</label>
-              {editing.firstName ? (
-                <input
-                  name="firstName"
-                  value={form.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              ) : (
-                <span className="profile-value">{form.firstName}</span>
-              )}
-              <button
-                type="button"
-                className="field-edit-button"
-                onClick={() => toggleEdit('firstName')}
-              >
-                ✏️
-              </button>
-            </div>
-
-            {/* Last name */}
-            <div className="profile-field-row">
-              <label>Last name</label>
-              {editing.lastName ? (
-                <input
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              ) : (
-                <span className="profile-value">{form.lastName}</span>
-              )}
-              <button
-                type="button"
-                className="field-edit-button"
-                onClick={() => toggleEdit('lastName')}
-              >
-                ✏️
-              </button>
-            </div>
-
-            {/* User ID */}
-            <div className="profile-field-row">
-              <label>User ID (username)</label>
-              {editing.userUid ? (
-                <input
-                  name="userUid"
-                  value={form.userUid}
-                  onChange={handleChange}
-                  required
-                />
-              ) : (
-                <span className="profile-value">{form.userUid}</span>
-              )}
-              <button
-                type="button"
-                className="field-edit-button"
-                onClick={() => toggleEdit('userUid')}
-              >
-                ✏️
-              </button>
-            </div>
-            <small className="field-hint">
-              You can only change your User ID once every 30 days.
-            </small>
-
-            {/* Birthday */}
-            <div className="profile-field-row">
-              <label>Birthday</label>
-              {editing.birthday ? (
-                <input
-                  type="date"
-                  name="birthday"
-                  value={form.birthday}
-                  onChange={handleChange}
-                  required
-                />
-              ) : (
-                <span className="profile-value">{form.birthday}</span>
-              )}
-              <button
-                type="button"
-                className="field-edit-button"
-                onClick={() => toggleEdit('birthday')}
-              >
-                ✏️
-              </button>
-            </div>
-
-            {/* Tutor-only section */}
-            {currentUser.role === 'TUTOR' && (
-              <>
-                <h2 className="profile-section-title">Tutor Profile</h2>
-
+              <div className="form-grid">
                 {/* Subjects */}
-                <div className="profile-field-row">
-                  <label>Subjects</label>
+                <div className="form-field full-width">
+                  <label className="field-label">
+                    Subjects
+                    <button
+                      type="button"
+                      className="edit-btn"
+                      onClick={() => toggleEdit('subjects')}
+                    >
+                      {editing.subjects ? '✓ Done' : '✏️ Edit'}
+                    </button>
+                  </label>
                   {editing.subjects ? (
-                    <div className="subject-toggle-group">
+                    <div className="subject-grid">
                       {SUBJECT_OPTIONS.map((subject) => {
-                        const selected =
-                          tutorForm.subjects.includes(subject)
+                        const selected = tutorForm.subjects.includes(subject)
                         return (
                           <button
                             key={subject}
                             type="button"
-                            className={`subject-toggle ${
-                              selected ? 'selected' : ''
-                            }`}
+                            className={`subject-tag ${selected ? 'selected' : ''}`}
                             onClick={() => toggleSubject(subject)}
                           >
+                            {selected && '✓ '}
                             {subject}
                           </button>
                         )
                       })}
                     </div>
                   ) : (
-                    <span className="profile-value">
-                      {tutorForm.subjects.length > 0
-                        ? tutorForm.subjects.join(', ')
-                        : 'Not set'}
-                    </span>
+                    <div className="field-value">
+                      {tutorForm.subjects.length > 0 ? (
+                        <div className="subject-badges">
+                          {tutorForm.subjects.map((subject) => (
+                            <span key={subject} className="subject-badge">
+                              {subject}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted">No subjects selected</span>
+                      )}
+                    </div>
                   )}
-                  <button
-                    type="button"
-                    className="field-edit-button"
-                    onClick={() => toggleEdit('subjects')}
-                  >
-                    ✏️
-                  </button>
                 </div>
 
-                {/* Hourly rate */}
-                <div className="profile-field-row">
-                  <label>Hourly rate</label>
+                {/* Hourly Rate */}
+                <div className="form-field">
+                  <label className="field-label">
+                    Hourly Rate
+                    <button
+                      type="button"
+                      className="edit-btn"
+                      onClick={() => toggleEdit('hourlyRate')}
+                    >
+                      {editing.hourlyRate ? '✓ Done' : '✏️ Edit'}
+                    </button>
+                  </label>
                   {editing.hourlyRate ? (
-                    <input
-                      type="number"
-                      name="hourlyRate"
-                      value={tutorForm.hourlyRate}
-                      onChange={handleTutorChange}
-                      min="0"
-                      step="1"
-                      placeholder="e.g. 40"
-                    />
+                    <div className="input-with-prefix">
+                      <span className="input-prefix">$</span>
+                      <input
+                        type="number"
+                        name="hourlyRate"
+                        value={tutorForm.hourlyRate}
+                        onChange={handleTutorChange}
+                        className="form-input with-prefix"
+                        min="0"
+                        step="1"
+                        placeholder="40"
+                      />
+                      <span className="input-suffix">/hour</span>
+                    </div>
                   ) : (
-                    <span className="profile-value">
+                    <div className="field-value price">
                       {tutorForm.hourlyRate
-                        ? `$${tutorForm.hourlyRate}/hr`
+                        ? `$${tutorForm.hourlyRate}/hour`
                         : 'Not set'}
-                    </span>
+                    </div>
                   )}
-                  <button
-                    type="button"
-                    className="field-edit-button"
-                    onClick={() => toggleEdit('hourlyRate')}
-                  >
-                    ✏️
-                  </button>
                 </div>
 
-                {/* Teaching method */}
-                <div className="profile-field-row">
-                  <label>Teaching method</label>
+                {/* Teaching Method */}
+                <div className="form-field">
+                  <label className="field-label">
+                    Teaching Method
+                    <button
+                      type="button"
+                      className="edit-btn"
+                      onClick={() => toggleEdit('teachingMethod')}
+                    >
+                      {editing.teachingMethod ? '✓ Done' : '✏️ Edit'}
+                    </button>
+                  </label>
                   {editing.teachingMethod ? (
                     <select
                       name="teachingMethod"
                       value={tutorForm.teachingMethod}
                       onChange={handleTutorChange}
+                      className="form-select"
                     >
-                      <option value="ONLINE">Online</option>
-                      <option value="IN_PERSON">In person</option>
-                      <option value="HYBRID">Hybrid</option>
+                      <option value="ONLINE">💻 Online</option>
+                      <option value="IN_PERSON">🏫 In Person</option>
+                      <option value="HYBRID">🔄 Hybrid</option>
                     </select>
                   ) : (
-                    <span className="profile-value">
+                    <div className="field-value">
                       {tutorForm.teachingMethod === 'IN_PERSON'
-                        ? 'In person'
+                        ? '🏫 In Person'
                         : tutorForm.teachingMethod === 'HYBRID'
-                        ? 'Hybrid'
-                        : 'Online'}
-                    </span>
+                        ? '🔄 Hybrid'
+                        : '💻 Online'}
+                    </div>
                   )}
-                  <button
-                    type="button"
-                    className="field-edit-button"
-                    onClick={() => toggleEdit('teachingMethod')}
-                  >
-                    ✏️
-                  </button>
                 </div>
 
-                {/* Summary */}
-                <div className="profile-field-row">
-                  <label>Summary</label>
-                  {editing.summary ? (
-                    <textarea
-                      name="summary"
-                      value={tutorForm.summary}
-                      onChange={handleTutorChange}
-                      rows={3}
-                      className="profile-textarea"
-                      placeholder="Brief description about your tutoring experience, style, etc."
-                    />
+                {/* Headline */}
+                <div className="form-field full-width">
+                  <label className="field-label">
+                    Headline
+                    <button
+                      type="button"
+                      className="edit-btn"
+                      onClick={() => toggleEdit('headline')}
+                    >
+                      {editing.headline ? '✓ Done' : '✏️ Edit'}
+                    </button>
+                  </label>
+                  {editing.headline ? (
+                    <>
+                      <input
+                        type="text"
+                        name="headline"
+                        value={tutorForm.headline}
+                        onChange={handleTutorChange}
+                        className="form-input"
+                        maxLength={255}
+                        placeholder="Brief tagline that appears on tutors listing"
+                      />
+                      <small className="field-hint">
+                        Brief summary shown on tutors listing page (max 255 characters)
+                      </small>
+                    </>
                   ) : (
-                    <span className="profile-value">
-                      {tutorForm.summary || 'Not set'}
-                    </span>
+                    <div className="field-value">
+                      {tutorForm.headline || (
+                        <span className="text-muted">No headline set</span>
+                      )}
+                    </div>
                   )}
-                  <button
-                    type="button"
-                    className="field-edit-button"
-                    onClick={() => toggleEdit('summary')}
-                  >
-                    ✏️
-                  </button>
                 </div>
-              </>
-            )}
 
-            {/* Read-only fields */}
-            <div className="profile-field-row">
-              <label>Email</label>
-              <span className="profile-value read-only">
-                {profile.email}
-              </span>
+                {/* Bio */}
+                <div className="form-field full-width">
+                  <label className="field-label">
+                    Bio
+                    <button
+                      type="button"
+                      className="edit-btn"
+                      onClick={() => toggleEdit('bio')}
+                    >
+                      {editing.bio ? '✓ Done' : '✏️ Edit'}
+                    </button>
+                  </label>
+                  {editing.bio ? (
+                    <>
+                      <textarea
+                        name="bio"
+                        value={tutorForm.bio}
+                        onChange={handleTutorChange}
+                        className="form-textarea"
+                        rows={6}
+                        placeholder="Share your teaching experience, philosophy, qualifications, and what makes you unique..."
+                      />
+                      <small className="field-hint">
+                        Detailed bio shown on your tutor profile page. Share your background,
+                        teaching philosophy, and what makes you unique.
+                      </small>
+                    </>
+                  ) : (
+                    <div className="field-value bio-text">
+                      {tutorForm.bio || (
+                        <span className="text-muted">No bio written yet</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Account Information Section */}
+          <div className="profile-section readonly-section">
+            <div className="section-header">
+              <h2 className="section-title">Account Information</h2>
+              <span className="section-subtitle">Read-only account details</span>
             </div>
 
-            <div className="profile-field-row">
-              <label>Account status</label>
-              <span className="profile-value read-only">
-                {profile.status}
-              </span>
+            <div className="form-grid">
+              <div className="form-field">
+                <label className="field-label">Email</label>
+                <div className="field-value readonly">
+                  {profile.email}
+                  <span className="readonly-badge">Read-only</span>
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label className="field-label">Account Status</label>
+                <div className="field-value readonly">
+                  <span className={`status-badge ${profile.status.toLowerCase()}`}>
+                    {profile.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label className="field-label">Member Since</label>
+                <div className="field-value readonly">
+                  {new Date(profile.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div className="profile-field-row">
-              <label>Created at</label>
-              <span className="profile-value read-only">
-                {profile.createdAt}
-              </span>
+          {/* Messages */}
+          {error && (
+            <div className="alert alert-error">
+              <span className="alert-icon">⚠️</span>
+              <span className="alert-message">{error}</span>
             </div>
+          )}
 
-            {error && <p className="auth-error">{error}</p>}
-            {success && <p className="auth-success">{success}</p>}
+          {success && (
+            <div className="alert alert-success">
+              <span className="alert-icon">✓</span>
+              <span className="alert-message">{success}</span>
+            </div>
+          )}
 
+          {/* Submit Button */}
+          <div className="form-actions">
             <button
               type="submit"
               disabled={saving}
-              className="primary-button"
+              className="submit-btn"
             >
-              {saving ? 'Saving…' : 'Update Profile'}
+              {saving ? (
+                <>
+                  <span className="btn-spinner"></span>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <span>💾</span>
+                  Update Profile
+                </>
+              )}
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   )

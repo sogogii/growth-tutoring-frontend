@@ -1,0 +1,192 @@
+/* ClickableAvatar - Elegant Hover Upload */
+
+.clickable-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.clickable-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border: 5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(212, 175, 55, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clickable-avatar:hover {
+  transform: scale(1.08);
+  box-shadow: 
+    0 20px 64px rgba(0, 0, 0, 0.4),
+    0 0 0 2px var(--luxury-gold, #d4af37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 32px rgba(212, 175, 55, 0.3);
+}
+
+.clickable-avatar.uploading {
+  cursor: wait;
+  pointer-events: none;
+}
+
+/* Avatar Image */
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.clickable-avatar:hover .avatar-image {
+  filter: brightness(0.7);
+}
+
+/* Hover Overlay */
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+}
+
+.clickable-avatar:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.clickable-avatar.uploading .avatar-overlay {
+  opacity: 1;
+}
+
+/* Camera Icon */
+.camera-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Overlay Text */
+.overlay-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--luxury-gold-light, #f4e4bc);
+}
+
+/* Upload Spinner */
+.upload-spinner-small {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--luxury-gold, #d4af37);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hidden File Input */
+.hidden-file-input {
+  display: none;
+}
+
+/* Error Message */
+.avatar-upload-error {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(254, 242, 242, 0.95), rgba(254, 226, 226, 0.9));
+  color: #991b1b;
+  border: 2px solid rgba(220, 38, 38, 0.2);
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+  white-space: nowrap;
+  z-index: 10;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.error-icon {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .clickable-avatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .camera-icon {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .clickable-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .camera-icon {
+    font-size: 1.75rem;
+  }
+  
+  .overlay-text {
+    font-size: 0.75rem;
+  }
+  
+  .avatar-upload-error {
+    font-size: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    max-width: 280px;
+    white-space: normal;
+    text-align: center;
+  }
+}
