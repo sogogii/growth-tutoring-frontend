@@ -14,6 +14,9 @@ import ForgotPasswordPage from './pages/login/ForgotPasswordPage'
 import MyProfilePage from './pages/MyProfilePage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
+import HowItWorksStudents from './pages/main/HowItWorksStudents'
+import HowItWorksTutors from './pages/main/HowItWorksTutors'
+import HowItWorksCip from './pages/main/HowItWorksCip'
 import ChatListPage from './pages/chat/ChatListPage'
 import ChatPage from './pages/chat/ChatPage'
 import AdminPage from './pages/AdminPage.jsx'
@@ -493,7 +496,10 @@ function App() {
             element={<MyTutorsPage currentUser={currentUser} />}
           />
 
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/how-it-works/students" element={<HowItWorksStudents />} />
+          <Route path="/how-it-works/tutors" element={<HowItWorksTutors />} />
+          <Route path="/how-it-works/cip" element={<HowItWorksCip />} />
+
           <Route path="/contact" element={<ContactPage />} />
 
           <Route

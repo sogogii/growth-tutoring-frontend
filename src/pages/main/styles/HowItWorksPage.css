@@ -5,61 +5,136 @@
   flex-direction: column;
 }
 
-/* Hero Section */
+/* Hero Section - Full Width */
 .how-hero-section {
   position: relative;
-  min-height: 500px;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500"><rect fill="%23374151" width="1200" height="500"/></svg>');
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  min-height: 600px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 20px;
+  padding: 0px 20px;
+}
+
+/* Specific background images for each page */
+.how-hero-students {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('../assets/how-it-works-students.png');
+}
+
+.how-hero-tutors {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('../assets/how-it-works-tutors.png');
+}
+
+.how-hero-cip {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+    url('../assets/how-it-works-cip.png');
+}
+
+.how-hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(22, 163, 74, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(249, 115, 22, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  animation: heroGlow 8s ease-in-out infinite;
+}
+
+@keyframes heroGlow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .how-hero-overlay {
-  max-width: 1000px;
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .how-hero-title {
-  font-size: 64px;
-  font-weight: 700;
+  font-size: 72px;
+  font-weight: 800;
   color: white;
   margin: 0;
   line-height: 1.2;
   letter-spacing: 0.02em;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .how-hero-highlight {
   color: #16a34a;
   display: inline-block;
+  position: relative;
+}
+
+.how-hero-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: rgba(22, 163, 74, 0.2);
+  z-index: -1;
 }
 
 /* Content Section */
 .how-content-section {
-  background: white;
+  background: #fafaf9;
   padding: 80px 20px;
 }
 
 .how-content-container {
-  max-width: 1000px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 .how-subtitle {
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 600;
   color: #f97316;
   text-align: center;
-  margin: 0 0 24px 0;
+  margin: 0 0 20px 0;
 }
 
 .how-description {
-  font-size: 18px;
+  font-size: 17px;
   color: #4b5563;
   text-align: center;
   line-height: 1.7;
@@ -67,55 +142,477 @@
   margin: 0 auto 60px;
 }
 
-/* Steps */
-.how-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  margin-bottom: 60px;
-}
-
-.how-step-card {
-  background: #ffffff;
-  border: 2px solid #e5e7eb;
+/* Step Sections */
+.how-step-section {
+  background: white;
   border-radius: 12px;
-  padding: 32px 24px;
-  text-align: center;
-  transition: all 0.3s ease;
+  padding: 40px;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.how-step-card:hover {
-  border-color: #f97316;
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.15);
-  transform: translateY(-4px);
-}
-
-.how-step-number {
-  width: 60px;
-  height: 60px;
+.how-step-number-large {
+  width: 70px;
+  height: 70px;
   background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
   color: white;
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
 }
 
-.how-step-title {
-  font-size: 22px;
+.how-step-title-large {
+  font-size: 28px;
+  font-weight: 600;
+  color: #f97316;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.how-step-description-large {
+  font-size: 16px;
+  color: #4b5563;
+  line-height: 1.7;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+/* Tutor Showcase */
+.how-tutor-showcase {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.how-tutor-sample-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 200px;
+  transition: all 0.3s ease;
+}
+
+.how-tutor-sample-card:hover {
+  border-color: #f97316;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+}
+
+.how-tutor-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 600;
+}
+
+.how-tutor-info {
+  text-align: center;
+}
+
+.how-tutor-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.how-tutor-rating {
+  font-size: 14px;
+  color: #fbbf24;
+  margin-bottom: 4px;
+}
+
+.how-tutor-price {
+  font-size: 15px;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+/* Chat Mockup */
+.how-chat-mockup {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.how-chat-message {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.how-chat-message.sent {
+  flex-direction: row-reverse;
+}
+
+.how-chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.how-chat-bubble {
+  background: #f3f4f6;
+  border-radius: 16px;
+  padding: 12px 16px;
+  max-width: 400px;
+}
+
+.how-chat-message.sent .how-chat-bubble {
+  background: #ffedd5;
+}
+
+.how-chat-bubble p {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #111827;
+  line-height: 1.5;
+}
+
+.how-chat-time {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Notifications */
+.how-notification-mockup {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.how-notification {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.how-notification:last-child {
+  margin-bottom: 0;
+}
+
+.how-notification-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.how-notification-content strong {
+  display: block;
+  font-size: 15px;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.how-notification-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Profile Preview */
+.how-profile-preview {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.how-profile-header {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.how-profile-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.how-profile-details h4 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  color: #111827;
+}
+
+.how-profile-subjects {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.how-profile-rate {
+  font-size: 20px;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.how-profile-bio {
+  font-size: 15px;
+  color: #4b5563;
+  line-height: 1.6;
+  font-style: italic;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+}
+
+/* Checklist */
+.how-checklist {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 32px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.how-checklist-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.how-checklist-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.how-checklist-text {
+  font-size: 15px;
+  color: #111827;
+}
+
+/* Approval Mockup */
+.how-approval-mockup {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 2px solid #86efac;
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 32px;
+  text-align: center;
+}
+
+.how-approval-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.how-approval-icon {
+  font-size: 48px;
+}
+
+.how-approval-header h4 {
+  margin: 0;
+  font-size: 24px;
+  color: #166534;
+}
+
+.how-approval-mockup p {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #166534;
+}
+
+.how-approval-next {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  color: #166534;
+}
+
+.how-approval-next strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Learning Options */
+.how-learning-options {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 40px 0;
+  text-align: center;
+}
+
+.how-learning-text {
+  margin: 0;
+  font-size: 16px;
+  color: #9a3412;
+  line-height: 1.7;
+}
+
+/* Benefits Section */
+.how-benefits-section {
+  margin: 60px 0;
+}
+
+.how-benefits-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #111827;
+  text-align: center;
+  margin: 0 0 40px 0;
+}
+
+.how-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.how-benefit-card {
+  text-align: center;
+  padding: 24px;
+}
+
+.how-benefit-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.how-benefit-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.how-benefit-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Eligibility Section */
+.how-eligibility-section {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  padding: 32px;
+  margin: 40px 0;
+}
+
+.how-eligibility-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #9a3412;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.how-eligibility-text {
+  margin: 0;
+  font-size: 15px;
+  color: #78350f;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* Good Fit Guarantee */
+.how-guarantee-section {
+  text-align: center;
+  padding: 50px 20px;
+  margin: 40px 0;
+}
+
+.how-guarantee-badge {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #16a34a;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.how-guarantee-icon {
+  font-size: 48px;
+  color: #16a34a;
+}
+
+.how-guarantee-title {
+  font-size: 28px;
   font-weight: 600;
   color: #111827;
   margin: 0 0 12px 0;
 }
 
-.how-step-description {
-  font-size: 15px;
+.how-guarantee-text {
+  font-size: 16px;
   color: #6b7280;
-  line-height: 1.6;
-  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
 }
 
 /* CTA Section */
@@ -126,7 +623,7 @@
 
 .how-cta-button {
   display: inline-block;
-  padding: 16px 48px;
+  padding: 18px 48px;
   background: #16a34a;
   color: white;
   font-size: 18px;
@@ -146,27 +643,37 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .how-hero-title {
-    font-size: 52px;
+    font-size: 56px;
+  }
+  
+  .how-hero-section {
+    min-height: 500px;
+    padding: 80px 20px;
   }
   
   .how-subtitle {
-    font-size: 36px;
+    font-size: 32px;
   }
   
-  .how-steps {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
+  .how-benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
   .how-hero-section {
-    min-height: 400px;
-    padding: 40px 20px;
+    min-height: 450px;
+    padding: 60px 20px;
   }
   
   .how-hero-title {
-    font-size: 40px;
+    font-size: 44px;
+  }
+  
+  .how-hero-highlight::after {
+    height: 8px;
+    bottom: 4px;
   }
   
   .how-content-section {
@@ -181,9 +688,32 @@
     font-size: 16px;
   }
   
-  .how-steps {
-    grid-template-columns: 1fr;
-    gap: 24px;
+  .how-step-section {
+    padding: 30px 24px;
+  }
+  
+  .how-step-number-large {
+    width: 60px;
+    height: 60px;
+    font-size: 32px;
+  }
+  
+  .how-step-title-large {
+    font-size: 24px;
+  }
+  
+  .how-tutor-showcase {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .how-chat-bubble {
+    max-width: 280px;
+  }
+  
+  .how-profile-header {
+    flex-direction: column;
+    text-align: center;
   }
   
   .how-cta-button {
@@ -193,21 +723,32 @@
 }
 
 @media (max-width: 480px) {
+  .how-hero-section {
+    min-height: 400px;
+    padding: 50px 16px;
+  }
+  
   .how-hero-title {
-    font-size: 32px;
+    font-size: 36px;
   }
   
   .how-subtitle {
     font-size: 24px;
   }
   
-  .how-step-number {
-    width: 50px;
-    height: 50px;
-    font-size: 28px;
+  .how-step-section {
+    padding: 24px 16px;
   }
   
-  .how-step-title {
+  .how-step-title-large {
     font-size: 20px;
+  }
+  
+  .how-step-description-large {
+    font-size: 15px;
+  }
+  
+  .how-tutor-sample-card {
+    width: 100%;
   }
 }
