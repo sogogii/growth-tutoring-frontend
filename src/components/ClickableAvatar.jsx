@@ -11,7 +11,7 @@ function ClickableAvatar({ currentImage, onImageChange, userName = 'User', curre
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
 
-  // 🔑 ADD YOUR IMGBB API KEY HERE
+  // ADD YOUR IMGBB API KEY HERE
   const IMGBB_API_KEY = '7b2a11b7098609c580b686521c4d7dec'
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
@@ -178,17 +178,20 @@ function ClickableAvatar({ currentImage, onImageChange, userName = 'User', curre
       // Update backend immediately
       if (currentUser && setCurrentUser) {
         try {
-          await updateProfilePictureOnBackend(imageUrl)
+          // Get the updated user data from backend
+          const backendResponse = await updateProfilePictureOnBackend(imageUrl)
           
-          // Update currentUser in state
-          const updatedUser = { ...currentUser, profileImageUrl: imageUrl }
+          // Merge the backend response with current user data
+          const updatedUser = { 
+            ...currentUser, 
+            ...backendResponse,
+            profileImageUrl: imageUrl  // Ensure this field is set
+          }
           setCurrentUser(updatedUser)
           
           // Update localStorage
           localStorage.setItem('currentUser', JSON.stringify(updatedUser))
           
-          // Force page refresh to update all components
-          window.location.reload()
         } catch (backendError) {
           console.error('Backend update failed:', backendError)
           // Still show the image locally even if backend fails

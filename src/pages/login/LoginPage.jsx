@@ -46,10 +46,11 @@ function LoginPage({ setCurrentUser }) {
         firstName: data.firstName,
         lastName: data.lastName,
         role: data.role, // should already be "TUTOR" or "STUDENT"
+        profileImageUrl: data.profileImageUrl || null,
       }
 
       if (setCurrentUser) {
-        setCurrentUser(data)
+        setCurrentUser(userObj)
       }
 
       localStorage.setItem('currentUser', JSON.stringify(userObj))
