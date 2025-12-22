@@ -1,6 +1,6 @@
-// src/pages/TutorProfilePage.jsx
+// src/pages/TutorProfilePage.jsx - Complete Improved Version
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import VerificationBadge from '../components/VerificationBadge'
 import './styles/TutorProfilePage.css'
 
@@ -42,7 +42,8 @@ function StarRating({ rating }) {
 }
 
 function TutorProfilePage({ currentUser }) {
-  const { id } = useParams() // this is tutor's userId in your routes
+  const { id } = useParams()
+  const navigate = useNavigate()
 
   const [tutor, setTutor] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -63,11 +64,10 @@ function TutorProfilePage({ currentUser }) {
 
   const isStudent = currentUser?.role === 'STUDENT'
 
-  // NEW: state for student–tutor link
-  const [linkStatus, setLinkStatus] = useState('NONE') // NONE | PENDING | ACCEPTED | DECLINED
+  const [linkStatus, setLinkStatus] = useState('NONE')
   const [linkLoading, setLinkLoading] = useState(false)
 
-  // --- load tutor info ---
+  // Load tutor info
   const loadTutor = async (userId) => {
     try {
       const res = await fetch(`${API_BASE}/api/tutors/${userId}`)
@@ -84,8 +84,9 @@ function TutorProfilePage({ currentUser }) {
         joined: formatJoined(data.joinedAt),
         subject: data.subjectLabel,
         experienceYears: data.yearsExperience,
-        teachingMethod: data.teachingMethod,
-        summary: data.bio || '',
+        teachingMethod: formatTeachingMethod(data.teachingMethod),
+        bio: data.bio || '',
+        education: data.education || '',
         hourlyRate: data.hourlyRate,
         profileImageUrl: data.profileImageUrl || null,
         verificationTier: data.verificationTier || 'TIER_1'
@@ -98,7 +99,7 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
-  // --- load reviews for tutor (via userId) ---
+  // Load reviews
   const loadReviews = async (userId) => {
     setReviewsLoading(true)
     setReviewsError(null)
@@ -112,7 +113,6 @@ function TutorProfilePage({ currentUser }) {
       const data = await res.json()
       setReviews(data || [])
 
-      // pre-fill existing review if this student already rated
       if (isStudent && currentUser) {
         const mine = data.find(
           (r) => r.studentUserId === currentUser.userId
@@ -135,14 +135,13 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
-  // --- load current relationship status (student ↔ tutor) ---
+  // Load link status
   const loadLinkStatus = async (studentUserId, tutorUserId) => {
     try {
       const res = await fetch(
         `${API_BASE}/api/student-tutor-links/status?studentUserId=${studentUserId}&tutorUserId=${tutorUserId}`
       )
       if (!res.ok) {
-        // if 404 or other, just treat as NONE
         setLinkStatus('NONE')
         return
       }
@@ -165,9 +164,21 @@ function TutorProfilePage({ currentUser }) {
     if (isStudent && currentUser) {
       loadLinkStatus(currentUser.userId, userId)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isStudent, currentUser])
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (openMenuReviewId && !e.target.closest('.review-menu-wrapper')) {
+        setOpenMenuReviewId(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [openMenuReviewId])
+
+  // Submit review
   const handleReviewSubmit = async (e) => {
     e.preventDefault()
     setReviewsError(null)
@@ -192,7 +203,7 @@ function TutorProfilePage({ currentUser }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: currentUser.userId, // student userId
+            userId: currentUser.userId,
             rating: Number(myRating),
             comment: myComment.trim(),
           }),
@@ -205,7 +216,7 @@ function TutorProfilePage({ currentUser }) {
       }
 
       setReviewsSuccess('Your review has been saved.')
-      // refresh tutor (avg + count) and reviews list
+      setShowReviewForm(false)
       await loadTutor(userId)
       await loadReviews(userId)
     } catch (err) {
@@ -216,6 +227,7 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
+  // Delete review
   const handleDeleteReview = async (review) => {
     if (!isStudent || !currentUser) return
 
@@ -257,75 +269,77 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
+  // Render review card
   const renderReviewCard = (r, isMine) => (
     <div key={r.id} className="review-card">
       <div className="review-card-top">
-        <div className="review-rating">
-          <span className="stars">★</span>{' '}
-          {Number(r.rating).toFixed(1)}
-        </div>
-
-        <div className="review-author-area">
-          <div className="review-author">
+        <div style={{ flex: 1 }}>
+          <span className="review-card-reviewer">
             {r.studentFirstName
               ? `${r.studentFirstName} ${r.studentLastName || ''}`.trim()
               : 'Student'}
+            {isMine && ' (You)'}
+          </span>
+          <div style={{ marginTop: '4px' }}>
+            <span className="review-card-rating">
+              {'★'.repeat(r.rating)}
+            </span>
           </div>
-
-          {isMine && (
-            <div className="review-menu-wrapper">
-              <button
-                type="button"
-                className="review-kebab"
-                onClick={() =>
-                  setOpenMenuReviewId((prev) =>
-                    prev === r.id ? null : r.id
-                  )
-                }
-              >
-                ⋯
-              </button>
-              {openMenuReviewId === r.id && (
-                <div className="review-menu">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMyRating(String(r.rating))
-                      setMyComment(r.comment || '')
-                      setEditingReviewId(r.id)
-                      setShowReviewForm(true)
-                      setReviewsError(null)
-                      setReviewsSuccess(null)
-                      setOpenMenuReviewId(null)
-                    }}
-                  >
-                    Edit review
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteReview(r)}
-                  >
-                    Delete review
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
         </div>
+
+        {isMine && (
+          <div className="review-menu-wrapper">
+            <button
+              type="button"
+              className="review-kebab"
+              onClick={() =>
+                setOpenMenuReviewId((prev) =>
+                  prev === r.id ? null : r.id
+                )
+              }
+            >
+              ⋯
+            </button>
+            {openMenuReviewId === r.id && (
+              <div className="review-menu">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMyRating(String(r.rating))
+                    setMyComment(r.comment || '')
+                    setEditingReviewId(r.id)
+                    setShowReviewForm(true)
+                    setReviewsError(null)
+                    setReviewsSuccess(null)
+                    setOpenMenuReviewId(null)
+                  }}
+                >
+                  Edit review
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteReview(r)}
+                >
+                  Delete review
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {r.comment && (
-        <p className="review-comment">{r.comment}</p>
+        <p className="review-card-comment">{r.comment}</p>
       )}
       {r.createdAt && (
-        <div className="review-date">
+        <p className="review-card-date">
           {new Date(r.createdAt).toLocaleDateString()}
-        </div>
+        </p>
       )}
     </div>
   )
 
-  // --- handle "Add Tutor" request ---
+  // Handle add tutor request
   const handleAddTutorRequest = async () => {
     if (!isStudent || !currentUser) {
       alert('Please log in as a student to add this tutor.')
@@ -350,7 +364,6 @@ function TutorProfilePage({ currentUser }) {
         throw new Error(text || 'Failed to send request')
       }
 
-      // backend sets/returns PENDING; refresh status
       await loadLinkStatus(currentUser.userId, tutorUserId)
     } catch (err) {
       console.error(err)
@@ -360,11 +373,65 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
+  // Handle contact tutor (open chat)
+  const handleContactTutor = async () => {
+    if (!currentUser) {
+      alert('Please log in to contact this tutor.')
+      return
+    }
+
+    const tutorUserId = tutor?.userId ?? Number(id)
+    
+    // Determine student and tutor IDs based on current user role
+    let studentUserId, finalTutorUserId
+    
+    if (currentUser.role === 'STUDENT') {
+      studentUserId = currentUser.userId
+      finalTutorUserId = tutorUserId
+    } else if (currentUser.role === 'TUTOR') {
+      // If current user is a tutor viewing another tutor's profile,
+      // they can't start a conversation (tutors can only chat with students)
+      alert('Only students can contact tutors.')
+      return
+    } else {
+      alert('Invalid user role.')
+      return
+    }
+
+    setLinkLoading(true)
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversation?studentUserId=${studentUserId}&tutorUserId=${finalTutorUserId}`,
+        { method: 'POST' }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to start conversation')
+      }
+
+      const conv = await res.json()
+      navigate(`/chat/${conv.id}`, {
+        state: { 
+          otherName: tutor.name,
+          otherUserId: tutorUserId
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to start conversation')
+    } finally {
+      setLinkLoading(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="tutor-profile-page">
         <div className="tutor-profile-card">
-          <p>Loading tutor...</p>
+          <div className="tutor-profile-loading">
+            <p>Loading tutor profile...</p>
+          </div>
         </div>
       </div>
     )
@@ -374,249 +441,246 @@ function TutorProfilePage({ currentUser }) {
     return (
       <div className="tutor-profile-page">
         <div className="tutor-profile-card">
-          <p>Failed to load tutor.</p>
-          <Link to="/tutors" className="tutor-profile-back">
-            ← Back to tutors
-          </Link>
+          <div className="tutor-profile-loading">
+            <p>Failed to load tutor profile.</p>
+            <Link to="/tutors" className="tutor-profile-back">
+              ← Back to tutors
+            </Link>
+          </div>
         </div>
       </div>
     )
   }
 
-  const avgRatingDisplay = Number(tutor.rating || 0).toFixed(2)
+  const avgRatingDisplay = Number(tutor.rating || 0).toFixed(1)
   const ratingCount = tutor.ratingCount || reviews.length || 0
-
   const myUserId = currentUser?.userId
-  const myReview =
-    isStudent && currentUser
-      ? reviews.find((r) => r.studentUserId === myUserId)
-      : null
+  const myReview = isStudent && currentUser ? reviews.find((r) => r.studentUserId === myUserId) : null
   const hasMyReview = Boolean(myReview)
+  const otherReviews = hasMyReview ? reviews.filter((r) => r.id !== myReview.id) : reviews
 
-  const otherReviews = hasMyReview
-    ? reviews.filter((r) => r.id !== myReview.id)
-    : reviews
+  // Parse subjects into array
+  const subjectsArray = tutor.subject ? tutor.subject.split(',').map(s => s.trim()) : []
 
-  // text for Add Tutor button based on status
   const addTutorLabel = (() => {
     switch (linkStatus) {
-      case 'PENDING':
-        return 'Request Sent'
-      case 'ACCEPTED':
-        return 'Tutor Added'
-      // after declined, we just show the original label again
-      case 'DECLINED':
-        return 'Add Tutor'
-      default:
-        return 'Add Tutor'
+      case 'PENDING': return 'Request Sent'
+      case 'ACCEPTED': return 'Tutor Added'
+      case 'DECLINED': return 'Add Tutor'
+      default: return 'Add Tutor'
     }
   })()
 
-  const addTutorDisabled =
-    linkLoading || linkStatus === 'PENDING' || linkStatus === 'ACCEPTED'
+  const addTutorDisabled = linkLoading || linkStatus === 'PENDING' || linkStatus === 'ACCEPTED'
 
   return (
     <div className="tutor-profile-page">
       <div className="tutor-profile-card">
+        {/* Modern Header with Gradient */}
         <div className="tutor-profile-header">
-          <div className="tutor-profile-left">
-            {tutor.profileImageUrl ? (
-              <img
-                src={tutor.profileImageUrl}
-                alt={tutor.name}
-                className="tutor-profile-photo"
-              />
-            ) : (
-              <div className="tutor-profile-photo placeholder" />
-            )}
+          <div className="tutor-profile-header-content">
+            {/* Profile Photo */}
+            <div className="tutor-profile-photo-wrapper">
+              {tutor.profileImageUrl ? (
+                <img
+                  src={tutor.profileImageUrl}
+                  alt={tutor.name}
+                  className="tutor-profile-photo"
+                />
+              ) : (
+                <div className="tutor-profile-photo placeholder">
+                  {tutor.name.charAt(0)}
+                </div>
+              )}
+            </div>
 
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <h1 className="tutor-profile-name" style={{ margin: 0 }}>{tutor.name}</h1>
+            {/* Tutor Info */}
+            <div className="tutor-profile-info">
+              <div className="tutor-profile-name-row">
+                <h1 className="tutor-profile-name">{tutor.name}</h1>
                 <VerificationBadge tier={tutor.verificationTier} />
               </div>
-              
+
               <div className="tutor-profile-rating-row">
                 <StarRating rating={tutor.rating} />
                 <span className="tutor-profile-rating-number">
                   {avgRatingDisplay} ({ratingCount})
                 </span>
               </div>
-              <p className="tutor-profile-subject">{tutor.subject}</p>
-            </div>
-          </div>
 
-          <div className="tutor-profile-right">
-            <div className="tutor-profile-rate">
-              <span className="amount">${tutor.hourlyRate}</span>
-              <span className="unit">/hr</span>
+              {/* Subject Tags */}
+              <div className="tutor-profile-subjects">
+                {subjectsArray.map((subject, idx) => (
+                  <span key={idx} className="tutor-profile-subject-tag">
+                    {subject}
+                  </span>
+                ))}
+              </div>
             </div>
-            <button type="button" className="tutor-profile-cta">
-              Contact Tutor
-            </button>
 
-            {isStudent && (
-              <button
-                type="button"
-                className="tutor-profile-secondary-cta"
-                onClick={handleAddTutorRequest}
-                disabled={addTutorDisabled}
+            {/* Actions (Price & Buttons) */}
+            <div className="tutor-profile-actions">
+              <div className="tutor-profile-rate">
+                <span className="amount">${tutor.hourlyRate}</span>
+                <span className="unit">/hr</span>
+              </div>
+
+              <button 
+                type="button" 
+                className="tutor-profile-cta"
+                onClick={handleContactTutor}
               >
-                {linkLoading ? 'Sending…' : addTutorLabel}
+                Contact Tutor
               </button>
-            )}
-          </div>
-        </div>
 
-        <div className="tutor-profile-section-grid">
-          <div>
-            <h2>Overview</h2>
-            <ul className="tutor-profile-list">
-              <li><strong>Joined:</strong> {tutor.joined}</li>
-              <li>
-                <strong>Experience:</strong>{' '}
-                {tutor.experienceYears} year
-                {tutor.experienceYears > 1 ? 's' : ''}
-              </li>
-              <li>
-                <strong>Method:</strong> {formatTeachingMethod(tutor.teachingMethod)}
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h2>About {tutor.name.split(' ')[0]}</h2>
-            <p>{tutor.summary}</p>
-          </div>
-        </div>
-
-        {/* --- Reviews section --- */}
-        <div className="tutor-profile-section">
-          <h2>Student Reviews</h2>
-
-          {reviewsError && (
-            <p className="reviews-error">{reviewsError}</p>
-          )}
-          {reviewsSuccess && (
-            <p className="reviews-success">{reviewsSuccess}</p>
-          )}
-
-          {/* Review form for students */}
-          {isStudent && currentUser && showReviewForm && (
-            <form
-              className="review-form"
-              onSubmit={handleReviewSubmit}
-            >
-              <div className="review-form-row">
-                <label>Rate this tutor</label>
-                <select
-                  value={myRating}
-                  onChange={(e) => setMyRating(e.target.value)}
+              {isStudent && (
+                <button
+                  type="button"
+                  className="tutor-profile-secondary-cta"
+                  onClick={handleAddTutorRequest}
+                  disabled={addTutorDisabled}
                 >
-                  <option value="">Select rating</option>
-                  {Array.from({ length: 9 }).map((_, i) => {
-                    const value = 1 + i * 0.5
-                    const v = value.toFixed(1)
-                    return (
-                      <option key={v} value={v}>
-                        {v} / 5.0
-                      </option>
-                    )
-                  })}
-                </select>
-              </div>
-
-              <div className="review-form-row">
-                <label>Comment (optional)</label>
-                <textarea
-                  rows={3}
-                  value={myComment}
-                  onChange={(e) => setMyComment(e.target.value)}
-                  placeholder="Share how this tutor helped you..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={savingReview}
-                className="review-submit"
-              >
-                {savingReview ? 'Saving…' : 'Submit review'}
-              </button>
-            </form>
-          )}
-
-          {/* Button only if student & no existing review */}
-          {isStudent && !hasMyReview && (
-            <button
-              type="button"
-              className="leave-review-button"
-              onClick={() => {
-                setShowReviewForm((prev) => !prev)
-                setReviewsError(null)
-                setReviewsSuccess(null)
-                if (!showReviewForm) {
-                  // opening new review form
-                  setMyRating('')
-                  setMyComment('')
-                  setEditingReviewId(null)
-                }
-              }}
-            >
-              {showReviewForm ? 'Cancel Review' : 'Leave a Review'}
-            </button>
-          )}
-
-          {!isStudent && (
-            <p className="reviews-hint">
-              Log in as a student to leave a review.
-            </p>
-          )}
-
-          {isStudent && hasMyReview && (
-            <p className="reviews-hint">
-              You have already reviewed this tutor. Use the menu on your review to edit or delete it.
-            </p>
-          )}
-
-          {/* List of reviews */}
-          <div className="reviews-list">
-            {reviewsLoading ? (
-              <div className="reviews-empty">Loading reviews...</div>
-            ) : (
-              <>
-                {/* --- Your own review on top, if it exists --- */}
-                {hasMyReview && myReview && (
-                  <div className="reviews-subsection">
-                    <h3 className="reviews-subtitle">Your review</h3>
-                    {renderReviewCard(myReview, true)}
-                  </div>
-                )}
-
-                {/* --- Other students' reviews --- */}
-                <div className="reviews-subsection">
-                  <h3 className="reviews-subtitle">
-                    {hasMyReview ? "Other students' reviews" : 'Student reviews'}
-                  </h3>
-
-                  {otherReviews.length === 0 ? (
-                    <div className="reviews-empty">
-                      {hasMyReview
-                        ? 'No other reviews yet.'
-                        : 'No one has reviewed this tutor yet.'}
-                    </div>
-                  ) : (
-                    otherReviews.map((r) => renderReviewCard(r, false))
-                  )}
-                </div>
-              </>
-            )}
+                  {linkLoading ? 'Sending…' : addTutorLabel}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Content Section */}
+        <div className="tutor-profile-content">
+          {/* Overview & About Grid */}
+          <div className="tutor-profile-section-grid">
+            <div className="tutor-profile-section">
+              <h2>Overview</h2>
+              <ul className="tutor-profile-list">
+                <li>
+                  <strong>Joined:</strong>
+                  <span>{tutor.joined}</span>
+                </li>
+                <li>
+                  <strong>Experience:</strong>
+                  <span>{tutor.experienceYears} year{tutor.experienceYears > 1 ? 's' : ''}</span>
+                </li>
+                <li>
+                  <strong>Method:</strong>
+                  <span>{tutor.teachingMethod}</span>
+                </li>
+                {tutor.education && (
+                  <li>
+                    <strong>Education:</strong>
+                    <span>{tutor.education}</span>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            <div className="tutor-profile-section">
+              <h2>About {tutor.name.split(' ')[0]}</h2>
+              <div className="tutor-profile-bio">
+                {tutor.bio || 'No bio provided yet.'}
+              </div>
+            </div>
+          </div>
+
+          {/* Reviews Section */}
+          <div className="tutor-profile-reviews">
+            <div className="tutor-profile-section">
+              <h2>Student Reviews</h2>
+
+              {reviewsSuccess && (
+                <div className="reviews-success">{reviewsSuccess}</div>
+              )}
+              {reviewsError && (
+                <div className="reviews-error">{reviewsError}</div>
+              )}
+
+              {/* Review Form */}
+              {isStudent && showReviewForm && (
+                <div className="review-form">
+                  <div className="review-form-row">
+                    <label htmlFor="rating">Rating</label>
+                    <select
+                      id="rating"
+                      value={myRating}
+                      onChange={(e) => setMyRating(e.target.value)}
+                    >
+                      <option value="">Select rating</option>
+                      <option value="1">1 - Poor</option>
+                      <option value="2">2 - Fair</option>
+                      <option value="3">3 - Good</option>
+                      <option value="4">4 - Very Good</option>
+                      <option value="5">5 - Excellent</option>
+                    </select>
+                  </div>
+
+                  <div className="review-form-row">
+                    <label htmlFor="comment">Comment</label>
+                    <textarea
+                      id="comment"
+                      value={myComment}
+                      onChange={(e) => setMyComment(e.target.value)}
+                      placeholder="Share your experience..."
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    className="review-submit"
+                    onClick={handleReviewSubmit}
+                    disabled={savingReview || !myRating}
+                  >
+                    {savingReview ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </div>
+              )}
+
+              {/* Review button for students */}
+              {isStudent && !hasMyReview && !showReviewForm && (
+                <button
+                  type="button"
+                  className="review-submit"
+                  style={{ marginBottom: '20px' }}
+                  onClick={() => setShowReviewForm(true)}
+                >
+                  Leave a Review
+                </button>
+              )}
+
+              {!isStudent && (
+                <p className="reviews-hint">
+                  Log in as a student to leave a review.
+                </p>
+              )}
+
+              {isStudent && hasMyReview && !showReviewForm && (
+                <p className="reviews-hint">
+                  You have already reviewed this tutor. Use the menu on your review to edit or delete it.
+                </p>
+              )}
+
+              {/* Display Reviews */}
+              <div className="reviews-list">
+                {reviewsLoading ? (
+                  <div className="reviews-hint">Loading reviews...</div>
+                ) : (
+                  <>
+                    {myReview && renderReviewCard(myReview, true)}
+                    {otherReviews.map((r) => renderReviewCard(r, false))}
+                    {reviews.length === 0 && (
+                      <p className="reviews-hint">No reviews yet. Be the first to review!</p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
         <div className="tutor-profile-footer">
           <Link to="/tutors" className="tutor-profile-back">
-            ← Back to tutors
+            ← Back to all tutors
           </Link>
         </div>
       </div>
