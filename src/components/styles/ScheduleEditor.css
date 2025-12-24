@@ -1,0 +1,315 @@
+/* src/components/ScheduleEditor.css */
+
+.schedule-editor {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+}
+
+.schedule-header {
+  margin-bottom: 24px;
+}
+
+.schedule-header h3 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+}
+
+.schedule-subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Day tabs */
+.day-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 4px;
+  overflow-x: auto;
+}
+
+.day-tab {
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.day-tab:hover {
+  background: #f3f4f6;
+  color: #1a1a1a;
+}
+
+.day-tab.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.day-tab.has-slots {
+  font-weight: 600;
+}
+
+.slot-count {
+  background: rgba(255, 255, 255, 0.9);
+  color: #3b82f6;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.day-tab.active .slot-count {
+  background: rgba(255, 255, 255, 0.9);
+  color: #3b82f6;
+}
+
+/* Day schedule */
+.day-schedule {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.day-schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.day-schedule-header h4 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.125rem;
+}
+
+.day-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-copy-all,
+.btn-clear-day {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.btn-copy-all:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.btn-clear-day:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* Time slots */
+.time-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.no-slots {
+  text-align: center;
+  padding: 32px;
+  color: #9ca3af;
+}
+
+.no-slots p {
+  margin: 0;
+}
+
+.time-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.time-input-group label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.time-input-group input[type="time"] {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.time-input-group input[type="time"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.time-separator {
+  color: #9ca3af;
+  font-size: 1.25rem;
+  margin-top: 20px;
+}
+
+.btn-remove-slot {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #ef4444;
+  font-size: 1.125rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-remove-slot:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.btn-add-slot {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed #d1d5db;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #3b82f6;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-add-slot:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* Weekly overview */
+.schedule-overview {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 24px;
+}
+
+.schedule-overview h4 {
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+  font-size: 1.125rem;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.overview-day {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.overview-day-name {
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+}
+
+.overview-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overview-slot {
+  font-size: 0.8rem;
+  color: #059669;
+  background: #d1fae5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.overview-empty {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .schedule-editor {
+    padding: 16px;
+  }
+
+  .day-tabs {
+    gap: 4px;
+  }
+
+  .day-tab {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+
+  .time-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .time-separator {
+    display: none;
+  }
+
+  .day-actions {
+    flex-direction: column;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+}

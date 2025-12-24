@@ -1,7 +1,8 @@
-// src/pages/TutorProfilePage.jsx - Complete Improved Version
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import VerificationBadge from '../components/VerificationBadge'
+import ScheduleDisplay from '../components/ScheduleDisplay'
+import SessionRequestForm from '../components/SessionRequestForm'
 import './styles/TutorProfilePage.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
@@ -66,6 +67,7 @@ function TutorProfilePage({ currentUser }) {
 
   const [linkStatus, setLinkStatus] = useState('NONE')
   const [linkLoading, setLinkLoading] = useState(false)
+  const [showRequestForm, setShowRequestForm] = useState(false)
 
   // Load tutor info
   const loadTutor = async (userId) => {
@@ -89,7 +91,8 @@ function TutorProfilePage({ currentUser }) {
         education: data.education || '',
         hourlyRate: data.hourlyRate,
         profileImageUrl: data.profileImageUrl || null,
-        verificationTier: data.verificationTier || 'TIER_1'
+        verificationTier: data.verificationTier || 'TIER_1',
+        weeklySchedule: data.weeklySchedule || null  // ADD THIS LINE
       })
     } catch (err) {
       console.error(err)
@@ -188,39 +191,46 @@ function TutorProfilePage({ currentUser }) {
       setReviewsError('You must be logged in as a student to leave a review.')
       return
     }
+
     if (!myRating) {
       setReviewsError('Please select a rating.')
       return
     }
 
-    const userId = tutor?.userId ?? Number(id)
     setSavingReview(true)
 
     try {
-      const res = await fetch(
-        `${API_BASE}/api/tutors/user/${userId}/reviews`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: currentUser.userId,
-            rating: Number(myRating),
-            comment: myComment.trim(),
-          }),
-        }
-      )
+      const url = editingReviewId
+        ? `${API_BASE}/api/tutors/user/${tutor.userId}/reviews/${editingReviewId}`
+        : `${API_BASE}/api/tutors/user/${tutor.userId}/reviews`
+
+      const method = editingReviewId ? 'PUT' : 'POST'
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentUserId: currentUser.userId,
+          rating: Number(myRating),
+          comment: myComment || null
+        })
+      })
 
       if (!res.ok) {
         const text = await res.text()
-        throw new Error(text || 'Failed to save review')
+        throw new Error(text || 'Failed to submit review')
       }
 
-      setReviewsSuccess('Your review has been saved.')
+      setReviewsSuccess(
+        editingReviewId
+          ? 'Review updated successfully!'
+          : 'Review submitted successfully!'
+      )
+
       setShowReviewForm(false)
-      await loadTutor(userId)
-      await loadReviews(userId)
+      loadReviews(tutor.userId)
+      loadTutor(tutor.userId)
     } catch (err) {
-      console.error(err)
       setReviewsError(err.message)
     } finally {
       setSavingReview(false)
@@ -228,125 +238,55 @@ function TutorProfilePage({ currentUser }) {
   }
 
   // Delete review
-  const handleDeleteReview = async (review) => {
-    if (!isStudent || !currentUser) return
-
-    const confirmed = window.confirm('Delete your review?')
-    if (!confirmed) return
-
-    const userId = tutor?.userId ?? Number(id)
-
-    setSavingReview(true)
-    setReviewsError(null)
-    setReviewsSuccess(null)
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) return
 
     try {
       const res = await fetch(
-        `${API_BASE}/api/tutors/user/${userId}/reviews/${review.id}?studentUserId=${currentUser.userId}`,
-        {
-          method: 'DELETE',
-        }
+        `${API_BASE}/api/tutors/user/${tutor.userId}/reviews/${reviewId}`,
+        { method: 'DELETE' }
       )
 
       if (!res.ok) {
-        const text = await res.text()
-        throw new Error(text || 'Failed to delete review')
+        throw new Error('Failed to delete review')
       }
 
-      setReviewsSuccess('Your review has been deleted.')
-      setOpenMenuReviewId(null)
-      setEditingReviewId(null)
+      setReviewsSuccess('Review deleted successfully!')
       setMyRating('')
       setMyComment('')
-      setShowReviewForm(false)
-
-      await loadTutor(userId)
-      await loadReviews(userId)
+      setEditingReviewId(null)
+      setOpenMenuReviewId(null)
+      loadReviews(tutor.userId)
+      loadTutor(tutor.userId)
     } catch (err) {
       setReviewsError(err.message)
-    } finally {
-      setSavingReview(false)
     }
   }
 
-  // Render review card
-  const renderReviewCard = (r, isMine) => (
-    <div key={r.id} className="review-card">
-      <div className="review-card-top">
-        <div style={{ flex: 1 }}>
-          <span className="review-card-reviewer">
-            {r.studentFirstName
-              ? `${r.studentFirstName} ${r.studentLastName || ''}`.trim()
-              : 'Student'}
-            {isMine && ' (You)'}
-          </span>
-          <div style={{ marginTop: '4px' }}>
-            <span className="review-card-rating">
-              {'★'.repeat(r.rating)}
-            </span>
-          </div>
-        </div>
+  // Edit review
+  const handleEditReview = (review) => {
+    setMyRating(String(review.rating))
+    setMyComment(review.comment || '')
+    setEditingReviewId(review.id)
+    setShowReviewForm(true)
+    setOpenMenuReviewId(null)
+  }
 
-        {isMine && (
-          <div className="review-menu-wrapper">
-            <button
-              type="button"
-              className="review-kebab"
-              onClick={() =>
-                setOpenMenuReviewId((prev) =>
-                  prev === r.id ? null : r.id
-                )
-              }
-            >
-              ⋯
-            </button>
-            {openMenuReviewId === r.id && (
-              <div className="review-menu">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMyRating(String(r.rating))
-                    setMyComment(r.comment || '')
-                    setEditingReviewId(r.id)
-                    setShowReviewForm(true)
-                    setReviewsError(null)
-                    setReviewsSuccess(null)
-                    setOpenMenuReviewId(null)
-                  }}
-                >
-                  Edit review
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteReview(r)}
-                >
-                  Delete review
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {r.comment && (
-        <p className="review-card-comment">{r.comment}</p>
-      )}
-      {r.createdAt && (
-        <p className="review-card-date">
-          {new Date(r.createdAt).toLocaleDateString()}
-        </p>
-      )}
-    </div>
-  )
-
-  // Handle add tutor request
-  const handleAddTutorRequest = async () => {
-    if (!isStudent || !currentUser) {
-      alert('Please log in as a student to add this tutor.')
+  // Contact tutor
+  const handleContactTutor = () => {
+    if (!currentUser) {
+      navigate('/login')
       return
     }
+    navigate('/messages')
+  }
 
-    const tutorUserId = tutor?.userId ?? Number(id)
+  // Add tutor request
+  const handleAddTutorRequest = async () => {
+    if (!currentUser || !isStudent) {
+      navigate('/login')
+      return
+    }
 
     setLinkLoading(true)
     try {
@@ -355,8 +295,8 @@ function TutorProfilePage({ currentUser }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           studentUserId: currentUser.userId,
-          tutorUserId,
-        }),
+          tutorUserId: tutor.userId
+        })
       })
 
       if (!res.ok) {
@@ -364,73 +304,80 @@ function TutorProfilePage({ currentUser }) {
         throw new Error(text || 'Failed to send request')
       }
 
-      await loadLinkStatus(currentUser.userId, tutorUserId)
+      setLinkStatus('PENDING')
     } catch (err) {
-      console.error(err)
-      alert(err.message || 'Failed to send request')
+      alert(err.message)
     } finally {
       setLinkLoading(false)
     }
   }
 
-  // Handle contact tutor (open chat)
-  const handleContactTutor = async () => {
-    if (!currentUser) {
-      alert('Please log in to contact this tutor.')
-      return
-    }
+  // Render review card
+  const renderReviewCard = (review, isMyReview) => {
+    const isMenuOpen = openMenuReviewId === review.id
 
-    const tutorUserId = tutor?.userId ?? Number(id)
-    
-    // Determine student and tutor IDs based on current user role
-    let studentUserId, finalTutorUserId
-    
-    if (currentUser.role === 'STUDENT') {
-      studentUserId = currentUser.userId
-      finalTutorUserId = tutorUserId
-    } else if (currentUser.role === 'TUTOR') {
-      // If current user is a tutor viewing another tutor's profile,
-      // they can't start a conversation (tutors can only chat with students)
-      alert('Only students can contact tutors.')
-      return
-    } else {
-      alert('Invalid user role.')
-      return
-    }
+    return (
+      <div key={review.id} className="review-card">
+        <div className="review-card-top">
+          <div className="review-rating">
+            <span className="stars">★</span> {Number(review.rating).toFixed(1)}
+          </div>
+          <div className="review-author">
+            {review.studentFirstName
+              ? `${review.studentFirstName} ${review.studentLastName || ''}`.trim()
+              : 'Student'}
+          </div>
 
-    setLinkLoading(true)
-    try {
-      const res = await fetch(
-        `${API_BASE}/api/chat/conversation?studentUserId=${studentUserId}&tutorUserId=${finalTutorUserId}`,
-        { method: 'POST' }
-      )
+          {isMyReview && (
+            <div className="review-menu-wrapper">
+              <button
+                type="button"
+                className="review-menu-button"
+                onClick={() =>
+                  setOpenMenuReviewId(isMenuOpen ? null : review.id)
+                }
+              >
+                ⋮
+              </button>
+              {isMenuOpen && (
+                <div className="review-menu-dropdown">
+                  <button
+                    type="button"
+                    onClick={() => handleEditReview(review)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteReview(review.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
-      if (!res.ok) {
-        const text = await res.text()
-        throw new Error(text || 'Failed to start conversation')
-      }
+        {review.comment && (
+          <p className="review-comment">{review.comment}</p>
+        )}
 
-      const conv = await res.json()
-      navigate(`/chat/${conv.id}`, {
-        state: { 
-          otherName: tutor.name,
-          otherUserId: tutorUserId
-        }
-      })
-    } catch (err) {
-      console.error(err)
-      alert(err.message || 'Failed to start conversation')
-    } finally {
-      setLinkLoading(false)
-    }
+        {review.createdAt && (
+          <div className="review-date">
+            {new Date(review.createdAt).toLocaleDateString()}
+          </div>
+        )}
+      </div>
+    )
   }
 
   if (loading) {
     return (
       <div className="tutor-profile-page">
         <div className="tutor-profile-card">
-          <div className="tutor-profile-loading">
-            <p>Loading tutor profile...</p>
+          <div style={{ padding: '40px', textAlign: 'center' }}>
+            Loading tutor profile...
           </div>
         </div>
       </div>
@@ -441,10 +388,10 @@ function TutorProfilePage({ currentUser }) {
     return (
       <div className="tutor-profile-page">
         <div className="tutor-profile-card">
-          <div className="tutor-profile-loading">
-            <p>Failed to load tutor profile.</p>
+          <div style={{ padding: '40px', textAlign: 'center' }}>
+            <p>{error || 'Tutor not found'}</p>
             <Link to="/tutors" className="tutor-profile-back">
-              ← Back to tutors
+              ← Back to all tutors
             </Link>
           </div>
         </div>
@@ -452,26 +399,37 @@ function TutorProfilePage({ currentUser }) {
     )
   }
 
-  const avgRatingDisplay = Number(tutor.rating || 0).toFixed(1)
-  const ratingCount = tutor.ratingCount || reviews.length || 0
-  const myUserId = currentUser?.userId
-  const myReview = isStudent && currentUser ? reviews.find((r) => r.studentUserId === myUserId) : null
-  const hasMyReview = Boolean(myReview)
-  const otherReviews = hasMyReview ? reviews.filter((r) => r.id !== myReview.id) : reviews
+  const avgRatingDisplay = tutor.rating ? tutor.rating.toFixed(1) : 'N/A'
+  const ratingCount = tutor.ratingCount || 0
 
-  // Parse subjects into array
-  const subjectsArray = tutor.subject ? tutor.subject.split(',').map(s => s.trim()) : []
+  const myUserId = currentUser?.userId
+  const myReview = isStudent && myUserId
+    ? reviews.find((r) => r.studentUserId === myUserId)
+    : null
+  const hasMyReview = Boolean(myReview)
+  const otherReviews = hasMyReview
+    ? reviews.filter((r) => r.id !== myReview.id)
+    : reviews
+
+  const subjectsArray = tutor.subject
+    ? tutor.subject.split(',').map((s) => s.trim())
+    : []
 
   const addTutorLabel = (() => {
     switch (linkStatus) {
-      case 'PENDING': return 'Request Sent'
-      case 'ACCEPTED': return 'Tutor Added'
-      case 'DECLINED': return 'Add Tutor'
-      default: return 'Add Tutor'
+      case 'PENDING':
+        return 'Request Sent'
+      case 'ACCEPTED':
+        return 'Tutor Added'
+      case 'DECLINED':
+        return 'Add Tutor'
+      default:
+        return 'Add Tutor'
     }
   })()
 
-  const addTutorDisabled = linkLoading || linkStatus === 'PENDING' || linkStatus === 'ACCEPTED'
+  const addTutorDisabled =
+    linkLoading || linkStatus === 'PENDING' || linkStatus === 'ACCEPTED'
 
   return (
     <div className="tutor-profile-page">
@@ -525,8 +483,8 @@ function TutorProfilePage({ currentUser }) {
                 <span className="unit">/hr</span>
               </div>
 
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="tutor-profile-cta"
                 onClick={handleContactTutor}
               >
@@ -560,7 +518,10 @@ function TutorProfilePage({ currentUser }) {
                 </li>
                 <li>
                   <strong>Experience:</strong>
-                  <span>{tutor.experienceYears} year{tutor.experienceYears > 1 ? 's' : ''}</span>
+                  <span>
+                    {tutor.experienceYears} year
+                    {tutor.experienceYears > 1 ? 's' : ''}
+                  </span>
                 </li>
                 <li>
                   <strong>Method:</strong>
@@ -582,6 +543,28 @@ function TutorProfilePage({ currentUser }) {
               </div>
             </div>
           </div>
+
+          {/* Schedule Display with Book Now Button */}
+          {tutor.weeklySchedule && (
+            <div className="tutor-profile-section" style={{ marginTop: '32px' }}>
+              <ScheduleDisplay schedule={tutor.weeklySchedule} />
+              
+              {/* Book Now Button - Students Only */}
+              {isStudent && (
+                <div className="book-now-container">
+                  <button
+                    className="btn-book-now"
+                    onClick={() => setShowRequestForm(true)}
+                  >
+                    📅 Book a Session
+                  </button>
+                  <p className="book-now-hint">
+                    Select your preferred time and send a request to this tutor
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Reviews Section */}
           <div className="tutor-profile-reviews">
@@ -630,7 +613,11 @@ function TutorProfilePage({ currentUser }) {
                     onClick={handleReviewSubmit}
                     disabled={savingReview || !myRating}
                   >
-                    {savingReview ? 'Submitting...' : 'Submit Review'}
+                    {savingReview
+                      ? 'Submitting...'
+                      : editingReviewId
+                        ? 'Update Review'
+                        : 'Submit Review'}
                   </button>
                 </div>
               )}
@@ -655,7 +642,8 @@ function TutorProfilePage({ currentUser }) {
 
               {isStudent && hasMyReview && !showReviewForm && (
                 <p className="reviews-hint">
-                  You have already reviewed this tutor. Use the menu on your review to edit or delete it.
+                  You have already reviewed this tutor. Use the menu on your
+                  review to edit or delete it.
                 </p>
               )}
 
@@ -668,7 +656,9 @@ function TutorProfilePage({ currentUser }) {
                     {myReview && renderReviewCard(myReview, true)}
                     {otherReviews.map((r) => renderReviewCard(r, false))}
                     {reviews.length === 0 && (
-                      <p className="reviews-hint">No reviews yet. Be the first to review!</p>
+                      <p className="reviews-hint">
+                        No reviews yet. Be the first to review!
+                      </p>
                     )}
                   </>
                 )}
@@ -684,6 +674,20 @@ function TutorProfilePage({ currentUser }) {
           </Link>
         </div>
       </div>
+
+      {/* Session Request Modal */}
+      {showRequestForm && (
+        <SessionRequestForm
+          tutorUserId={tutor.userId}
+          tutorName={tutor.name}
+          studentUserId={currentUser?.userId}
+          onClose={() => setShowRequestForm(false)}
+          onSuccess={() => {
+            alert('Session request sent successfully! The tutor will review your request.')
+            setShowRequestForm(false)
+          }}
+        />
+      )}
     </div>
   )
 }

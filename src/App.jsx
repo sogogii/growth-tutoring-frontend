@@ -12,6 +12,7 @@ import SignupChoicePage from './pages/login/SignupChoicePage'
 import LoginPage from './pages/login/LoginPage'
 import ForgotPasswordPage from './pages/login/ForgotPasswordPage'
 import MyProfilePage from './pages/MyProfilePage'
+import SchedulePage from './pages/SchedulePage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
@@ -362,18 +363,27 @@ function App() {
                       </button>
                     )}
                     {currentUser.role === 'TUTOR' && (
-                      <button
-                        type="button"
-                        className="user-menu-link"
-                        onClick={() => goTo('/my-students')}
-                      >
-                        My students
-                        {pendingStudentCount > 0 && (
-                          <span className="notif-badge">
-                            {pendingStudentCount}
-                          </span>
-                        )}
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/my-students')}
+                        >
+                          My students
+                          {pendingStudentCount > 0 && (
+                            <span className="notif-badge">
+                              {pendingStudentCount}
+                            </span>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/my-schedule')}
+                        >
+                          My schedule
+                        </button>
+                      </>
                     )}
                     {currentUser.role === 'STUDENT' && (
                       <button
@@ -494,6 +504,13 @@ function App() {
           <Route
             path="/my-tutors"
             element={<MyTutorsPage currentUser={currentUser} />}
+          />
+
+          <Route
+            path="/my-schedule"
+            element={
+              <SchedulePage currentUser={currentUser} />
+            }
           />
 
           <Route path="/how-it-works/students" element={<HowItWorksStudents />} />

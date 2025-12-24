@@ -1,0 +1,130 @@
+/* src/components/ScheduleDisplay.css */
+
+.schedule-display {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+}
+
+.schedule-display h3 {
+  margin: 0 0 20px 0;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.no-schedule {
+  text-align: center;
+  padding: 32px;
+  color: #9ca3af;
+  font-style: italic;
+  margin: 0;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.schedule-day {
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.schedule-day:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.schedule-day.unavailable {
+  opacity: 0.6;
+}
+
+.schedule-day.unavailable:hover {
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+.schedule-day-header {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.day-name {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.schedule-day-slots {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+}
+
+.schedule-time-slot {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #047857;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid #6ee7b7;
+  transition: transform 0.2s;
+}
+
+.schedule-time-slot:hover {
+  transform: translateY(-2px);
+}
+
+.schedule-unavailable {
+  color: #9ca3af;
+  text-align: center;
+  padding: 20px 12px;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .schedule-display {
+    padding: 16px;
+  }
+
+  .schedule-display h3 {
+    font-size: 1.25rem;
+  }
+
+  .schedule-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .schedule-day-slots {
+    min-height: 60px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .schedule-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .schedule-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
