@@ -604,3 +604,61 @@
 .tutor-profile-card {
   animation: fadeIn 0.4s ease;
 }
+
+/* ========================================
+   Book Now Button Styles
+   ======================================== */
+
+.book-now-container {
+  margin-top: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.btn-book-now {
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-book-now:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  background: #f8f9ff;
+}
+
+.btn-book-now:active {
+  transform: translateY(0);
+}
+
+.book-now-hint {
+  margin: 12px 0 0;
+  color: white;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .btn-book-now {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+  
+  .book-now-container {
+    padding: 20px;
+  }
+}

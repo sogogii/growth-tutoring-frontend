@@ -1,0 +1,383 @@
+/* src/pages/styles/SchedulePage.css - Complete with Admin-Style Tabs */
+
+/* ========================================
+   Page Container
+   ======================================== */
+
+.schedule-page {
+  min-height: 100vh;
+  background: #f9fafb;
+  padding: 40px 20px;
+}
+
+.schedule-container {
+  min-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   Page Header
+   ======================================== */
+
+.schedule-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.schedule-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.schedule-page-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.btn-back-to-profile {
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back-to-profile:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* ========================================
+   Messages
+   ======================================== */
+
+.schedule-message {
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.schedule-success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.schedule-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* ========================================
+   Admin-Style Tabs
+   ======================================== */
+
+.admin-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+.admin-tab {
+  padding: 16px 32px;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-tab:hover {
+  color: #374151;
+  background: #f9fafb;
+}
+
+.admin-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  background: white;
+  font-weight: 600;
+}
+
+.tab-badge {
+  background: #ef4444;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+.admin-tab.active .tab-badge {
+  background: #3b82f6;
+}
+
+/* ========================================
+   Tab Content
+   ======================================== */
+
+.tab-content {
+  background: white;
+  border-radius: 0 0 12px 12px;
+  padding: 32px;
+  min-height: 400px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.availability-tab,
+.requests-tab {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   Schedule Actions
+   ======================================== */
+
+.schedule-actions {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-save-schedule {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-save-schedule:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-save-schedule:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Help Section
+   ======================================== */
+
+.schedule-help {
+  margin-top: 32px;
+  padding: 24px;
+  background: #eff6ff;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+}
+
+.schedule-help h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.125rem;
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.schedule-help ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.schedule-help li {
+  color: #1e40af;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.schedule-help li:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-radius: 50%;
+  border-top-color: #3b82f6;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .schedule-page {
+    padding: 20px 16px;
+  }
+
+  .schedule-page-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn-back-to-profile {
+    align-self: flex-start;
+  }
+
+  .schedule-page-title {
+    font-size: 1.5rem;
+  }
+
+  .admin-tabs {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .admin-tab {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .tab-content {
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .schedule-actions {
+    flex-direction: column;
+  }
+
+  .btn-save-schedule {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .schedule-help {
+    padding: 20px;
+  }
+
+  .schedule-help h3 {
+    font-size: 1rem;
+  }
+
+  .schedule-help li {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tab {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
+
+  .tab-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .schedule-page {
+    background: white;
+  }
+
+  .admin-tabs,
+  .schedule-actions,
+  .btn-back-to-profile {
+    display: none;
+  }
+
+  .tab-content {
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+}
