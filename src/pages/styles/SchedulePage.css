@@ -1,4 +1,4 @@
-/* src/pages/styles/SchedulePage.css - Complete with Admin-Style Tabs */
+/* src/pages/styles/SchedulePage.css - Complete with 3 tabs */
 
 /* ========================================
    Page Container
@@ -6,13 +6,18 @@
 
 .schedule-page {
   min-height: 100vh;
-  background: #f9fafb;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 40px 20px;
+  min-width: 1100px;
 }
 
 .schedule-container {
-  min-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 /* ========================================
@@ -20,56 +25,127 @@
    ======================================== */
 
 .schedule-page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 32px 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
 }
 
-.schedule-page-title {
+.schedule-page-header h1 {
+  margin: 0 0 8px 0;
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 8px 0;
 }
 
-.schedule-page-subtitle {
-  font-size: 1rem;
-  color: #6b7280;
+.schedule-page-header p {
   margin: 0;
-}
-
-.btn-back-to-profile {
-  padding: 10px 20px;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  color: #374151;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-back-to-profile:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  font-size: 1.1rem;
+  opacity: 0.95;
 }
 
 /* ========================================
-   Messages
+   Admin-style Tabs
    ======================================== */
 
-.schedule-message {
-  padding: 14px 20px;
-  border-radius: 8px;
-  margin-bottom: 24px;
+.admin-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 0 24px;
+  gap: 4px;
+}
+
+.admin-tab {
+  padding: 16px 28px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.admin-tab:hover {
+  color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.admin-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* Tab Badge (for pending count) */
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: #ef4444;
+  color: white;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ========================================
+   Tab Content
+   ======================================== */
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Availability Tab
+   ======================================== */
+
+.availability-tab {
+  padding: 32px 40px;
+}
+
+/* Messages */
+.success-message {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  border-left: 4px solid #10b981;
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-message {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  border-left: 4px solid #ef4444;
   animation: slideDown 0.3s ease-out;
 }
 
@@ -84,125 +160,26 @@
   }
 }
 
-.schedule-success {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.schedule-error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
-}
-
-/* ========================================
-   Admin-Style Tabs
-   ======================================== */
-
-.admin-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 32px;
-  background: white;
-  border-radius: 12px 12px 0 0;
-  overflow: hidden;
-}
-
-.admin-tab {
-  padding: 16px 32px;
-  background: transparent;
-  border: none;
-  color: #6b7280;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.admin-tab:hover {
-  color: #374151;
-  background: #f9fafb;
-}
-
-.admin-tab.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
-  background: white;
-  font-weight: 600;
-}
-
-.tab-badge {
-  background: #ef4444;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  min-width: 20px;
-  text-align: center;
-}
-
-.admin-tab.active .tab-badge {
-  background: #3b82f6;
-}
-
-/* ========================================
-   Tab Content
-   ======================================== */
-
-.tab-content {
-  background: white;
-  border-radius: 0 0 12px 12px;
-  padding: 32px;
-  min-height: 400px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.availability-tab,
-.requests-tab {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* ========================================
-   Schedule Actions
-   ======================================== */
-
+/* Schedule Actions */
 .schedule-actions {
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 2px solid #e5e7eb;
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
 }
 
 .btn-save-schedule {
-  padding: 12px 32px;
+  padding: 14px 40px;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -210,21 +187,24 @@
 
 .btn-save-schedule:hover:not(:disabled) {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .btn-save-schedule:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-.btn-spinner {
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: transparent;
+  border-top-color: white;
   animation: spin 0.6s linear infinite;
 }
 
@@ -232,103 +212,165 @@
   to { transform: rotate(360deg); }
 }
 
-/* ========================================
-   Help Section
-   ======================================== */
-
+/* Help Section */
 .schedule-help {
   margin-top: 32px;
   padding: 24px;
-  background: #eff6ff;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-radius: 12px;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #f59e0b;
 }
 
 .schedule-help h3 {
   margin: 0 0 16px 0;
-  font-size: 1.125rem;
-  color: #1e40af;
-  font-weight: 600;
+  font-size: 1.2rem;
+  color: #92400e;
 }
 
 .schedule-help ul {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 24px;
+  color: #78350f;
+  line-height: 1.8;
 }
 
 .schedule-help li {
-  color: #1e40af;
-  line-height: 1.7;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .schedule-help li:last-child {
   margin-bottom: 0;
 }
 
-/* ========================================
-   Loading State
-   ======================================== */
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  color: #6b7280;
+.schedule-help strong {
+  color: #92400e;
+  font-weight: 600;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e5e7eb;
-  border-radius: 50%;
-  border-top-color: #3b82f6;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 16px;
+/* ========================================
+   Requests Tab
+   ======================================== */
+
+.requests-tab {
+  padding: 32px 40px;
+}
+
+/* ========================================
+   Calendar Tab
+   ======================================== */
+
+.calendar-tab {
+  padding: 32px 40px;
+  background: #f9fafb;
+  min-height: 600px;
+}
+
+.calendar-intro {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.calendar-intro h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  color: #1f2937;
+}
+
+.calendar-intro p {
+  margin: 0;
+  font-size: 1rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ========================================
+   Empty States
+   ======================================== */
+
+.empty-state {
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.empty-state h2 {
+  margin: 0 0 12px 0;
+  font-size: 1.8rem;
+  color: #1f2937;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #6b7280;
 }
 
 /* ========================================
    Responsive Design
    ======================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .schedule-page {
-    padding: 20px 16px;
+    padding: 30px 15px;
+  }
+
+  .schedule-container {
+    border-radius: 12px;
   }
 
   .schedule-page-header {
-    flex-direction: column;
-    gap: 16px;
+    padding: 24px 32px;
   }
 
-  .btn-back-to-profile {
-    align-self: flex-start;
+  .schedule-page-header h1 {
+    font-size: 1.75rem;
   }
 
-  .schedule-page-title {
+  .availability-tab,
+  .requests-tab,
+  .calendar-tab {
+    padding: 24px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-page {
+    padding: 20px 10px;
+  }
+
+  .schedule-page-header {
+    padding: 20px 24px;
+  }
+
+  .schedule-page-header h1 {
     font-size: 1.5rem;
   }
 
+  .schedule-page-header p {
+    font-size: 1rem;
+  }
+
   .admin-tabs {
-    border-radius: 8px 8px 0 0;
+    padding: 0 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .admin-tab {
     padding: 14px 20px;
     font-size: 0.9rem;
-    flex: 1;
-    justify-content: center;
   }
 
-  .tab-content {
-    padding: 20px;
-    border-radius: 0 0 8px 8px;
-  }
-
-  .schedule-actions {
-    flex-direction: column;
+  .availability-tab,
+  .requests-tab,
+  .calendar-tab {
+    padding: 20px 24px;
   }
 
   .btn-save-schedule {
@@ -341,43 +383,127 @@
   }
 
   .schedule-help h3 {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
-  .schedule-help li {
-    font-size: 0.9rem;
+  .schedule-help ul {
+    padding-left: 20px;
+    font-size: 0.95rem;
+  }
+
+  .calendar-intro h2 {
+    font-size: 1.5rem;
+  }
+
+  .calendar-intro p {
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 480px) {
+  .schedule-page {
+    padding: 15px 5px;
+  }
+
+  .schedule-page-header {
+    padding: 16px 20px;
+  }
+
+  .schedule-page-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .schedule-page-header p {
+    font-size: 0.9rem;
+  }
+
+  .admin-tabs {
+    padding: 0 8px;
+  }
+
   .admin-tab {
     padding: 12px 16px;
     font-size: 0.85rem;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .tab-badge {
-    font-size: 0.7rem;
-    padding: 2px 6px;
+  .admin-tab .tab-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+  }
+
+  .availability-tab,
+  .requests-tab,
+  .calendar-tab {
+    padding: 16px 20px;
+  }
+
+  .btn-save-schedule {
+    padding: 12px 32px;
+    font-size: 1rem;
+  }
+
+  .schedule-help {
+    padding: 16px;
+  }
+
+  .schedule-help h3 {
+    font-size: 1rem;
+  }
+
+  .schedule-help ul {
+    font-size: 0.9rem;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+  }
+
+  .empty-state h2 {
+    font-size: 1.5rem;
+  }
+
+  .empty-state p {
+    font-size: 1rem;
+  }
+
+  .calendar-intro {
+    margin-bottom: 24px;
+  }
+
+  .calendar-intro h2 {
+    font-size: 1.3rem;
+  }
+
+  .calendar-intro p {
+    font-size: 0.9rem;
   }
 }
 
 /* ========================================
-   Print Styles
+   Accessibility
    ======================================== */
 
-@media print {
-  .schedule-page {
-    background: white;
-  }
+.admin-tab:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
 
-  .admin-tabs,
-  .schedule-actions,
-  .btn-back-to-profile {
-    display: none;
-  }
+.btn-save-schedule:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
 
-  .tab-content {
-    box-shadow: none;
-    border: 1px solid #e5e7eb;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tab-content,
+  .success-message,
+  .error-message,
+  .btn-save-schedule,
+  .admin-tab {
+    animation: none;
+    transition: none;
   }
 }

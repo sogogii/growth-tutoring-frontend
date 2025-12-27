@@ -69,6 +69,9 @@ function TutorProfilePage({ currentUser }) {
   const [linkLoading, setLinkLoading] = useState(false)
   const [showRequestForm, setShowRequestForm] = useState(false)
 
+  const [isConnected, setIsConnected] = useState(false)
+  const [checkingConnection, setCheckingConnection] = useState(true)
+
   // Load tutor info
   const loadTutor = async (userId) => {
     try {

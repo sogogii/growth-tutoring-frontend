@@ -1,0 +1,473 @@
+/* src/components/styles/SessionCalendar.css */
+
+.session-calendar {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   Calendar Header
+   ======================================== */
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn,
+.today-btn {
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover,
+.today-btn:hover {
+  background: #f9fafb;
+  border-color: #3b82f6;
+}
+
+.today-btn {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.calendar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.booked {
+  background: #3b82f6;
+}
+
+/* ========================================
+   Calendar Grid
+   ======================================== */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #e5e7eb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.calendar-day-header {
+  background: #f9fafb;
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.calendar-day {
+  background: white;
+  min-height: 120px;
+  padding: 8px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.calendar-day.other-month {
+  background: #f9fafb;
+  opacity: 0.5;
+}
+
+.calendar-day.today {
+  background: #eff6ff;
+  border: 2px solid #3b82f6;
+}
+
+.calendar-day.has-events {
+  background: #f0f9ff;
+}
+
+.calendar-day:hover {
+  background: #fef3c7;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.day-number {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.calendar-day.today .day-number {
+  color: #3b82f6;
+  font-size: 1.1rem;
+}
+
+/* ========================================
+   Session Indicators
+   ======================================== */
+
+.day-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-indicator {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.session-indicator:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.session-time {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.session-student {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.more-sessions {
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-align: center;
+  padding: 4px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* ========================================
+   Session Details Modal
+   ======================================== */
+
+.session-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.session-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.session-modal h3 {
+  margin: 0 0 24px 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #9ca3af;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-value {
+  font-size: 1rem;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+/* Student Info in Modal */
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.student-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.student-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.student-email {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.message-box {
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+  white-space: pre-wrap;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.status-accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.status-declined {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+
+.calendar-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .calendar-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .calendar-nav {
+    order: 2;
+  }
+
+  .calendar-title {
+    order: 1;
+  }
+
+  .calendar-legend {
+    order: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-day {
+    min-height: 80px;
+    padding: 4px;
+  }
+
+  .day-number {
+    font-size: 0.8rem;
+  }
+
+  .session-indicator {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+  }
+
+  .session-time {
+    font-size: 0.65rem;
+  }
+
+  .session-student {
+    font-size: 0.6rem;
+  }
+
+  .calendar-day-header {
+    padding: 8px 4px;
+    font-size: 0.7rem;
+  }
+
+  .session-modal {
+    padding: 24px;
+  }
+
+  .session-modal h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-header {
+    padding: 12px;
+  }
+
+  .calendar-title {
+    font-size: 1.2rem;
+  }
+
+  .nav-btn,
+  .today-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .calendar-day {
+    min-height: 60px;
+  }
+
+  .session-indicator {
+    font-size: 0.6rem;
+  }
+
+  .session-time,
+  .session-student {
+    display: none;
+  }
+
+  .session-indicator::after {
+    content: '•';
+    font-size: 1.5rem;
+  }
+}
