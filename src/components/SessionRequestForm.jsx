@@ -1,222 +1,425 @@
+// src/components/SessionRequestForm_Enhanced.jsx - With Calendar & Available Times
 import { useState, useEffect } from 'react'
 import './styles/SessionRequestForm.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-// Get user's timezone
-const getUserTimezone = () => {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone
-}
-
-function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose, onSuccess }) {
-  const [formData, setFormData] = useState({
-    date: '',
-    startTime: '',
-    endTime: '',
-    subject: '',
-    message: ''
-  })
+function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) {
+  // Step 1: Select Date
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(null)
   
-  const [loading, setLoading] = useState(false)
+  // Step 2: Select Time
+  const [availableTimes, setAvailableTimes] = useState([])
+  const [selectedStartTime, setSelectedStartTime] = useState(null)
+  const [selectedEndTime, setSelectedEndTime] = useState(null)
+  
+  // Step 3: Add Details
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
+  
+  // UI State
+  const [tutorSchedule, setTutorSchedule] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
-  
-  const userTimezone = getUserTimezone()
 
-  // Get min and max dates
-  const getMinDate = () => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return tomorrow.toISOString().split('T')[0]
-  }
+  // Load tutor's schedule
+  useEffect(() => {
+    loadTutorSchedule()
+  }, [tutorUserId])
 
-  const getMaxDate = () => {
-    const maxDate = new Date()
-    maxDate.setDate(maxDate.getDate() + 90) // 3 months
-    return maxDate.toISOString().split('T')[0]
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-    setError(null)
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
-
-    // Validation
-    if (!formData.date || !formData.startTime || !formData.endTime) {
-      setError('Please fill in all required fields')
-      return
+  // When date is selected, calculate available times
+  useEffect(() => {
+    if (selectedDate && tutorSchedule) {
+      calculateAvailableTimes(selectedDate)
     }
+  }, [selectedDate, tutorSchedule])
 
-    // Create datetime strings in user's timezone
-    const startDateTime = new Date(`${formData.date}T${formData.startTime}`)
-    const endDateTime = new Date(`${formData.date}T${formData.endTime}`)
-
-    // Check if end is after start
-    if (endDateTime <= startDateTime) {
-      setError('End time must be after start time')
-      return
-    }
-
-    // Check minimum 1 hour duration
-    const durationHours = (endDateTime - startDateTime) / (1000 * 60 * 60)
-    if (durationHours < 1) {
-      setError('Session must be at least 1 hour long')
-      return
-    }
-
-    // Check if in the past
-    const now = new Date()
-    if (startDateTime < now) {
-      setError('Cannot request sessions in the past')
-      return
-    }
-
+  const loadTutorSchedule = async () => {
     setLoading(true)
-
     try {
-      const response = await fetch(
-        `${API_BASE}/api/session-requests?studentUserId=${studentUserId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tutorUserId: tutorUserId,
-            requestedStart: startDateTime.toISOString(),
-            requestedEnd: endDateTime.toISOString(),
-            studentTimezone: userTimezone,
-            subject: formData.subject || null,
-            message: formData.message || null
-          })
-        }
-      )
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(errorText || 'Failed to create session request')
-      }
-
-      if (onSuccess) {
-        onSuccess()
-      }
-      
-      if (onClose) {
-        onClose()
+      const res = await fetch(`${API_BASE}/api/tutors/${tutorUserId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setTutorSchedule(data.weeklySchedule || {})
       }
     } catch (err) {
-      setError(err.message)
+      console.error('Error loading schedule:', err)
+      setError('Failed to load tutor schedule')
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <div className="session-request-modal-overlay" onClick={onClose}>
-      <div className="session-request-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="session-request-header">
-          <h2>Request Session with {tutorName}</h2>
-          <button className="modal-close-btn" onClick={onClose}>✕</button>
-        </div>
+  const calculateAvailableTimes = (date) => {
+    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()]
+    const daySchedule = tutorSchedule?.[dayName]
 
-        <form onSubmit={handleSubmit} className="session-request-form">
-          {error && (
-            <div className="session-request-error">
-              {error}
+    if (!daySchedule || daySchedule.length === 0) {
+      setAvailableTimes([])
+      return
+    }
+
+    // Convert schedule to time slots
+    const times = []
+    daySchedule.forEach(slot => {
+      const [startHour, startMin] = slot.start.split(':').map(Number)
+      const [endHour, endMin] = slot.end.split(':').map(Number)
+      
+      // Generate 1-hour slots
+      let currentHour = startHour
+      let currentMin = startMin
+      
+      while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
+        const time24 = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`
+        const time12 = formatTime12Hour(time24)
+        
+        times.push({
+          time24,
+          time12,
+          hour: currentHour,
+          minute: currentMin
+        })
+        
+        // Increment by 30 minutes
+        currentMin += 30
+        if (currentMin >= 60) {
+          currentMin = 0
+          currentHour++
+        }
+      }
+    })
+
+    setAvailableTimes(times)
+  }
+
+  const formatTime12Hour = (time24) => {
+    const [hour, minute] = time24.split(':').map(Number)
+    const period = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${String(minute).padStart(2, '0')} ${period}`
+  }
+
+  const getDaysInMonth = () => {
+    const year = currentMonth.getFullYear()
+    const month = currentMonth.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const daysInMonth = lastDay.getDate()
+    const startingDayOfWeek = firstDay.getDay()
+
+    const days = []
+
+    // Previous month days
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push({ date: null, isCurrentMonth: false })
+    }
+
+    // Current month days
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = new Date(year, month, i)
+      const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()]
+      const hasAvailability = tutorSchedule?.[dayName]?.length > 0
+      const isPast = date < new Date(new Date().setHours(0, 0, 0, 0))
+      const isTooFar = date > new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 3 months
+
+      days.push({
+        date,
+        isCurrentMonth: true,
+        hasAvailability,
+        isSelectable: hasAvailability && !isPast && !isTooFar
+      })
+    }
+
+    return days
+  }
+
+  const handleDateClick = (day) => {
+    if (!day.isSelectable) return
+    setSelectedDate(day.date)
+    setSelectedStartTime(null)
+    setSelectedEndTime(null)
+  }
+
+  const handleTimeClick = (time) => {
+    if (!selectedStartTime) {
+      setSelectedStartTime(time)
+      // Auto-suggest 1 hour session
+      const endHour = time.hour + 1
+      const endTime = availableTimes.find(t => 
+        t.hour === endHour && t.minute === time.minute
+      )
+      if (endTime) {
+        setSelectedEndTime(endTime)
+      }
+    } else if (!selectedEndTime) {
+      // Validate end time is after start time
+      const startMinutes = selectedStartTime.hour * 60 + selectedStartTime.minute
+      const endMinutes = time.hour * 60 + time.minute
+      
+      if (endMinutes <= startMinutes) {
+        alert('End time must be after start time')
+        return
+      }
+      
+      if (endMinutes - startMinutes < 60) {
+        alert('Sessions must be at least 1 hour long')
+        return
+      }
+      
+      setSelectedEndTime(time)
+    } else {
+      // Reset and start over
+      setSelectedStartTime(time)
+      setSelectedEndTime(null)
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!selectedDate || !selectedStartTime || !selectedEndTime) {
+      alert('Please select a date and time')
+      return
+    }
+
+    setSubmitting(true)
+    setError(null)
+
+    try {
+      // Combine date with times
+      const startDateTime = new Date(selectedDate)
+      startDateTime.setHours(selectedStartTime.hour, selectedStartTime.minute, 0, 0)
+
+      const endDateTime = new Date(selectedDate)
+      endDateTime.setHours(selectedEndTime.hour, selectedEndTime.minute, 0, 0)
+
+      const res = await fetch(
+        `${API_BASE}/api/session-requests?studentUserId=${studentUserId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tutorUserId,
+            requestedStart: startDateTime.toISOString(),
+            requestedEnd: endDateTime.toISOString(),
+            subject: subject.trim() || null,
+            message: message.trim() || null
+          })
+        }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to send request')
+      }
+
+      alert('Session request sent successfully!')
+      onClose()
+    } catch (err) {
+      console.error('Error submitting request:', err)
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+  }
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
+  }
+
+  const isToday = (date) => {
+    if (!date) return false
+    const today = new Date()
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    )
+  }
+
+  const isSelected = (date) => {
+    if (!date || !selectedDate) return false
+    return date.getTime() === selectedDate.getTime()
+  }
+
+  const days = getDaysInMonth()
+  const monthName = currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+
+  if (loading) {
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="loading-message">Loading tutor availability...</div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content enhanced" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+        
+        <h2 className="modal-title">Request Session with {tutorName}</h2>
+
+        {error && (
+          <div className="error-message">{error}</div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          {/* Step 1: Select Date */}
+          <div className="form-section">
+            <h3 className="section-title">📅 Step 1: Select Date</h3>
+            
+            <div className="calendar-header">
+              <button type="button" onClick={prevMonth} className="month-nav">←</button>
+              <h4 className="month-title">{monthName}</h4>
+              <button type="button" onClick={nextMonth} className="month-nav">→</button>
+            </div>
+
+            <div className="calendar-grid">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="calendar-day-header">{day}</div>
+              ))}
+
+              {days.map((day, index) => (
+                <div
+                  key={index}
+                  className={`calendar-day ${
+                    !day.isCurrentMonth ? 'other-month' : ''
+                  } ${day.hasAvailability ? 'available' : 'unavailable'} ${
+                    isToday(day.date) ? 'today' : ''
+                  } ${isSelected(day.date) ? 'selected' : ''} ${
+                    day.isSelectable ? 'selectable' : ''
+                  }`}
+                  onClick={() => handleDateClick(day)}
+                >
+                  {day.date && (
+                    <>
+                      <span className="day-number">{day.date.getDate()}</span>
+                      {day.hasAvailability && day.isSelectable && (
+                        <span className="availability-dot"></span>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="calendar-legend">
+              <span className="legend-item">
+                <span className="legend-dot available"></span> Available
+              </span>
+              <span className="legend-item">
+                <span className="legend-dot unavailable"></span> Unavailable
+              </span>
+              <span className="legend-item">
+                <span className="legend-dot selected"></span> Selected
+              </span>
+            </div>
+          </div>
+
+          {/* Step 2: Select Time */}
+          {selectedDate && (
+            <div className="form-section">
+              <h3 className="section-title">
+                ⏰ Step 2: Select Time - {selectedDate.toLocaleDateString('en-US', { 
+                  weekday: 'long', month: 'long', day: 'numeric' 
+                })}
+              </h3>
+
+              {availableTimes.length === 0 ? (
+                <p className="no-times">No available times on this date</p>
+              ) : (
+                <>
+                  <div className="time-grid">
+                    {availableTimes.map(time => {
+                      const isStartSelected = selectedStartTime?.time24 === time.time24
+                      const isEndSelected = selectedEndTime?.time24 === time.time24
+                      const isInRange = selectedStartTime && selectedEndTime &&
+                        time.hour * 60 + time.minute > selectedStartTime.hour * 60 + selectedStartTime.minute &&
+                        time.hour * 60 + time.minute < selectedEndTime.hour * 60 + selectedEndTime.minute
+
+                      return (
+                        <button
+                          key={time.time24}
+                          type="button"
+                          onClick={() => handleTimeClick(time)}
+                          className={`time-slot ${
+                            isStartSelected ? 'start-selected' : ''
+                          } ${isEndSelected ? 'end-selected' : ''} ${
+                            isInRange ? 'in-range' : ''
+                          }`}
+                        >
+                          {time.time12}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {selectedStartTime && selectedEndTime && (
+                    <div className="selected-time-summary">
+                      <strong>Selected:</strong> {selectedStartTime.time12} - {selectedEndTime.time12}
+                      {' '}({Math.floor(((selectedEndTime.hour * 60 + selectedEndTime.minute) - 
+                        (selectedStartTime.hour * 60 + selectedStartTime.minute)) / 60)}h{' '}
+                      {((selectedEndTime.hour * 60 + selectedEndTime.minute) - 
+                        (selectedStartTime.hour * 60 + selectedStartTime.minute)) % 60}m)
+                    </div>
+                  )}
+
+                  <p className="time-hint">
+                    Click to select start time, then click again to select end time.
+                    Minimum 1 hour session.
+                  </p>
+                </>
+              )}
             </div>
           )}
 
-          <div className="form-group">
-            <label htmlFor="date">Date *</label>
-            <input
-              type="date"
-              id="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              min={getMinDate()}
-              max={getMaxDate()}
-              required
-            />
-            <small className="form-hint">
-              You can request sessions up to 3 months in advance
-            </small>
-          </div>
+          {/* Step 3: Add Details */}
+          {selectedDate && selectedStartTime && selectedEndTime && (
+            <div className="form-section">
+              <h3 className="section-title">📝 Step 3: Add Details (Optional)</h3>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="startTime">Start Time *</label>
-              <input
-                type="time"
-                id="startTime"
-                name="startTime"
-                value={formData.startTime}
-                onChange={handleChange}
-                required
-              />
+              <div className="form-group">
+                <label htmlFor="subject">Subject</label>
+                <input
+                  type="text"
+                  id="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="e.g., Algebra 2, Essay Review"
+                  maxLength={100}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Any additional details or topics you'd like to cover..."
+                  rows={4}
+                  maxLength={500}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-submit"
+              >
+                {submitting ? 'Sending Request...' : '📤 Send Request'}
+              </button>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="endTime">End Time *</label>
-              <input
-                type="time"
-                id="endTime"
-                name="endTime"
-                value={formData.endTime}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          <small className="form-hint timezone-hint">
-            🕐 Your timezone: {userTimezone} (Times will be converted automatically)
-          </small>
-
-          <div className="form-group">
-            <label htmlFor="subject">Subject (Optional)</label>
-            <input
-              type="text"
-              id="subject"
-              name="subject"
-              value={formData.subject}
-              onChange={handleChange}
-              placeholder="e.g., Algebra 2, Essay Review"
-              maxLength={255}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="message">Message (Optional)</label>
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              placeholder="Any additional details or topics you'd like to cover..."
-              rows={4}
-            />
-          </div>
-
-          <div className="form-actions">
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn-submit"
-              disabled={loading}
-            >
-              {loading ? 'Sending Request...' : 'Request Session'}
-            </button>
-          </div>
+          )}
         </form>
       </div>
     </div>

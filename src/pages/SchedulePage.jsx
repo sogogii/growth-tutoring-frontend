@@ -154,7 +154,7 @@ function SchedulePage({ currentUser }) {
             className={`admin-tab ${activeTab === 'calendar' ? 'active' : ''}`}
             onClick={() => setActiveTab('calendar')}
           >
-            📅 Calendar View
+            Calendar View
           </button>
         </div>
 
@@ -245,7 +245,7 @@ function SchedulePage({ currentUser }) {
           {activeTab === 'calendar' && (
             <div className="calendar-tab">
               <div className="calendar-intro">
-                <h2>📅 Your Session Calendar</h2>
+                <h2>Your Session Calendar</h2>
                 <p>
                   View all your booked sessions in a monthly calendar format. 
                   Click on any session to see student details and session information.
