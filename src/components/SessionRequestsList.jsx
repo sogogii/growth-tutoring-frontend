@@ -1,227 +1,313 @@
-import { useState } from 'react'
+// src/components/SessionRequestsList.jsx - Original Style with Bug Fixes
+import { useState, useEffect } from 'react'
 import './styles/SessionRequestsList.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-// Format datetime to local time
-const formatDateTime = (isoString, timezone) => {
-  const date = new Date(isoString)
-  return new Intl.DateTimeFormat('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: timezone || undefined
-  }).format(date)
-}
-
-// Calculate duration
-const formatDuration = (start, end) => {
-  const durationMs = new Date(end) - new Date(start)
-  const hours = Math.floor(durationMs / (1000 * 60 * 60))
-  const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60))
-  
-  if (minutes === 0) {
-    return `${hours} hour${hours !== 1 ? 's' : ''}`
-  }
-  return `${hours}h ${minutes}m`
-}
-
-function SessionRequestsList({ requests, tutorUserId, onUpdate }) {
-  const [responding, setResponding] = useState(null)
-  const [responseMessage, setResponseMessage] = useState('')
+function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
+  const [requests, setRequests] = useState([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [processing, setProcessing] = useState(null)
 
-  const handleRespond = async (requestId, status) => {
+  useEffect(() => {
+    if (tutorUserId) {
+      loadRequests()
+    }
+  }, [tutorUserId])
+
+  const loadRequests = async () => {
+    setLoading(true)
     setError(null)
-    setResponding(requestId)
 
     try {
-      const response = await fetch(
-        `${API_BASE}/api/session-requests/${requestId}/respond?tutorUserId=${tutorUserId}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            status: status,
-            responseMessage: responseMessage || null
-          })
-        }
-      )
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(errorText || 'Failed to respond to request')
+      const res = await fetch(`${API_BASE}/api/session-requests/tutor/${tutorUserId}`)
+      
+      if (!res.ok) {
+        throw new Error('Failed to load session requests')
       }
 
-      setResponseMessage('')
-      if (onUpdate) {
-        onUpdate()
-      }
+      const data = await res.json()
+      setRequests(Array.isArray(data) ? data : [])
     } catch (err) {
+      console.error('Error loading requests:', err)
       setError(err.message)
+      setRequests([])
     } finally {
-      setResponding(null)
+      setLoading(false)
     }
   }
 
-  const pendingRequests = requests.filter(r => r.status === 'PENDING')
-  const respondedRequests = requests.filter(r => r.status !== 'PENDING')
+  const handleDecision = async (requestId, decision) => {
+    setProcessing(requestId)
+
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/session-requests/${requestId}/${decision.toLowerCase()}`,
+        { method: 'POST' }
+      )
+
+      if (!res.ok) {
+        throw new Error(`Failed to ${decision.toLowerCase()} request`)
+      }
+
+      await loadRequests()
+      
+      if (onRequestUpdate) {
+        onRequestUpdate()
+      }
+    } catch (err) {
+      console.error(`Error ${decision.toLowerCase()}ing request:`, err)
+      alert(err.message)
+    } finally {
+      setProcessing(null)
+    }
+  }
+
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString)
+    return date.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    })
+  }
+
+  const formatDuration = (start, end) => {
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    const durationMs = endDate - startDate
+    const hours = Math.floor(durationMs / (1000 * 60 * 60))
+    const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60))
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`
+    }
+    return `${minutes}m`
+  }
+
+  // Safe filtering with array checks
+  const pendingRequests = Array.isArray(requests) 
+    ? requests.filter(r => r.status === 'PENDING')
+    : []
+
+  const acceptedRequests = Array.isArray(requests)
+    ? requests.filter(r => r.status === 'ACCEPTED')
+    : []
+
+  const declinedRequests = Array.isArray(requests)
+    ? requests.filter(r => r.status === 'DECLINED')
+    : []
+
+  if (loading) {
+    return (
+      <div className="session-requests-list">
+        <div className="loading-state">
+          <div className="loading-spinner"></div>
+          <p>Loading session requests...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="session-requests-list">
+        <div className="error-state">
+          <div className="error-icon">⚠️</div>
+          <h3>Error Loading Requests</h3>
+          <p>{error}</p>
+          <button onClick={loadRequests} className="retry-button">
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   if (requests.length === 0) {
     return (
-      <div className="session-requests-empty">
-        <p>No session requests yet</p>
+      <div className="session-requests-list">
+        <div className="empty-state">
+          <div className="empty-icon">📭</div>
+          <h3>No Session Requests Yet</h3>
+          <p>When students request sessions, they'll appear here.</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="session-requests-list">
-      {error && (
-        <div className="session-requests-error">
-          {error}
-        </div>
-      )}
-
       {/* Pending Requests */}
-      {pendingRequests.length > 0 && (
-        <div className="requests-section">
-          <h3 className="requests-section-title">
-            Pending Requests ({pendingRequests.length})
-          </h3>
-          
-          {pendingRequests.map((request) => (
-            <div key={request.id} className="session-request-card pending">
-              <div className="request-header">
-                <div className="request-student">
-                  <div className="student-avatar">
-                    {request.studentFirstName?.[0] || 'S'}
-                  </div>
-                  <div>
-                    <div className="student-name">
-                      {request.studentFirstName} {request.studentLastName}
+      <div className="requests-section">
+        <h2 className="section-title">Pending Requests ({pendingRequests.length})</h2>
+
+        {pendingRequests.length === 0 ? (
+          <div className="section-empty">
+            <p>No pending requests</p>
+          </div>
+        ) : (
+          <div className="requests-grid">
+            {pendingRequests.map(request => (
+              <div key={request.id} className="request-card pending">
+                <div className="card-header">
+                  <div className="student-info">
+                    <div className="student-avatar">
+                      {request.studentFirstName?.charAt(0) || 'S'}
                     </div>
-                    <div className="student-email">{request.studentEmail}</div>
+                    <div className="student-details">
+                      <h3 className="student-name">
+                        {request.studentFirstName} {request.studentLastName}
+                      </h3>
+                      <p className="student-email">{request.studentEmail}</p>
+                    </div>
                   </div>
-                </div>
-                <span className="status-badge status-pending">Pending</span>
-              </div>
-
-              <div className="request-details">
-                <div className="detail-row">
-                  <span className="detail-label">📅 Date & Time:</span>
-                  <span className="detail-value">
-                    {formatDateTime(request.requestedStart, request.tutorTimezone)}
-                  </span>
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-label">⏱️ Duration:</span>
-                  <span className="detail-value">
-                    {formatDuration(request.requestedStart, request.requestedEnd)}
-                  </span>
+                  <span className="status-badge status-pending">PENDING</span>
                 </div>
 
-                {request.subject && (
-                  <div className="detail-row">
-                    <span className="detail-label">📚 Subject:</span>
-                    <span className="detail-value">{request.subject}</span>
+                <div className="card-body">
+                  <div className="request-info">
+                    <div className="info-row">
+                      <span className="info-label">📅 Date & Time:</span>
+                      <span className="info-value">
+                        {formatDateTime(request.requestedStart)}
+                      </span>
+                    </div>
+                    <div className="info-row">
+                      <span className="info-label">⏱️ Duration:</span>
+                      <span className="info-value">
+                        {formatDuration(request.requestedStart, request.requestedEnd)}
+                      </span>
+                    </div>
+                    {request.subject && (
+                      <div className="info-row">
+                        <span className="info-label">📚 Subject:</span>
+                        <span className="info-value">{request.subject}</span>
+                      </div>
+                    )}
+                    {request.message && (
+                      <div className="info-row message-row">
+                        <span className="info-label">💬 Message:</span>
+                        <p className="message-text">{request.message}</p>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
 
-                {request.message && (
-                  <div className="request-message">
-                    <strong>Message from student:</strong>
-                    <p>{request.message}</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="request-actions">
-                {/*
-                <textarea
-                  className="response-textarea"
-                  placeholder="Optional message to student..."
-                  value={responseMessage}
-                  onChange={(e) => setResponseMessage(e.target.value)}
-                  rows={2}
-                />
-                */}
-                
-                <div className="action-buttons">
+                <div className="card-actions">
                   <button
+                    onClick={() => handleDecision(request.id, 'DECLINE')}
+                    disabled={processing === request.id}
                     className="btn-decline"
-                    onClick={() => handleRespond(request.id, 'DECLINED')}
-                    disabled={responding === request.id}
                   >
-                    {responding === request.id ? 'Processing...' : 'Decline'}
+                    {processing === request.id ? 'Processing...' : 'Decline'}
                   </button>
                   <button
+                    onClick={() => handleDecision(request.id, 'ACCEPT')}
+                    disabled={processing === request.id}
                     className="btn-accept"
-                    onClick={() => handleRespond(request.id, 'ACCEPTED')}
-                    disabled={responding === request.id}
                   >
-                    {responding === request.id ? 'Processing...' : 'Accept'}
+                    {processing === request.id ? 'Processing...' : 'Accept'}
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Accepted Sessions */}
+      {acceptedRequests.length > 0 && (
+        <div className="requests-section">
+          <h2 className="section-title">Accepted Sessions ({acceptedRequests.length})</h2>
+          
+          <div className="requests-grid">
+            {acceptedRequests.map(request => (
+              <div key={request.id} className="request-card accepted">
+                <div className="card-header">
+                  <div className="student-info">
+                    <div className="student-avatar">
+                      {request.studentFirstName?.charAt(0) || 'S'}
+                    </div>
+                    <div className="student-details">
+                      <h3 className="student-name">
+                        {request.studentFirstName} {request.studentLastName}
+                      </h3>
+                      <p className="student-email">{request.studentEmail}</p>
+                    </div>
+                  </div>
+                  <span className="status-badge status-accepted">ACCEPTED</span>
+                </div>
+
+                <div className="card-body">
+                  <div className="request-info">
+                    <div className="info-row">
+                      <span className="info-label">📅 Date & Time:</span>
+                      <span className="info-value">
+                        {formatDateTime(request.requestedStart)}
+                      </span>
+                    </div>
+                    <div className="info-row">
+                      <span className="info-label">⏱️ Duration:</span>
+                      <span className="info-value">
+                        {formatDuration(request.requestedStart, request.requestedEnd)}
+                      </span>
+                    </div>
+                    {request.subject && (
+                      <div className="info-row">
+                        <span className="info-label">📚 Subject:</span>
+                        <span className="info-value">{request.subject}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Responded Requests */}
-      {respondedRequests.length > 0 && (
+      {/* Declined Requests */}
+      {declinedRequests.length > 0 && (
         <div className="requests-section">
-          <h3 className="requests-section-title">
-            Past Responses ({respondedRequests.length})
-          </h3>
+          <h2 className="section-title">Declined Requests ({declinedRequests.length})</h2>
           
-          {respondedRequests.map((request) => (
-            <div key={request.id} className={`session-request-card ${request.status.toLowerCase()}`}>
-              <div className="request-header">
-                <div className="request-student">
-                  <div className="student-avatar">
-                    {request.studentFirstName?.[0] || 'S'}
+          <div className="requests-grid">
+            {declinedRequests.map(request => (
+              <div key={request.id} className="request-card declined">
+                <div className="card-header">
+                  <div className="student-info">
+                    <div className="student-avatar">
+                      {request.studentFirstName?.charAt(0) || 'S'}
+                    </div>
+                    <div className="student-details">
+                      <h3 className="student-name">
+                        {request.studentFirstName} {request.studentLastName}
+                      </h3>
+                      <p className="student-email">{request.studentEmail}</p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="student-name">
-                      {request.studentFirstName} {request.studentLastName}
+                  <span className="status-badge status-declined">DECLINED</span>
+                </div>
+
+                <div className="card-body">
+                  <div className="request-info">
+                    <div className="info-row">
+                      <span className="info-label">📅 Date & Time:</span>
+                      <span className="info-value">
+                        {formatDateTime(request.requestedStart)}
+                      </span>
                     </div>
                   </div>
                 </div>
-                <span className={`status-badge status-${request.status.toLowerCase()}`}>
-                  {request.status}
-                </span>
               </div>
-
-              <div className="request-details">
-                <div className="detail-row">
-                  <span className="detail-label">📅 Date & Time:</span>
-                  <span className="detail-value">
-                    {formatDateTime(request.requestedStart, request.tutorTimezone)}
-                  </span>
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-label">⏱️ Duration:</span>
-                  <span className="detail-value">
-                    {formatDuration(request.requestedStart, request.requestedEnd)}
-                  </span>
-                </div>
-
-                {request.tutorResponseMessage && (
-                  <div className="request-message">
-                    <strong>Your response:</strong>
-                    <p>{request.tutorResponseMessage}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
