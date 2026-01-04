@@ -17,7 +17,7 @@ function ScheduleDisplay({ schedule }) {
   if (!schedule) {
     return (
       <div className="schedule-display">
-        <h3>📅 Availability</h3>
+        <h3>Availability</h3>
         <p className="no-schedule">Schedule not set</p>
       </div>
     )
@@ -29,7 +29,7 @@ function ScheduleDisplay({ schedule }) {
   if (!hasAnySlots) {
     return (
       <div className="schedule-display">
-        <h3>📅 Availability</h3>
+        <h3>Availability</h3>
         <p className="no-schedule">No availability set</p>
       </div>
     )
@@ -47,7 +47,7 @@ function ScheduleDisplay({ schedule }) {
 
   return (
     <div className="schedule-display">
-      <h3>📅 Weekly Availability</h3>
+      <h3>Weekly Availability</h3>
       <div className="schedule-grid">
         {DAYS.map(day => {
           const daySlots = schedule[day] || []

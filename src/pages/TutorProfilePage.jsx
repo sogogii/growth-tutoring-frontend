@@ -559,7 +559,7 @@ function TutorProfilePage({ currentUser }) {
                     className="btn-book-now"
                     onClick={() => setShowRequestForm(true)}
                   >
-                    📅 Book a Session
+                    Book a Session
                   </button>
                   <p className="book-now-hint">
                     Select your preferred time and send a request to this tutor
