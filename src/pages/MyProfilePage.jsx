@@ -326,7 +326,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                   {form.firstName} {form.lastName}
                 </h1>
                 <p className="profile-role">
-                  {currentUser.role === 'TUTOR' ? '🎓 Tutor' : '📚 Student'}
+                  {currentUser.role === 'TUTOR' ? 'Tutor' : 'Student'}
                 </p>
               </div>
             </div>
@@ -571,17 +571,17 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                       onChange={handleTutorChange}
                       className="form-select"
                     >
-                      <option value="ONLINE">💻 Online</option>
-                      <option value="IN_PERSON">🏫 In Person</option>
-                      <option value="HYBRID">🔄 Hybrid</option>
+                      <option value="ONLINE">Online</option>
+                      <option value="IN_PERSON">In Person</option>
+                      <option value="HYBRID">Hybrid</option>
                     </select>
                   ) : (
                     <div className="field-value">
                       {tutorForm.teachingMethod === 'IN_PERSON'
-                        ? '🏫 In Person'
+                        ? 'In Person'
                         : tutorForm.teachingMethod === 'HYBRID'
-                        ? '🔄 Hybrid'
-                        : '💻 Online'}
+                        ? 'Hybrid'
+                        : 'Online'}
                     </div>
                   )}
                 </div>
@@ -673,7 +673,6 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                 <label className="field-label">Email</label>
                 <div className="field-value readonly">
                   {profile.email}
-                  <span className="readonly-badge">Read-only</span>
                 </div>
               </div>
 
@@ -728,7 +727,6 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                 </>
               ) : (
                 <>
-                  <span>💾</span>
                   Update Profile
                 </>
               )}
