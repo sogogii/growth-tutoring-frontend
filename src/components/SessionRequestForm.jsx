@@ -53,7 +53,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
   }
 
   const calculateAvailableTimes = (date) => {
-    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()]
+    const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()]
     const daySchedule = tutorSchedule?.[dayName]
 
     if (!daySchedule || daySchedule.length === 0) {
@@ -119,7 +119,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
     // Current month days
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i)
-      const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()]
+      const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()]
       const hasAvailability = tutorSchedule?.[dayName]?.length > 0
       const isPast = date < new Date(new Date().setHours(0, 0, 0, 0))
       const isTooFar = date > new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 3 months
@@ -275,7 +275,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
         <form onSubmit={handleSubmit}>
           {/* Step 1: Select Date */}
           <div className="form-section">
-            <h3 className="section-title">📅 Step 1: Select Date</h3>
+            <h3 className="section-title"> Step 1: Select Date</h3>
             
             <div className="calendar-header">
               <button type="button" onClick={prevMonth} className="month-nav">←</button>
@@ -293,7 +293,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
                   key={index}
                   className={`calendar-day ${
                     !day.isCurrentMonth ? 'other-month' : ''
-                  } ${day.hasAvailability ? 'available' : 'unavailable'} ${
+                  } ${day.isSelectable ? 'available' : 'unavailable'} ${
                     isToday(day.date) ? 'today' : ''
                   } ${isSelected(day.date) ? 'selected' : ''} ${
                     day.isSelectable ? 'selectable' : ''
@@ -303,7 +303,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
                   {day.date && (
                     <>
                       <span className="day-number">{day.date.getDate()}</span>
-                      {day.hasAvailability && day.isSelectable && (
+                      {day.isSelectable && (
                         <span className="availability-dot"></span>
                       )}
                     </>
@@ -329,7 +329,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
           {selectedDate && (
             <div className="form-section">
               <h3 className="section-title">
-                ⏰ Step 2: Select Time - {selectedDate.toLocaleDateString('en-US', { 
+                Step 2: Select Time - {selectedDate.toLocaleDateString('en-US', { 
                   weekday: 'long', month: 'long', day: 'numeric' 
                 })}
               </h3>
