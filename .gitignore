@@ -26,3 +26,17 @@ dist-ssr
 # Environment variables
 .env
 .env.*
+
+# Build artifacts
+target/
+*.jar
+*.war
+   
+# Logs
+*.log
+logs/
+   
+# IDE
+.idea/
+.vscode/
+*.iml
