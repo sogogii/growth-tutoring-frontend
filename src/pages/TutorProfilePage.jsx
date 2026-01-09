@@ -213,7 +213,7 @@ function TutorProfilePage({ currentUser }) {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentUserId: currentUser.userId,
+          userId: currentUser.userId,
           rating: Number(myRating),
           comment: myComment || null
         })
