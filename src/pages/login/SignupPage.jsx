@@ -16,6 +16,54 @@ const SUBJECT_OPTIONS = [
 const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, '')
 
+// ========== PASSWORD VALIDATION HELPER ==========
+function validatePassword(password) {
+  const requirements = {
+    minLength: password.length >= 8,
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+  }
+
+  const isValid = Object.values(requirements).every(req => req)
+  
+  return { requirements, isValid }
+}
+
+function PasswordRequirements({ password, showRequirements }) {
+  if (!showRequirements) return null
+
+  const { requirements } = validatePassword(password)
+
+  const requirementsList = [
+    { key: 'minLength', label: 'At least 8 characters' },
+    { key: 'hasUppercase', label: 'One uppercase letter (A-Z)' },
+    { key: 'hasLowercase', label: 'One lowercase letter (a-z)' },
+    { key: 'hasNumber', label: 'One number (0-9)' },
+    { key: 'hasSpecial', label: 'One special character (!@#$%^&*)' },
+  ]
+
+  return (
+    <div className="password-requirements">
+      <p className="requirements-title">Password must contain:</p>
+      <ul className="requirements-list">
+        {requirementsList.map(({ key, label }) => (
+          <li
+            key={key}
+            className={`requirement-item ${requirements[key] ? 'met' : 'unmet'}`}
+          >
+            <span className="requirement-icon">
+              {requirements[key] ? '✓' : '○'}
+            </span>
+            {label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function SignupPage({ fixedRole }) {
   const [step, setStep] = useState(1) // 1: Form, 2: Verification
   
@@ -34,6 +82,7 @@ function SignupPage({ fixedRole }) {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
 
   const roleToSend = fixedRole || 'TUTOR'
   const roleLabel = roleToSend === 'TUTOR' ? 'Tutor' : 'Student'
@@ -41,6 +90,11 @@ function SignupPage({ fixedRole }) {
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+
+    // Show requirements when user starts typing password
+    if (name === 'password' && !showPasswordRequirements) {
+      setShowPasswordRequirements(true)
+    }
   }
 
   const toggleSubject = (subject) => {
@@ -60,6 +114,13 @@ function SignupPage({ fixedRole }) {
     e.preventDefault()
     setError(null)
     setSuccess(null)
+
+    // Validate password complexity
+    const { isValid } = validatePassword(form.password)
+    if (!isValid) {
+      setError('Password does not meet complexity requirements.')
+      return
+    }
 
     if (form.password !== form.confirmPassword) {
       setError('Passwords do not match.')
@@ -306,6 +367,7 @@ function SignupPage({ fixedRole }) {
                       type="password"
                       value={form.password}
                       onChange={handleChange}
+                      onFocus={() => setShowPasswordRequirements(true)}
                       required
                     />
                   </div>
@@ -322,6 +384,12 @@ function SignupPage({ fixedRole }) {
                     />
                   </div>
                 </div>
+
+                {/* Password Requirements Display */}
+                <PasswordRequirements 
+                  password={form.password} 
+                  showRequirements={showPasswordRequirements}
+                />
 
                 {roleToSend === 'TUTOR' && (
                   <div className="auth-field">
