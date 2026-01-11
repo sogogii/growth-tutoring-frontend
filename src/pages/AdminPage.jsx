@@ -342,6 +342,12 @@ function AdminPage({ currentUser }) {
                   >
                     Suspend
                   </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => updateStatus(u.id, 'DEACTIVATED')}
+                  >
+                    Deactivate
+                  </button>
                 </td>
               </tr>
             ))}
