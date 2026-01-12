@@ -203,11 +203,8 @@ function TutorProfilePage({ currentUser }) {
     setSavingReview(true)
 
     try {
-      const url = editingReviewId
-        ? `${API_BASE}/api/tutors/user/${tutor.userId}/reviews/${editingReviewId}`
-        : `${API_BASE}/api/tutors/user/${tutor.userId}/reviews`
-
-      const method = editingReviewId ? 'PUT' : 'POST'
+      const url = `${API_BASE}/api/tutors/user/${tutor.userId}/reviews`
+      const method = 'POST'
 
       const res = await fetch(url, {
         method,
@@ -317,63 +314,83 @@ function TutorProfilePage({ currentUser }) {
 
   // Render review card
   const renderReviewCard = (review, isMyReview) => {
-    const isMenuOpen = openMenuReviewId === review.id
+  const isMenuOpen = openMenuReviewId === review.id
+  
+  // Get first letter of name for avatar
+  const firstName = review.studentFirstName || 'S'
+  const initial = firstName.charAt(0).toUpperCase()
 
-    return (
-      <div key={review.id} className="review-card">
-        <div className="review-card-top">
-          <div className="review-rating">
-            <span className="stars">★</span> {Number(review.rating).toFixed(1)}
-          </div>
+  return (
+    <div key={review.id} className={`review-card ${isMyReview ? 'my-review' : ''}`}>
+      <div className="review-card-top">
+        {/* Avatar with initial */}
+        <div className="review-avatar">
+          {initial}
+        </div>
+
+        {/* Reviewer info and rating */}
+        <div className="review-info">
           <div className="review-author">
             {review.studentFirstName
               ? `${review.studentFirstName} ${review.studentLastName || ''}`.trim()
               : 'Student'}
+            <span className="review-rating">
+              <span className="stars">★</span>
+              <span className="review-rating-number">
+                {Number(review.rating).toFixed(1)}
+              </span>
+            </span>
           </div>
-
-          {isMyReview && (
-            <div className="review-menu-wrapper">
-              <button
-                type="button"
-                className="review-menu-button"
-                onClick={() =>
-                  setOpenMenuReviewId(isMenuOpen ? null : review.id)
-                }
-              >
-                ⋮
-              </button>
-              {isMenuOpen && (
-                <div className="review-menu-dropdown">
-                  <button
-                    type="button"
-                    onClick={() => handleEditReview(review)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteReview(review.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
+          {review.createdAt && (
+            <div className="review-date">
+              {new Date(review.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
             </div>
           )}
         </div>
 
-        {review.comment && (
-          <p className="review-comment">{review.comment}</p>
-        )}
-
-        {review.createdAt && (
-          <div className="review-date">
-            {new Date(review.createdAt).toLocaleDateString()}
+        {/* Menu (only for my review) */}
+        {isMyReview && (
+          <div className="review-menu-wrapper">
+            <button
+              type="button"
+              className="review-menu-button"
+              onClick={() =>
+                setOpenMenuReviewId(isMenuOpen ? null : review.id)
+              }
+            >
+              ⋮
+            </button>
+            {isMenuOpen && (
+              <div className="review-menu-dropdown">
+                <button
+                  type="button"
+                  onClick={() => handleEditReview(review)}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteReview(review.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
-    )
-  }
+
+      {/* Comment */}
+      {review.comment && (
+        <p className="review-comment">{review.comment}</p>
+      )}
+    </div>
+  )
+}
 
   if (loading) {
     return (
