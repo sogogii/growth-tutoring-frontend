@@ -7,13 +7,13 @@ import './styles/CheckoutPage.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-// Initialize Stripe - Replace with your publishable key
+// Initialize Stripe - REPLACE WITH YOUR PUBLISHABLE KEY
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 function CheckoutPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  
+
   const {
     tutorUserId,
     tutorName,
@@ -22,34 +22,30 @@ function CheckoutPage() {
     selectedEndTime,
     subject,
     message,
-    studentUserId
+    studentUserId,
   } = location.state || {}
 
   const [priceInfo, setPriceInfo] = useState(null)
+  const [sessionRequestData, setSessionRequestData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [sessionRequestData, setSessionRequestData] = useState(null)
 
   useEffect(() => {
     if (!tutorUserId || !selectedDate || !selectedStartTime || !selectedEndTime) {
-      setError('Missing booking information')
-      setLoading(false)
+      navigate('/tutors')
       return
     }
-
-    fetchPriceInfo()
+    calculatePrice()
   }, [])
 
-  const fetchPriceInfo = async () => {
+  const calculatePrice = async () => {
     try {
-      // Create ISO timestamps
       const startDateTime = new Date(selectedDate)
       startDateTime.setHours(selectedStartTime.hour, selectedStartTime.minute, 0, 0)
 
       const endDateTime = new Date(selectedDate)
       endDateTime.setHours(selectedEndTime.hour, selectedEndTime.minute, 0, 0)
 
-      // Fetch price calculation
       const res = await fetch(
         `${API_BASE}/api/payments/calculate-price?` +
         `tutorUserId=${tutorUserId}&` +
@@ -69,15 +65,14 @@ function CheckoutPage() {
   }
 
   const handleCreateSessionRequest = async () => {
-    setLoading(true)
-    setError(null)
-
     try {
       const startDateTime = new Date(selectedDate)
       startDateTime.setHours(selectedStartTime.hour, selectedStartTime.minute, 0, 0)
 
       const endDateTime = new Date(selectedDate)
       endDateTime.setHours(selectedEndTime.hour, selectedEndTime.minute, 0, 0)
+
+      const studentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
       const res = await fetch(
         `${API_BASE}/api/session-requests?studentUserId=${studentUserId}`,
@@ -88,9 +83,10 @@ function CheckoutPage() {
             tutorUserId,
             requestedStart: startDateTime.toISOString(),
             requestedEnd: endDateTime.toISOString(),
+            studentTimezone,
             subject: subject?.trim() || null,
-            message: message?.trim() || null
-          })
+            message: message?.trim() || null,
+          }),
         }
       )
 
@@ -101,60 +97,24 @@ function CheckoutPage() {
 
       const data = await res.json()
       setSessionRequestData(data)
-      setLoading(false)
-      
-      return data // Return for payment form
+      return data
     } catch (err) {
-      setError(err.message)
-      setLoading(false)
+      console.error('Session request error:', err)
       throw err
     }
   }
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
   const formatCurrency = (cents) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(cents / 100)
+    return `$${(cents / 100).toFixed(2)}`
   }
 
-  if (loading) {
-    return (
-      <div className="checkout-page">
-        <div className="checkout-container">
-          <p>Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="checkout-page">
-        <div className="checkout-container">
-          <div className="error-message">
-            <h2>Error</h2>
-            <p>{error}</p>
-            <button onClick={() => navigate(-1)}>Go Back</button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <div className="checkout-page"><h1>Loading...</h1></div>
+  if (error) return <div className="checkout-page"><h1>Error: {error}</h1></div>
 
   return (
     <div className="checkout-page">
       <div className="checkout-container">
-        <h1>Review & Pay</h1>
+        <h1>Complete Your Booking</h1>
 
         {/* Session Details */}
         <div className="checkout-section">
@@ -165,7 +125,14 @@ function CheckoutPage() {
           </div>
           <div className="detail-row">
             <span className="detail-label">Date:</span>
-            <span className="detail-value">{formatDate(selectedDate)}</span>
+            <span className="detail-value">
+              {new Date(selectedDate).toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Time:</span>
@@ -179,12 +146,6 @@ function CheckoutPage() {
               <span className="detail-value">{subject}</span>
             </div>
           )}
-          <div className="detail-row">
-            <span className="detail-label">Duration:</span>
-            <span className="detail-value">
-              {priceInfo?.durationHours} hours ({priceInfo?.durationMinutes} minutes)
-            </span>
-          </div>
         </div>
 
         {/* Price Breakdown */}
@@ -210,12 +171,13 @@ function CheckoutPage() {
         <div className="checkout-notice">
           <h3>💳 Payment Authorization</h3>
           <p>
-            Your payment method will be <strong>authorized</strong> but <strong>not charged</strong> immediately. 
-            The payment will only be processed after the tutor accepts your session request.
+            Your payment method will be <strong>authorized</strong> but{' '}
+            <strong>not charged</strong> immediately. The payment will only be
+            processed after the tutor accepts your session request.
           </p>
           <p>
-            If the tutor declines or you cancel the request, the authorization will be released 
-            and you won't be charged.
+            If the tutor declines or you cancel the request, the authorization
+            will be released and you won't be charged.
           </p>
         </div>
 

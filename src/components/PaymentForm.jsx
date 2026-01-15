@@ -3,44 +3,39 @@ import { useNavigate } from 'react-router-dom'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import './styles/PaymentForm.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-
-function PaymentForm({ onCreateSessionRequest, sessionRequestData, amount }) {
+function PaymentForm({ onCreateSessionRequest, amount }) {
   const stripe = useStripe()
   const elements = useElements()
   const navigate = useNavigate()
 
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (!stripe || !elements) {
-      return // Stripe hasn't loaded yet
+      setError('Payment system is loading. Please wait.')
+      return
     }
 
     setProcessing(true)
     setError(null)
 
     try {
-      // Step 1: Create session request and payment intent (if not already created)
-      let sessionData = sessionRequestData
-      if (!sessionData) {
-        sessionData = await onCreateSessionRequest()
+      // Create session request and get client secret
+      const sessionData = await onCreateSessionRequest()
+      
+      if (!sessionData?.clientSecret) {
+        throw new Error('Failed to initialize payment')
       }
 
-      const { paymentIntentId } = sessionData
-
-      // Step 2: Confirm payment with card details
-      const cardElement = elements.getElement(CardElement)
-
+      // Confirm payment
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        paymentIntentId,
+        sessionData.clientSecret,
         {
           payment_method: {
-            card: cardElement,
+            card: elements.getElement(CardElement),
           },
         }
       )
@@ -49,79 +44,59 @@ function PaymentForm({ onCreateSessionRequest, sessionRequestData, amount }) {
         throw new Error(stripeError.message)
       }
 
-      // Step 3: Verify payment was authorized (not captured yet)
       if (paymentIntent.status === 'requires_capture') {
-        setSuccess(true)
-        
-        // Redirect to success page after 2 seconds
-        setTimeout(() => {
-          navigate('/booking-success', {
-            state: {
-              sessionRequestId: sessionData.sessionRequest.id,
-              message: 'Your session request has been sent! Payment will be processed when the tutor accepts.'
-            }
-          })
-        }, 2000)
+        navigate('/booking-success', {
+          state: {
+            sessionRequestId: sessionData.sessionRequest.id,
+            message: 'Session request sent! Payment authorized.',
+          },
+        })
       } else {
         throw new Error('Payment authorization failed')
       }
-
     } catch (err) {
-      console.error('Payment error:', err)
       setError(err.message || 'Payment failed. Please try again.')
+    } finally {
       setProcessing(false)
     }
   }
 
-  const cardElementOptions = {
+  const CARD_ELEMENT_OPTIONS = {
     style: {
       base: {
+        color: '#32325d',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
         fontSize: '16px',
-        color: '#424770',
         '::placeholder': {
           color: '#aab7c4',
         },
       },
       invalid: {
-        color: '#9e2146',
+        color: '#fa755a',
+        iconColor: '#fa755a',
       },
     },
   }
 
   return (
     <form onSubmit={handleSubmit} className="payment-form">
-      <div className="form-group">
-        <label htmlFor="card-element">Card Information</label>
-        <div className="card-element-wrapper">
-          <CardElement id="card-element" options={cardElementOptions} />
-        </div>
+      <div className="card-element-container">
+        <CardElement options={CARD_ELEMENT_OPTIONS} />
       </div>
 
-      {error && (
-        <div className="payment-error">
-          <span className="error-icon">⚠️</span>
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="payment-success">
-          <span className="success-icon">✅</span>
-          Payment authorized successfully! Redirecting...
-        </div>
-      )}
+      {error && <div className="payment-error">{error}</div>}
 
       <button
         type="submit"
-        disabled={!stripe || processing || success}
-        className="btn-pay"
+        disabled={!stripe || processing}
+        className="payment-submit-btn"
       >
-        {processing ? 'Processing...' : success ? 'Success!' : `Authorize ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount / 100)}`}
+        {processing ? 'Processing...' : `Pay $${(amount / 100).toFixed(2)}`}
       </button>
 
-      <p className="payment-disclaimer">
-        🔒 Your payment information is securely processed by Stripe. 
-        We never see or store your card details.
+      <p className="payment-notice">
+        Your card will be authorized but not charged until the tutor accepts.
       </p>
     </form>
   )

@@ -10,7 +10,6 @@ function BookingSuccessPage() {
   return (
     <div className="booking-success-page">
       <div className="success-container">
-        <div className="success-icon">✅</div>
         <h1>Booking Request Sent!</h1>
         
         <p className="success-message">
