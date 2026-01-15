@@ -1,0 +1,158 @@
+.checkout-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 2rem 1rem;
+}
+
+.checkout-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-container h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 1rem;
+}
+
+.checkout-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.checkout-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.detail-value {
+  color: #1a1a1a;
+  text-align: right;
+}
+
+/* Price Breakdown */
+.price-breakdown {
+  background-color: #fff5e6;
+  border: 2px solid #ffd966;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  color: #333;
+}
+
+.price-row.total {
+  border-top: 2px solid #333;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.total-amount {
+  color: #d4621e;
+  font-size: 1.5rem;
+}
+
+/* Notice Box */
+.checkout-notice {
+  background-color: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border-radius: 4px;
+}
+
+.checkout-notice h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #1565c0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkout-notice p {
+  margin: 0.5rem 0;
+  color: #424242;
+  line-height: 1.6;
+}
+
+.checkout-notice strong {
+  color: #1565c0;
+}
+
+/* Error Message */
+.error-message {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-message h2 {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.error-message button {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.error-message button:hover {
+  background-color: #1976d2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: 1rem;
+  }
+
+  .checkout-section {
+    padding: 1rem;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .detail-value {
+    text-align: left;
+  }
+}

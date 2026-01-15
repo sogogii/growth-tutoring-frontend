@@ -1,10 +1,12 @@
-// src/components/SessionRequestForm_Enhanced.jsx - With Calendar & Available Times
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './styles/SessionRequestForm.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) {
+  const navigate = useNavigate() // ← ADDED for payment integration
+
   // Step 1: Select Date
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(null)
@@ -176,6 +178,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
     }
   }
 
+  // ============ UPDATED FOR PAYMENT INTEGRATION ============
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -184,46 +187,24 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
       return
     }
 
-    setSubmitting(true)
-    setError(null)
+    // Close modal
+    onClose()
 
-    try {
-      // Combine date with times
-      const startDateTime = new Date(selectedDate)
-      startDateTime.setHours(selectedStartTime.hour, selectedStartTime.minute, 0, 0)
-
-      const endDateTime = new Date(selectedDate)
-      endDateTime.setHours(selectedEndTime.hour, selectedEndTime.minute, 0, 0)
-
-      const res = await fetch(
-        `${API_BASE}/api/session-requests?studentUserId=${studentUserId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tutorUserId,
-            requestedStart: startDateTime.toISOString(),
-            requestedEnd: endDateTime.toISOString(),
-            subject: subject.trim() || null,
-            message: message.trim() || null
-          })
-        }
-      )
-
-      if (!res.ok) {
-        const text = await res.text()
-        throw new Error(text || 'Failed to send request')
+    // Navigate to checkout page with all booking details
+    navigate('/checkout', {
+      state: {
+        tutorUserId,
+        tutorName,
+        selectedDate,
+        selectedStartTime,
+        selectedEndTime,
+        subject: subject.trim() || null,
+        message: message.trim() || null,
+        studentUserId
       }
-
-      alert('Session request sent successfully!')
-      onClose()
-    } catch (err) {
-      console.error('Error submitting request:', err)
-      setError(err.message)
-    } finally {
-      setSubmitting(false)
-    }
+    })
   }
+  // ========================================================
 
   const prevMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
@@ -275,7 +256,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
         <form onSubmit={handleSubmit}>
           {/* Step 1: Select Date */}
           <div className="form-section">
-            <h3 className="section-title"> Step 1: Select Date</h3>
+            <h3 className="section-title">Step 1: Select Date</h3>
             
             <div className="calendar-header">
               <button type="button" onClick={prevMonth} className="month-nav">←</button>
@@ -385,7 +366,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
           {/* Step 3: Add Details */}
           {selectedDate && selectedStartTime && selectedEndTime && (
             <div className="form-section">
-              <h3 className="section-title">📝 Step 3: Add Details (Optional)</h3>
+              <h3 className="section-title">Step 3: Add Details (Optional)</h3>
 
               <div className="form-group">
                 <label htmlFor="subject">Subject</label>
@@ -416,7 +397,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
                 disabled={submitting}
                 className="btn-submit"
               >
-                {submitting ? 'Sending Request...' : '📤 Send Request'}
+                {submitting ? 'Processing...' : 'Continue to Payment →'}
               </button>
             </div>
           )}

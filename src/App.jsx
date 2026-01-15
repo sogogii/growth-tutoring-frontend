@@ -13,6 +13,8 @@ import LoginPage from './pages/login/LoginPage'
 import ForgotPasswordPage from './pages/login/ForgotPasswordPage'
 import MyProfilePage from './pages/MyProfilePage'
 import SchedulePage from './pages/SchedulePage'
+import CheckoutPage from './pages/CheckoutPage'
+import BookingSuccessPage from './pages/BookingSuccessPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
@@ -532,6 +534,9 @@ function App() {
               />
             }
           />
+
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/booking-success" element={<BookingSuccessPage />} />
 
           <Route path="/coming-soon" element={<ComingSoonPage />} />
 

@@ -1,8 +1,8 @@
-/* src/components/styles/SessionRequestForm_Enhanced.css */
+/* SessionRequestForm.css - Complete Styles */
 
-/* ========================================
-   Modal Overlay
-   ======================================== */
+/* ============================================
+   MODAL BASE STYLES
+   ============================================ */
 
 .modal-overlay {
   position: fixed;
@@ -10,510 +10,647 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
-  animation: fadeIn 0.2s;
+  padding: 1rem;
+  overflow-y: auto;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ========================================
-   Modal Content - MADE MORE COMPACT
-   ======================================== */
-
-.modal-content.enhanced {
+.modal-content {
   background: white;
-  border-radius: 16px;
-  max-width: 1030px;
+  border-radius: 12px;
   width: 100%;
-  max-height: 92vh;
+  max-width: 800px;
+  max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s;
-  padding: 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.modal-content.enhanced {
+  max-width: 900px;
 }
 
 .modal-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 1rem;
+  right: 1rem;
   background: none;
   border: none;
-  font-size: 1.8rem;
-  color: #9ca3af;
+  font-size: 2rem;
+  color: #666;
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s;
+  line-height: 1;
+  padding: 0;
 }
 
 .modal-close:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background-color: #f0f0f0;
+  color: #d4621e;
+  transform: rotate(90deg);
 }
 
 .modal-title {
-  margin: 0 0 20px 0;
-  font-size: 1.5rem;
-  color: #1f2937;
-  font-weight: 700;
-  padding-right: 40px;
+  font-size: 1.75rem;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+  padding-right: 3rem;
 }
 
-/* ========================================
-   Form Sections - MORE COMPACT
-   ======================================== */
+/* ============================================
+   LOADING & ERROR STATES
+   ============================================ */
+
+.loading-message {
+  text-align: center;
+  padding: 3rem 2rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error-message {
+  padding: 1rem 1.25rem;
+  background-color: #ffebee;
+  border-left: 4px solid #ef5350;
+  border-radius: 4px;
+  color: #c62828;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
 
 .form-section {
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 2px solid #f3f4f6;
-}
-
-.form-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
 }
 
 .section-title {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
+  color: #333;
   font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* ========================================
-   Calendar - OPTIMIZED FOR ONE SCREEN
-   ======================================== */
+/* ============================================
+   CALENDAR STYLES
+   ============================================ */
 
 .calendar-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding: 0 4px;
-}
-
-.month-nav {
-  background: #f3f4f6;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #374151;
-}
-
-.month-nav:hover {
-  background: #e5e7eb;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 0 0.5rem;
 }
 
 .month-title {
-  margin: 0;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #333;
+  margin: 0;
+}
+
+.month-nav {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #666;
+  transition: all 0.2s;
+  min-width: 45px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.month-nav:hover {
+  background-color: #f0f0f0;
+  border-color: #d4621e;
+  color: #d4621e;
+  transform: scale(1.05);
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .calendar-day-header {
   text-align: center;
   font-weight: 600;
-  font-size: 0.7rem;
-  color: #6b7280;
-  padding: 4px 2px;
+  color: #666;
+  padding: 0.75rem 0.25rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 }
 
 .calendar-day {
   aspect-ratio: 1;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  cursor: pointer;
   position: relative;
-  background: #f9fafb;
-  transition: all 0.15s;
-  min-height: 42px;
-  padding: 3px;
-  border: 2px solid transparent;
+  min-height: 60px;
 }
 
 .calendar-day.other-month {
-  opacity: 0.25;
+  background-color: #fafafa;
+  opacity: 0.4;
   cursor: default;
-  pointer-events: none;
-}
-
-.calendar-day.available {
-  background: #ecfdf5;
-  border-color: #10b981;
 }
 
 .calendar-day.unavailable {
-  background: #fef2f2;
-  border-color: #fecaca;
+  background-color: #f5f5f5;
+  color: #999;
   cursor: not-allowed;
 }
 
+.calendar-day.available {
+  background-color: #e8f5e9;
+  border-color: #a5d6a7;
+  cursor: pointer;
+}
+
 .calendar-day.selectable:hover {
-  transform: scale(1.08);
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
-  z-index: 5;
+  background-color: #c8e6c9;
+  border-color: #66bb6a;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day.today {
-  border-color: #3b82f6;
+  border-color: #2196f3;
+  border-width: 3px;
   font-weight: 700;
-  box-shadow: 0 0 0 1px #3b82f6 inset;
 }
 
 .calendar-day.selected {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-color: #1d4ed8;
+  background-color: #d4621e !important;
+  border-color: #d4621e !important;
   color: white;
-  font-weight: 700;
-  transform: scale(1.05);
+  font-weight: bold;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(212, 98, 30, 0.3);
 }
 
 .day-number {
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.calendar-day.selected .day-number {
+  color: white;
 }
 
 .availability-dot {
-  width: 5px;
-  height: 5px;
-  background: #10b981;
+  width: 6px;
+  height: 6px;
+  background-color: #66bb6a;
   border-radius: 50%;
-  margin-top: 2px;
+  position: absolute;
+  bottom: 8px;
 }
 
 .calendar-day.selected .availability-dot {
-  background: white;
+  background-color: white;
 }
+
+/* ============================================
+   CALENDAR LEGEND
+   ============================================ */
 
 .calendar-legend {
   display: flex;
-  gap: 12px;
+  gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 10px;
-  background: #f9fafb;
-  border-radius: 6px;
-  margin-top: 8px;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  color: #6b7280;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid #e0e0e0;
 }
 
 .legend-dot.available {
-  background: #10b981;
+  background-color: #e8f5e9;
+  border-color: #a5d6a7;
 }
 
 .legend-dot.unavailable {
-  background: #ef4444;
+  background-color: #f5f5f5;
+  border-color: #e0e0e0;
 }
 
 .legend-dot.selected {
-  background: #3b82f6;
+  background-color: #d4621e;
+  border-color: #d4621e;
 }
 
-/* ========================================
-   Time Selection
-   ======================================== */
+/* ============================================
+   TIME SELECTION STYLES
+   ============================================ */
 
 .time-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 8px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .time-slot {
-  padding: 12px 8px;
-  background: #f3f4f6;
-  border: 2px solid #e5e7eb;
+  padding: 0.875rem 0.5rem;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #374151;
+  background: white;
   cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
   transition: all 0.2s;
+  text-align: center;
+  color: #333;
 }
 
 .time-slot:hover {
-  background: #e5e7eb;
-  border-color: #3b82f6;
+  background-color: #fef5f1;
+  border-color: #d4621e;
   transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .time-slot.start-selected {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #047857;
+  background-color: #d4621e;
   color: white;
+  border-color: #d4621e;
+  font-weight: 700;
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(212, 98, 30, 0.3);
 }
 
 .time-slot.end-selected {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  border-color: #b91c1c;
+  background-color: #b8531a;
   color: white;
+  border-color: #b8531a;
+  font-weight: 700;
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(184, 83, 26, 0.3);
 }
 
 .time-slot.in-range {
-  background: #dbeafe;
-  border-color: #3b82f6;
-  color: #1e40af;
+  background-color: #fff3e0;
+  border-color: #ffb74d;
+  color: #e65100;
 }
 
 .selected-time-summary {
-  padding: 14px;
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  border-radius: 8px;
-  border-left: 4px solid #3b82f6;
-  color: #1e40af;
+  padding: 1rem 1.25rem;
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+  border-radius: 6px;
+  margin-bottom: 1rem;
   font-size: 0.95rem;
-  margin-bottom: 12px;
+  color: #e65100;
+}
+
+.selected-time-summary strong {
+  color: #d84315;
 }
 
 .time-hint {
-  font-size: 0.82rem;
-  color: #6b7280;
-  margin: 8px 0 0 0;
   text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+  font-style: italic;
 }
 
 .no-times {
-  padding: 28px;
   text-align: center;
-  background: #fef2f2;
+  color: #999;
+  padding: 2rem;
+  font-style: italic;
+  background-color: #f5f5f5;
   border-radius: 8px;
-  color: #991b1b;
-  font-size: 0.95rem;
+  margin: 1rem 0;
 }
 
-/* ========================================
-   Form Inputs
-   ======================================== */
+/* ============================================
+   FORM INPUTS
+   ============================================ */
 
 .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #374151;
-  font-size: 0.9rem;
+  color: #333;
+  font-size: 0.95rem;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 10px;
-  border: 2px solid #e5e7eb;
+  padding: 0.875rem;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: all 0.2s;
   font-family: inherit;
+  background-color: white;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #d4621e;
+  box-shadow: 0 0 0 3px rgba(212, 98, 30, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #999;
 }
 
 .form-group textarea {
   resize: vertical;
-  min-height: 90px;
+  min-height: 100px;
+  line-height: 1.5;
 }
 
-/* ========================================
-   Submit Button
-   ======================================== */
+/* ============================================
+   SUBMIT BUTTON
+   ============================================ */
 
 .btn-submit {
   width: 100%;
-  padding: 13px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  padding: 1rem 1.5rem;
+  background-color: #d4621e;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1.05rem;
+  border-radius: 10px;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  margin-top: 16px;
+  box-shadow: 0 3px 6px rgba(212, 98, 30, 0.2);
+  margin-top: 0.5rem;
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background-color: #b8531a;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 5px 12px rgba(212, 98, 30, 0.3);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(212, 98, 30, 0.2);
 }
 
 .btn-submit:disabled {
-  opacity: 0.6;
+  background-color: #ccc;
   cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
   transform: none;
 }
 
-/* ========================================
-   Messages
-   ======================================== */
-
-.error-message {
-  padding: 12px;
-  background: #fee2e2;
-  color: #991b1b;
-  border-radius: 8px;
-  margin-bottom: 18px;
-  border-left: 4px solid #ef4444;
-  font-size: 0.9rem;
-}
-
-.loading-message {
-  text-align: center;
-  padding: 50px 20px;
-  font-size: 1rem;
-  color: #6b7280;
-}
-
-/* ========================================
-   Responsive Design
-   ======================================== */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
 
 @media (max-width: 768px) {
-  .modal-content.enhanced {
-    padding: 20px;
+  .modal-content {
+    padding: 1.5rem;
     max-height: 95vh;
   }
 
   .modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .calendar-grid {
+    gap: 0.35rem;
+  }
+
+  .calendar-day {
+    min-height: 50px;
+  }
+
+  .calendar-day-header {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.15rem;
+  }
+
+  .day-number {
+    font-size: 0.9rem;
+  }
+
+  .availability-dot {
+    width: 5px;
+    height: 5px;
+    bottom: 6px;
+  }
+
+  .month-nav {
+    padding: 0.4rem 0.8rem;
+    font-size: 1.1rem;
+    min-width: 40px;
+    height: 36px;
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .time-slot {
+    padding: 0.75rem 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  .calendar-legend {
+    gap: 1rem;
+  }
+
+  .legend-item {
+    font-size: 0.85rem;
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  .btn-submit {
+    font-size: 1rem;
+    padding: 0.875rem 1.25rem;
+  }
+
+  .form-section {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .modal-title {
     font-size: 1.3rem;
+    padding-right: 2.5rem;
+  }
+
+  .modal-close {
+    width: 35px;
+    height: 35px;
+    font-size: 1.75rem;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .calendar-grid {
+    gap: 0.25rem;
+  }
+
+  .calendar-day {
+    min-height: 45px;
+  }
+
+  .calendar-day-header {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.1rem;
+  }
+
+  .day-number {
+    font-size: 0.85rem;
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .time-slot {
+    padding: 0.7rem 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .form-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .section-title {
     font-size: 1rem;
   }
 
-  .calendar-grid {
-    gap: 3px;
+  .calendar-legend {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
   }
 
-  .calendar-day {
-    min-height: 38px;
+  .form-group input,
+  .form-group textarea {
+    padding: 0.75rem;
+    font-size: 0.95rem;
   }
 
-  .day-number {
-    font-size: 0.8rem;
+  .btn-submit {
+    font-size: 0.95rem;
+    padding: 0.8rem 1rem;
   }
 
-  .time-grid {
-    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-    gap: 6px;
-  }
-
-  .time-slot {
-    padding: 10px 6px;
-    font-size: 0.85rem;
+  .selected-time-summary {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 480px) {
-  .modal-overlay {
-    padding: 10px;
-  }
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
 
-  .modal-content.enhanced {
-    padding: 18px;
-    border-radius: 12px;
-  }
+.calendar-day:focus,
+.time-slot:focus,
+.month-nav:focus,
+.btn-submit:focus {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+}
 
-  .modal-title {
-    font-size: 1.15rem;
-    margin-bottom: 16px;
-  }
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+}
 
-  .calendar-day-header {
-    font-size: 0.65rem;
-    padding: 4px 1px;
-  }
+/* Smooth scrolling */
+.modal-content {
+  scroll-behavior: smooth;
+}
 
-  .calendar-day {
-    min-height: 35px;
-  }
-
-  .day-number {
-    font-size: 0.75rem;
-  }
-
-  .availability-dot {
-    width: 4px;
-    height: 4px;
-  }
-
-  .time-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .calendar-legend {
-    gap: 10px;
-    padding: 8px;
-  }
-
-  .legend-item {
-    font-size: 0.75rem;
+/* Improve touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .calendar-day,
+  .time-slot,
+  .month-nav {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
