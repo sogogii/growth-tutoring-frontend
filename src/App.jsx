@@ -397,6 +397,15 @@ function App() {
                         My tutors
                       </button>
                     )}
+                    {currentUser.role === 'STUDENT' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => goTo('/my-sessions')}
+                      >
+                        My sessions
+                      </button>
+                    )}
 
                     <button
                       type="button"

@@ -182,26 +182,26 @@ function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
                 <div className="card-body">
                   <div className="request-info">
                     <div className="info-row">
-                      <span className="info-label">📅 Date & Time:</span>
+                      <span className="info-label">Date & Time:</span>
                       <span className="info-value">
                         {formatDateTime(request.requestedStart)}
                       </span>
                     </div>
                     <div className="info-row">
-                      <span className="info-label">⏱️ Duration:</span>
+                      <span className="info-label">Duration:</span>
                       <span className="info-value">
                         {formatDuration(request.requestedStart, request.requestedEnd)}
                       </span>
                     </div>
                     {request.subject && (
                       <div className="info-row">
-                        <span className="info-label">📚 Subject:</span>
+                        <span className="info-label">Subject:</span>
                         <span className="info-value">{request.subject}</span>
                       </div>
                     )}
                     {request.message && (
                       <div className="info-row message-row">
-                        <span className="info-label">💬 Message:</span>
+                        <span className="info-label">Message:</span>
                         <p className="message-text">{request.message}</p>
                       </div>
                     )}
@@ -212,18 +212,18 @@ function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
                   <button
                     type="button"
                     className="btn btn-primary"
-                    disabled={processing === req.id}
-                    onClick={() => handleDecision(req.id, 'ACCEPT')}
+                    disabled={processing === request.id}
+                    onClick={() => handleDecision(request.id, 'ACCEPT')}
                   >
-                    {processing === req.id ? 'Processing...' : 'Accept'}
+                    {processing === request.id ? 'Processing...' : 'Accept'}
                   </button>
                   <button
                     type="button"
                     className="btn btn-danger"
-                    disabled={processing === req.id}
-                    onClick={() => handleDecision(req.id, 'DECLINE')}
+                    disabled={processing === request.id}
+                    onClick={() => handleDecision(request.id, 'DECLINE')}
                   >
-                    {processing === req.id ? 'Processing...' : 'Decline'}
+                    {processing === request.id ? 'Processing...' : 'Decline'}
                   </button>
                 </div>
               </div>
