@@ -1,4 +1,5 @@
 .sessions-page {
+  min-width: 1100px;
   min-height: 100vh;
   padding: 80px 20px 40px;
   background: #f8f9fa;
@@ -11,8 +12,22 @@
 
 .sessions-container h1 {
   font-size: 2rem;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   color: #333;
+}
+
+.session-count {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1rem;
+}
+
+/* Section Header with Show More Button */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .sessions-section {
@@ -21,10 +36,72 @@
 
 .sessions-section h2 {
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  margin: 0;
   color: #555;
 }
 
+/* Back Button */
+.btn-back {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-back:hover {
+  background: #5a6268;
+}
+
+/* Show More Buttons */
+.btn-show-more {
+  background: transparent;
+  color: #007bff;
+  border: 2px solid #007bff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.btn-show-more:hover {
+  background: #007bff;
+  color: white;
+}
+
+.show-more-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btn-show-more-large {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.btn-show-more-large:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Empty States */
 .empty-message {
   color: #999;
   font-style: italic;
@@ -34,26 +111,90 @@
   border-radius: 8px;
 }
 
+.empty-state-large {
+  background: white;
+  border-radius: 12px;
+  padding: 60px 40px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.empty-state-large .empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.empty-state-large h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.empty-state-large p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+/* Sessions List */
 .sessions-list {
   display: grid;
   gap: 20px;
 }
 
+/* Session Card Base Styles */
 .session-card {
   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   border-left: 4px solid #ffc107;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Pending Sessions - Yellow/Warning */
+.session-card {
+  border-left-color: #ffc107;
+}
+
+/* Confirmed/Upcoming Sessions - Green */
 .session-card.confirmed {
   border-left-color: #28a745;
+  background: #f8fff9;
 }
 
+/* Past Sessions - Gray */
 .session-card.past {
   border-left-color: #6c757d;
-  opacity: 0.8;
+  background: #f8f9fa;
+  opacity: 0.9;
+}
+
+/* Cancelled/Declined Sessions - Red/Muted */
+.session-card.cancelled {
+  border-left-color: #dc3545;
+  background: #fff5f5;
+  opacity: 0.85;
 }
 
 .session-header {
@@ -69,11 +210,13 @@
   color: #333;
 }
 
+/* Status Badges */
 .status-badge {
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.875rem;
   font-weight: 600;
+  text-transform: capitalize;
 }
 
 .badge-warning {
@@ -96,6 +239,7 @@
   color: #383d41;
 }
 
+/* Session Details */
 .session-details {
   margin-bottom: 15px;
 }
@@ -103,6 +247,7 @@
 .session-details p {
   margin: 8px 0;
   color: #666;
+  font-size: 0.95rem;
 }
 
 .response-message {
@@ -111,8 +256,10 @@
   border-radius: 6px;
   margin-top: 10px !important;
   font-style: italic;
+  border-left: 3px solid #6c757d;
 }
 
+/* Buttons */
 .btn {
   padding: 10px 20px;
   border: none;
@@ -120,6 +267,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.95rem;
 }
 
 .btn-danger {
@@ -134,4 +282,85 @@
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sessions-page {
+    padding: 60px 15px 30px;
+  }
+
+  .sessions-container h1 {
+    font-size: 1.75rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .btn-show-more {
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .sessions-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .session-card {
+    padding: 15px;
+  }
+
+  .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .session-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .empty-state-large {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sessions-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .sessions-section h2 {
+    font-size: 1.15rem;
+  }
+
+  .session-card {
+    padding: 12px;
+  }
+
+  .session-details p {
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .btn-show-more-large {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .btn-back {
+    width: 100%;
+    justify-content: center;
+  }
 }
