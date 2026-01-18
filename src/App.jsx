@@ -16,6 +16,7 @@ import SchedulePage from './pages/SchedulePage'
 import CheckoutPage from './pages/CheckoutPage'
 import BookingSuccessPage from './pages/BookingSuccessPage'
 import StudentSessionsPage from './pages/StudentSessionsPage'
+import StudentSessionsDetailPage from './pages/StudentSessionsDetailPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
@@ -526,6 +527,7 @@ function App() {
           />
 
           <Route path="/my-sessions" element={<StudentSessionsPage />} />
+          <Route path="/my-sessions/:category" element={<StudentSessionsDetailPage />} />
 
           <Route path="/how-it-works/students" element={<HowItWorksStudents />} />
           <Route path="/how-it-works/tutors" element={<HowItWorksTutors />} />

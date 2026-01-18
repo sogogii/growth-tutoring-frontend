@@ -92,11 +92,68 @@ function StudentSessionsPage() {
     return <span className={`status-badge ${badge.class}`}>{badge.text}</span>
   }
 
-  // Separate sessions by status
+  const handleShowMore = (category) => {
+    navigate(`/my-sessions/${category}`)
+  }
+
+  // Get current time for comparison
+  const now = new Date()
+
+  // Separate sessions by status and time
   const pendingSessions = sessions.filter(s => s.status === 'PENDING')
-  const confirmedSessions = sessions.filter(s => s.status === 'ACCEPTED')
+  
+  const confirmedSessions = sessions.filter(s => 
+    s.status === 'ACCEPTED' && new Date(s.requestedStart) > now
+  )
+  
   const pastSessions = sessions.filter(s => 
+    s.status === 'ACCEPTED' && new Date(s.requestedStart) <= now
+  )
+  
+  const cancelledDeclinedSessions = sessions.filter(s => 
     s.status === 'DECLINED' || s.status === 'CANCELLED'
+  )
+
+  // Limit to 3 sessions per section
+  const MAX_DISPLAY = 3
+
+  const renderSessionCard = (session, showCancelButton = true, isPast = false) => (
+    <div key={session.id} className={`session-card ${
+      session.status === 'ACCEPTED' && !isPast ? 'confirmed' : 
+      isPast ? 'past' : 
+      (session.status === 'DECLINED' || session.status === 'CANCELLED') ? 'cancelled' : ''
+    }`}>
+      <div className="session-header">
+        <h3>{session.tutorFirstName} {session.tutorLastName}</h3>
+        {isPast ? (
+          <span className="status-badge badge-success">Completed</span>
+        ) : (
+          getStatusBadge(session.status)
+        )}
+      </div>
+      
+      <div className="session-details">
+        <p>Date & Time: {formatDateTime(session.requestedStart)}</p>
+        <p>Duration: {Math.round((new Date(session.requestedEnd) - new Date(session.requestedStart)) / 60000)} minutes</p>
+        {session.subject && <p>Subject: {session.subject}</p>}
+        {session.tutorResponseMessage && (
+          <p className="response-message">
+            Tutor Response: {session.tutorResponseMessage}
+          </p>
+        )}
+      </div>
+
+      {showCancelButton && !isPast && (session.status === 'PENDING' || session.status === 'ACCEPTED') && (
+        <button
+          className="btn btn-danger"
+          onClick={() => handleCancel(session.id)}
+          disabled={cancellingId === session.id}
+        >
+          {cancellingId === session.id ? 'Cancelling...' : 
+           session.status === 'PENDING' ? 'Cancel Request' : 'Cancel Session'}
+        </button>
+      )}
+    </div>
   )
 
   if (loading) return <div className="page-container"><h1>Loading...</h1></div>
@@ -109,86 +166,144 @@ function StudentSessionsPage() {
 
         {/* Pending Requests */}
         <section className="sessions-section">
-          <h2>Pending Requests ({pendingSessions.length})</h2>
+          <div className="section-header">
+            <h2>Pending Requests ({pendingSessions.length})</h2>
+            {pendingSessions.length > MAX_DISPLAY && (
+              <button 
+                className="btn-show-more"
+                onClick={() => handleShowMore('pending')}
+              >
+                Show All →
+              </button>
+            )}
+          </div>
+          
           {pendingSessions.length === 0 ? (
             <p className="empty-message">No pending requests</p>
           ) : (
             <div className="sessions-list">
-              {pendingSessions.map(session => (
-                <div key={session.id} className="session-card">
-                  <div className="session-header">
-                    <h3>{session.tutorFirstName} {session.tutorLastName}</h3>
-                    {getStatusBadge(session.status)}
-                  </div>
-                  
-                  <div className="session-details">
-                    <p>📅 {formatDateTime(session.requestedStart)}</p>
-                    <p>⏱️ Duration: {Math.round((new Date(session.requestedEnd) - new Date(session.requestedStart)) / 60000)} minutes</p>
-                    {session.subject && <p>📚 Subject: {session.subject}</p>}
-                  </div>
-
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleCancel(session.id)}
-                    disabled={cancellingId === session.id}
-                  >
-                    {cancellingId === session.id ? 'Cancelling...' : 'Cancel Request'}
-                  </button>
-                </div>
-              ))}
+              {pendingSessions.slice(0, MAX_DISPLAY).map(session => 
+                renderSessionCard(session, true, false)
+              )}
+            </div>
+          )}
+          
+          {pendingSessions.length > MAX_DISPLAY && (
+            <div className="show-more-footer">
+              <button 
+                className="btn-show-more-large"
+                onClick={() => handleShowMore('pending')}
+              >
+                View All {pendingSessions.length} Pending Requests →
+              </button>
             </div>
           )}
         </section>
 
-        {/* Confirmed Sessions */}
+        {/* Upcoming Confirmed Sessions */}
         <section className="sessions-section">
-          <h2>Confirmed Sessions ({confirmedSessions.length})</h2>
+          <div className="section-header">
+            <h2>Upcoming Confirmed Sessions ({confirmedSessions.length})</h2>
+            {confirmedSessions.length > MAX_DISPLAY && (
+              <button 
+                className="btn-show-more"
+                onClick={() => handleShowMore('confirmed')}
+              >
+                Show All →
+              </button>
+            )}
+          </div>
+          
           {confirmedSessions.length === 0 ? (
-            <p className="empty-message">No confirmed sessions</p>
+            <p className="empty-message">No upcoming confirmed sessions</p>
           ) : (
             <div className="sessions-list">
-              {confirmedSessions.map(session => (
-                <div key={session.id} className="session-card confirmed">
-                  <div className="session-header">
-                    <h3>{session.tutorFirstName} {session.tutorLastName}</h3>
-                    {getStatusBadge(session.status)}
-                  </div>
-                  
-                  <div className="session-details">
-                    <p>📅 {formatDateTime(session.requestedStart)}</p>
-                    <p>⏱️ Duration: {Math.round((new Date(session.requestedEnd) - new Date(session.requestedStart)) / 60000)} minutes</p>
-                    {session.subject && <p>📚 Subject: {session.subject}</p>}
-                  </div>
-                </div>
-              ))}
+              {confirmedSessions.slice(0, MAX_DISPLAY).map(session => 
+                renderSessionCard(session, true, false)
+              )}
+            </div>
+          )}
+          
+          {confirmedSessions.length > MAX_DISPLAY && (
+            <div className="show-more-footer">
+              <button 
+                className="btn-show-more-large"
+                onClick={() => handleShowMore('confirmed')}
+              >
+                View All {confirmedSessions.length} Confirmed Sessions →
+              </button>
             </div>
           )}
         </section>
 
         {/* Past Sessions */}
         <section className="sessions-section">
-          <h2>Past Sessions ({pastSessions.length})</h2>
+          <div className="section-header">
+            <h2>Past Sessions ({pastSessions.length})</h2>
+            {pastSessions.length > MAX_DISPLAY && (
+              <button 
+                className="btn-show-more"
+                onClick={() => handleShowMore('past')}
+              >
+                Show All →
+              </button>
+            )}
+          </div>
+          
           {pastSessions.length === 0 ? (
             <p className="empty-message">No past sessions</p>
           ) : (
             <div className="sessions-list">
-              {pastSessions.map(session => (
-                <div key={session.id} className="session-card past">
-                  <div className="session-header">
-                    <h3>{session.tutorFirstName} {session.tutorLastName}</h3>
-                    {getStatusBadge(session.status)}
-                  </div>
-                  
-                  <div className="session-details">
-                    <p>📅 {formatDateTime(session.requestedStart)}</p>
-                    {session.tutorResponseMessage && (
-                      <p className="response-message">
-                        💬 {session.tutorResponseMessage}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+              {pastSessions.slice(0, MAX_DISPLAY).map(session => 
+                renderSessionCard(session, false, true)
+              )}
+            </div>
+          )}
+          
+          {pastSessions.length > MAX_DISPLAY && (
+            <div className="show-more-footer">
+              <button 
+                className="btn-show-more-large"
+                onClick={() => handleShowMore('past')}
+              >
+                View All {pastSessions.length} Past Sessions →
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Cancelled/Declined Sessions */}
+        <section className="sessions-section">
+          <div className="section-header">
+            <h2>Cancelled/Declined Sessions ({cancelledDeclinedSessions.length})</h2>
+            {cancelledDeclinedSessions.length > MAX_DISPLAY && (
+              <button 
+                className="btn-show-more"
+                onClick={() => handleShowMore('cancelled')}
+              >
+                Show All →
+              </button>
+            )}
+          </div>
+          
+          {cancelledDeclinedSessions.length === 0 ? (
+            <p className="empty-message">No cancelled or declined sessions</p>
+          ) : (
+            <div className="sessions-list">
+              {cancelledDeclinedSessions.slice(0, MAX_DISPLAY).map(session => 
+                renderSessionCard(session, false, false)
+              )}
+            </div>
+          )}
+          
+          {cancelledDeclinedSessions.length > MAX_DISPLAY && (
+            <div className="show-more-footer">
+              <button 
+                className="btn-show-more-large"
+                onClick={() => handleShowMore('cancelled')}
+              >
+                View All {cancelledDeclinedSessions.length} Cancelled/Declined Sessions →
+              </button>
             </div>
           )}
         </section>
