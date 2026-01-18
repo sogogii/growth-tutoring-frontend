@@ -177,7 +177,7 @@ function ContactPage() {
 
           <h2>
             Phone Number:{" "}
-            <span className="contact-inline">+1 (949)520–0269</span>
+            <span className="contact-inline">+1 (949)232–0738</span>
           </h2>
           <p className="contact-note">
             We are currently available Monday–Friday, 9am–5pm.
