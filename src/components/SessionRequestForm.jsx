@@ -26,33 +26,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
-  // Load tutor's schedule
-  useEffect(() => {
-    loadTutorSchedule()
-  }, [tutorUserId])
-
-  // When date is selected, calculate available times
-  useEffect(() => {
-    if (selectedDate && tutorSchedule) {
-      calculateAvailableTimes(selectedDate)
-    }
-  }, [selectedDate, tutorSchedule])
-
-  const loadTutorSchedule = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch(`${API_BASE}/api/tutors/${tutorUserId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setTutorSchedule(data.weeklySchedule || {})
-      }
-    } catch (err) {
-      console.error('Error loading schedule:', err)
-      setError('Failed to load tutor schedule')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const [bookedSlots, setBookedSlots] = useState([])
 
   const calculateAvailableTimes = (date) => {
     const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()]
@@ -94,6 +68,35 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
     })
 
     setAvailableTimes(times)
+  }
+
+  // Load tutor's schedule
+  useEffect(() => {
+    loadTutorSchedule()
+  }, [tutorUserId])
+
+  // When date is selected, calculate available times
+  useEffect(() => {
+    if (selectedDate) {
+      calculateAvailableTimes(selectedDate)
+      loadBookedSlots(selectedDate) 
+    }
+  }, [selectedDate, tutorSchedule])
+
+  const loadTutorSchedule = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/tutors/${tutorUserId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setTutorSchedule(data.weeklySchedule || {})
+      }
+    } catch (err) {
+      console.error('Error loading schedule:', err)
+      setError('Failed to load tutor schedule')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const formatTime12Hour = (time24) => {
@@ -144,7 +147,40 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
     setSelectedEndTime(null)
   }
 
+  const isTimeSlotBooked = (time) => {
+    if (!selectedDate || bookedSlots.length === 0) return false
+    
+    const checkStart = new Date(selectedDate)
+    checkStart.setHours(time.hour, time.minute, 0, 0)
+    
+    const checkStartUTC = checkStart.getTime()
+    
+    const result = bookedSlots.some(booked => {
+      const bookedStartUTC = new Date(booked.start).getTime()
+      const bookedEndUTC = new Date(booked.end).getTime()
+      
+      // DEBUG: Log the comparison
+      const isConflict = checkStartUTC >= bookedStartUTC && checkStartUTC < bookedEndUTC
+      
+      if (isConflict) {
+        console.log(`  BLOCKED: ${time.time12}`)
+        console.log('  Check time (local):', checkStart.toString())
+        console.log('  Check time (UTC ms):', checkStartUTC)
+        console.log('  Booked start (UTC ms):', bookedStartUTC)
+        console.log('  Booked end (UTC ms):', bookedEndUTC)
+      }
+      
+      return isConflict
+    })
+    
+    return result
+  }
+
   const handleTimeClick = (time) => {
+    if (isTimeSlotBooked(time)) { 
+      return
+    }
+
     if (!selectedStartTime) {
       setSelectedStartTime(time)
       // Auto-suggest 1 hour session
@@ -231,6 +267,26 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
 
   const days = getDaysInMonth()
   const monthName = currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+
+  const loadBookedSlots = async (date) => {
+    if (!date || !tutorUserId) return 
+    
+    try {
+      const dateStr = date.toISOString().split('T')[0]
+      const res = await fetch(
+        `${API_BASE}/api/session-requests/tutor/${tutorUserId}/booked-slots?date=${dateStr}`  
+      )
+      
+      if (res.ok) {
+        const slots = await res.json()
+        setBookedSlots(slots)
+      } else {
+        setBookedSlots([])
+      }
+    } catch (error) {
+      setBookedSlots([])
+    }
+  }
 
   if (loading) {
     return (
@@ -321,6 +377,7 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
                 <>
                   <div className="time-grid">
                     {availableTimes.map(time => {
+                      const isBooked = isTimeSlotBooked(time)
                       const isStartSelected = selectedStartTime?.time24 === time.time24
                       const isEndSelected = selectedEndTime?.time24 === time.time24
                       const isInRange = selectedStartTime && selectedEndTime &&
@@ -332,8 +389,10 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
                           key={time.time24}
                           type="button"
                           onClick={() => handleTimeClick(time)}
+                          disabled={isBooked}
                           className={`time-slot ${
-                            isStartSelected ? 'start-selected' : ''
+                            isBooked ? 'booked' : '' 
+                          } ${ isStartSelected ? 'start-selected' : ''
                           } ${isEndSelected ? 'end-selected' : ''} ${
                             isInRange ? 'in-range' : ''
                           }`}
