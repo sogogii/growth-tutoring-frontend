@@ -17,6 +17,8 @@ import CheckoutPage from './pages/CheckoutPage'
 import BookingSuccessPage from './pages/BookingSuccessPage'
 import StudentSessionsPage from './pages/StudentSessionsPage'
 import StudentSessionsDetailPage from './pages/StudentSessionsDetailPage'
+import TutorSessionsPage from './pages/TutorSessionsPage'
+import TutorSessionsDetailPage from './pages/TutorSessionsDetailPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
@@ -528,6 +530,12 @@ function App() {
 
           <Route path="/my-sessions" element={<StudentSessionsPage />} />
           <Route path="/my-sessions/:category" element={<StudentSessionsDetailPage />} />
+
+          <Route path="/tutor/sessions" element={<TutorSessionsPage currentUser={currentUser} />} />
+          <Route 
+            path="/schedule/sessions/:category" 
+            element={<TutorSessionsDetailPage currentUser={currentUser} />} 
+          />
 
           <Route path="/how-it-works/students" element={<HowItWorksStudents />} />
           <Route path="/how-it-works/tutors" element={<HowItWorksTutors />} />

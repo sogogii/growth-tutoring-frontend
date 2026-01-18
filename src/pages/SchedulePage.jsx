@@ -1,7 +1,7 @@
 // src/pages/SchedulePage.jsx - Complete with 3 tabs
 import { useState, useEffect } from 'react'
 import ScheduleEditor from '../components/ScheduleEditor'
-import SessionRequestsList from '../components/SessionRequestsList'
+import TutorSessionsPage from './TutorSessionsPage'
 import SessionCalendar from '../components/SessionCalendar'
 import './styles/SchedulePage.css'
 
@@ -232,10 +232,7 @@ function SchedulePage({ currentUser }) {
                ======================================== */}
           {activeTab === 'requests' && (
             <div className="requests-tab">
-              <SessionRequestsList
-                tutorUserId={currentUser.userId}
-                onRequestUpdate={handleRequestUpdate}
-              />
+              <TutorSessionsPage currentUser={currentUser} />
             </div>
           )}
 
