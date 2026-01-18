@@ -39,30 +39,39 @@ function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
   }
 
   const handleDecision = async (requestId, decision) => {
-    setProcessing(requestId)
+  setProcessing(requestId)
 
-    try {
-      const res = await fetch(
-        `${API_BASE}/api/session-requests/${requestId}/${decision.toLowerCase()}`,
-        { method: 'POST' }
-      )
+  try {
+    const endpoint = decision === 'ACCEPT' ? 'accept' : 'decline'
+    const res = await fetch(
+      `${API_BASE}/api/session-requests/${requestId}/${endpoint}`,
+      { method: 'POST' }
+    )
 
-      if (!res.ok) {
-        throw new Error(`Failed to ${decision.toLowerCase()} request`)
-      }
-
-      await loadRequests()
-      
-      if (onRequestUpdate) {
-        onRequestUpdate()
-      }
-    } catch (err) {
-      console.error(`Error ${decision.toLowerCase()}ing request:`, err)
-      alert(err.message)
-    } finally {
-      setProcessing(null)
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(text || `Failed to ${endpoint} request`)
     }
+
+    await loadRequests()
+    
+    if (onRequestUpdate) {
+      onRequestUpdate()
+    }
+
+    // Show success message
+    const message = decision === 'ACCEPT' 
+      ? 'Session accepted! Payment will be processed.' 
+      : 'Session declined. Payment authorization released.'
+    alert(message)
+
+  } catch (err) {
+    console.error(`Error ${decision.toLowerCase()}ing request:`, err)
+    alert(err.message)
+  } finally {
+    setProcessing(null)
   }
+}
 
   const formatDateTime = (isoString) => {
     const date = new Date(isoString)
@@ -199,20 +208,22 @@ function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
                   </div>
                 </div>
 
-                <div className="card-actions">
+                <div className="request-actions">
                   <button
-                    onClick={() => handleDecision(request.id, 'DECLINE')}
-                    disabled={processing === request.id}
-                    className="btn-decline"
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={processing === req.id}
+                    onClick={() => handleDecision(req.id, 'ACCEPT')}
                   >
-                    {processing === request.id ? 'Processing...' : 'Decline'}
+                    {processing === req.id ? 'Processing...' : 'Accept'}
                   </button>
                   <button
-                    onClick={() => handleDecision(request.id, 'ACCEPT')}
-                    disabled={processing === request.id}
-                    className="btn-accept"
+                    type="button"
+                    className="btn btn-danger"
+                    disabled={processing === req.id}
+                    onClick={() => handleDecision(req.id, 'DECLINE')}
                   >
-                    {processing === request.id ? 'Processing...' : 'Accept'}
+                    {processing === req.id ? 'Processing...' : 'Decline'}
                   </button>
                 </div>
               </div>
