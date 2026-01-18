@@ -44,7 +44,7 @@ function BookingSuccessPage() {
         <div className="action-buttons">
           <button 
             className="btn-primary"
-            onClick={() => navigate('/student-dashboard')}
+            onClick={() => navigate('/my-sessions')}
           >
             View My Bookings
           </button>
