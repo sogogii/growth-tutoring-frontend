@@ -654,3 +654,33 @@
     min-width: 44px;
   }
 }
+
+/* Booked time slots */
+.time-slot.booked {
+  background-color: #fee2e2;
+  color: #991b1b;
+  cursor: not-allowed;
+  position: relative;
+  text-decoration: line-through;
+  border-color: #fca5a5;
+}
+
+.time-slot.booked:hover {
+  background-color: #fee2e2;
+  transform: none;
+  cursor: not-allowed;
+  border-color: #fca5a5;
+}
+
+.booked-indicator {
+  display: block;
+  font-size: 0.7rem;
+  color: #dc3545;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.time-slot:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
