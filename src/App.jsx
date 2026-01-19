@@ -27,7 +27,7 @@ import HowItWorksTutors from './pages/main/HowItWorksTutors'
 import HowItWorksCip from './pages/main/HowItWorksCip'
 import ChatListPage from './pages/chat/ChatListPage'
 import ChatPage from './pages/chat/ChatPage'
-import AdminPage from './pages/AdminPage.jsx'
+import AdminPage from './pages/admin/AdminPage.jsx'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
