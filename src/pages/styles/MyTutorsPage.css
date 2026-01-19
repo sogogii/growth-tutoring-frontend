@@ -155,3 +155,19 @@
   white-space: nowrap;  
   margin-left: 24px;
 }
+
+.tutor-stats, .tutor-stats {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.tutor-stats p, .tutor-stats p {
+  margin: 5px 0;
+}
+
+.tutor-stats strong, .tutor-stats strong {
+  color: #495057;
+}

@@ -167,6 +167,14 @@ function MyTutorsPage({ currentUser }) {
                         </button>
                       </div>
                     </div>
+                    <div className="tutor-stats">
+                      <p>
+                        <strong>Sessions completed:</strong> {tutor.totalSessionsCompleted || 0}
+                      </p>
+                      <p>
+                        <strong>Total hours:</strong> {tutor.totalHours || '0.00'} hours
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
