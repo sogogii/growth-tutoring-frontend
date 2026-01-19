@@ -224,6 +224,14 @@ function MyStudentsPage({ currentUser }) {
                           : 'Message'}
                       </button>
                     </div>
+                    <div className="student-stats">
+                      <p>
+                        <strong>Sessions completed:</strong> {student.totalSessionsCompleted || 0}
+                      </p>
+                      <p>
+                        <strong>Total hours:</strong> {student.totalHours || '0.00'} hours
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
