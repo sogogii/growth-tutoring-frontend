@@ -695,3 +695,549 @@
     width: 100%;
   }
 }
+
+/* ========================================
+   ADMIN BUTTON FIX - ONLY THIS IS NEW
+   Added at the very end - does not modify anything above
+   ======================================== */
+
+/* Simple admin buttons for users table ONLY */
+.admin-users-table .admin-btn {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #374151;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-users-table .admin-btn:last-child {
+  margin-right: 0;
+}
+
+.admin-users-table .admin-btn:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.admin-users-table .admin-btn:active {
+  background-color: #f3f4f6;
+}
+
+/* ========================================
+   SESSION MANAGEMENT STYLES
+   Added for Session Management tab
+   ======================================== */
+
+/* Session Management Section */
+.session-management-section {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Session Stats Grid */
+.session-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.session-stat-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  text-align: center;
+}
+
+.session-stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.session-stat-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Session Filters */
+.session-filters-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.session-filter-input,
+.session-filter-select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background: white;
+}
+
+.session-filter-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+.session-filter-select {
+  min-width: 150px;
+}
+
+.session-filter-input:focus,
+.session-filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Sessions Table */
+.sessions-table-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sessions-table thead {
+  background-color: #f9fafb;
+}
+
+.sessions-table th,
+.sessions-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sessions-table th {
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sessions-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.sessions-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Session User Info */
+.session-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.session-user-name {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+}
+
+.session-user-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.session-datetime {
+  font-size: 13px;
+  color: #374151;
+}
+
+/* Session Status Badges */
+.session-badge-pending {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.session-badge-accepted {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.session-badge-declined {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.session-badge-cancelled {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.session-badge-default {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* Payment Badges */
+.payment-badge-captured {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.payment-badge-authorized {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.payment-badge-cancelled {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.payment-badge-refunded {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.payment-badge-default {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.session-payment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Session Action Button */
+.session-action-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.session-action-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Session Pagination */
+.session-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.session-page-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.session-page-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.session-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.session-page-info {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Session Modal */
+.session-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.session-modal-box {
+  background: white;
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.session-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.session-modal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.session-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: #f3f4f6;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.session-modal-close:hover {
+  background: #e5e7eb;
+}
+
+.session-modal-body {
+  padding: 24px;
+}
+
+.session-modal-section {
+  margin-bottom: 20px;
+}
+
+.session-modal-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.session-modal-section p {
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.session-modal-message {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  white-space: pre-wrap;
+}
+
+.session-cancel-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.session-cancel-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.session-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.session-btn-close {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.session-btn-close:hover {
+  background: #e5e7eb;
+}
+
+.session-btn-cancel {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: #fee;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.session-btn-cancel:hover {
+  background: #fecaca;
+}
+
+/* States */
+.session-loading,
+.session-empty,
+.session-error-msg {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.session-error-msg {
+  color: #dc2626;
+  background: #fee;
+  border-radius: 12px;
+  border: 1px solid #fca5a5;
+}
+
+/* Responsive for Sessions */
+@media (max-width: 768px) {
+  .session-filters-row {
+    flex-direction: column;
+  }
+  
+  .session-filter-input,
+  .session-filter-select {
+    width: 100%;
+  }
+  
+  .session-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .sessions-table {
+    font-size: 13px;
+  }
+  
+  .sessions-table th,
+  .sessions-table td {
+    padding: 8px;
+  }
+  
+  .session-modal-box {
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
+  }
+  
+  .session-modal-footer {
+    flex-direction: column;
+  }
+  
+  .session-btn-close,
+  .session-btn-cancel {
+    width: 100%;
+  }
+}
