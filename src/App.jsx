@@ -19,6 +19,7 @@ import StudentSessionsPage from './pages/StudentSessionsPage'
 import StudentSessionsDetailPage from './pages/StudentSessionsDetailPage'
 import TutorSessionsPage from './pages/TutorSessionsPage'
 import TutorSessionsDetailPage from './pages/TutorSessionsDetailPage'
+import MyEarningsPage from './pages/MyEarningsPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
@@ -389,8 +390,16 @@ function App() {
                         >
                           My schedule
                         </button>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/my-earnings')}
+                        >
+                          My earnings
+                        </button>
                       </>
                     )}
+                  
                     {currentUser.role === 'STUDENT' && (
                       <button
                         type="button"
@@ -535,6 +544,11 @@ function App() {
           <Route 
             path="/schedule/sessions/:category" 
             element={<TutorSessionsDetailPage currentUser={currentUser} />} 
+          />
+
+          <Route 
+            path="/my-earnings" 
+            element={<MyEarningsPage currentUser={currentUser} />} 
           />
 
           <Route path="/how-it-works/students" element={<HowItWorksStudents />} />
