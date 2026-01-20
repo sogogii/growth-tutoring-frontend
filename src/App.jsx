@@ -20,6 +20,7 @@ import StudentSessionsDetailPage from './pages/StudentSessionsDetailPage'
 import TutorSessionsPage from './pages/TutorSessionsPage'
 import TutorSessionsDetailPage from './pages/TutorSessionsDetailPage'
 import MyEarningsPage from './pages/MyEarningsPage'
+import MyReviewsPage from './pages/MyReviewsPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
@@ -413,6 +414,15 @@ function App() {
                       <button
                         type="button"
                         className="user-menu-link"
+                        onClick={() => goTo('/my-reviews')}
+                      >
+                        My reviews
+                      </button>
+                    )}
+                    {currentUser.role === 'STUDENT' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
                         onClick={() => goTo('/my-sessions')}
                       >
                         My sessions
@@ -549,6 +559,11 @@ function App() {
           <Route 
             path="/my-earnings" 
             element={<MyEarningsPage currentUser={currentUser} />} 
+          />
+
+          <Route
+            path="/my-reviews"
+            element={<MyReviewsPage currentUser={currentUser} />}
           />
 
           <Route path="/how-it-works/students" element={<HowItWorksStudents />} />
