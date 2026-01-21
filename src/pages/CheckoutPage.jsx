@@ -22,6 +22,7 @@ function CheckoutPage() {
     selectedEndTime,
     subject,
     message,
+    sessionFormat,
     studentUserId,
   } = location.state || {}
 
@@ -86,6 +87,7 @@ function CheckoutPage() {
             studentTimezone,
             subject: subject?.trim() || null,
             message: message?.trim() || null,
+            sessionFormat: sessionFormat || 'ONLINE',
           }),
         }
       )
@@ -146,6 +148,12 @@ function CheckoutPage() {
               <span className="detail-value">{subject}</span>
             </div>
           )}
+          <div className="detail-row">
+            <span className="detail-label">Format:</span>
+            <span className="detail-value">
+              {sessionFormat === 'IN_PERSON' ? 'In-Person' : 'Online'}
+            </span>
+          </div>
         </div>
 
         {/* Price Breakdown */}

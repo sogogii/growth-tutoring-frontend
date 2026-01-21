@@ -700,6 +700,7 @@ function TutorProfilePage({ currentUser }) {
         <SessionRequestForm
           tutorUserId={tutor.userId}
           tutorName={tutor.name}
+          tutorTeachingMethod={tutor.teachingMethod}
           studentUserId={currentUser?.userId}
           onClose={() => setShowRequestForm(false)}
           onSuccess={() => {

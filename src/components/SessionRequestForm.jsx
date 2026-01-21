@@ -4,7 +4,7 @@ import './styles/SessionRequestForm.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) {
+function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, studentUserId, onClose }) {
   const navigate = useNavigate() // ← ADDED for payment integration
 
   // Step 1: Select Date
@@ -15,6 +15,8 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
   const [availableTimes, setAvailableTimes] = useState([])
   const [selectedStartTime, setSelectedStartTime] = useState(null)
   const [selectedEndTime, setSelectedEndTime] = useState(null)
+
+  const [sessionFormat, setSessionFormat] = useState('ONLINE')
   
   // Step 3: Add Details
   const [subject, setSubject] = useState('')
@@ -223,6 +225,11 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
       return
     }
 
+    if (tutorTeachingMethod === 'HYBRID' && !sessionFormat) {
+      alert('Please select session format (In-Person or Online)')
+      return
+    }
+
     // Close modal
     onClose()
 
@@ -231,11 +238,13 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
       state: {
         tutorUserId,
         tutorName,
+        tutorTeachingMethod,
         selectedDate,
         selectedStartTime,
         selectedEndTime,
         subject: subject.trim() || null,
         message: message.trim() || null,
+        sessionFormat,
         studentUserId
       }
     })
@@ -422,10 +431,37 @@ function SessionRequestForm({ tutorUserId, tutorName, studentUserId, onClose }) 
             </div>
           )}
 
-          {/* Step 3: Add Details */}
-          {selectedDate && selectedStartTime && selectedEndTime && (
+          {selectedDate && selectedStartTime && selectedEndTime && tutorTeachingMethod?.toUpperCase() === 'HYBRID' && (
             <div className="form-section">
-              <h3 className="section-title">Step 3: Add Details (Optional)</h3>
+              <h3 className="section-title">Step 3: Select Session Format</h3>
+              
+              <div className="session-format-options">
+                <button
+                  type="button"
+                  className={`format-option ${sessionFormat === 'IN_PERSON' ? 'selected' : ''}`}
+                  onClick={() => setSessionFormat('IN_PERSON')}
+                >
+                  <span className="format-label">In-Person</span>
+                  <span className="format-description">Meet at a physical location</span>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`format-option ${sessionFormat === 'ONLINE' ? 'selected' : ''}`}
+                  onClick={() => setSessionFormat('ONLINE')}
+                >
+                  <span className="format-label">Online</span>
+                  <span className="format-description">Video call session</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Add Details */}
+          {selectedDate && selectedStartTime && selectedEndTime && 
+          (tutorTeachingMethod?.toUpperCase() !== 'HYBRID' || sessionFormat) && (
+            <div className="form-section">
+              <h3 className="section-title">Step 4: Add Details (Optional)</h3>
 
               <div className="form-group">
                 <label htmlFor="subject">Subject</label>
