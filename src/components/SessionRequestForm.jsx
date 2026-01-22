@@ -178,8 +178,23 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
     return result
   }
 
+  const isTimePast = (time) => {
+    if (!selectedDate) return false
+    
+    const now = new Date()
+    const selectedDateTime = new Date(selectedDate)
+    selectedDateTime.setHours(time.hour, time.minute, 0, 0)
+    
+    // Check if the selected datetime is in the past
+    return selectedDateTime < now
+  }
+
   const handleTimeClick = (time) => {
     if (isTimeSlotBooked(time)) { 
+      return
+    }
+
+    if (isTimePast(time)) {
       return
     }
 
@@ -190,7 +205,7 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
       const endTime = availableTimes.find(t => 
         t.hour === endHour && t.minute === time.minute
       )
-      if (endTime) {
+      if (endTime && !isTimePast(endTime)) {
         setSelectedEndTime(endTime)
       }
     } else if (!selectedEndTime) {
@@ -387,6 +402,7 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
                   <div className="time-grid">
                     {availableTimes.map(time => {
                       const isBooked = isTimeSlotBooked(time)
+                      const isPast = isTimePast(time)
                       const isStartSelected = selectedStartTime?.time24 === time.time24
                       const isEndSelected = selectedEndTime?.time24 === time.time24
                       const isInRange = selectedStartTime && selectedEndTime &&
@@ -398,7 +414,7 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
                           key={time.time24}
                           type="button"
                           onClick={() => handleTimeClick(time)}
-                          disabled={isBooked}
+                          disabled={isBooked || isPast}
                           className={`time-slot ${
                             isBooked ? 'booked' : '' 
                           } ${ isStartSelected ? 'start-selected' : ''
