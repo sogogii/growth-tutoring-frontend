@@ -50,6 +50,8 @@ function CheckoutPage() {
       const res = await fetch(
         `${API_BASE}/api/payments/calculate-price?` +
         `tutorUserId=${tutorUserId}&` +
+        `studentUserId=${studentUserId}&` +
+        `sessionFormat=${sessionFormat || 'ONLINE'}&` +
         `startTime=${startDateTime.toISOString()}&` +
         `endTime=${endDateTime.toISOString()}`
       )
@@ -167,12 +169,30 @@ function CheckoutPage() {
             <span>Duration:</span>
             <span>{priceInfo?.durationHours} hours</span>
           </div>
+          <div className="price-row subtotal">
+            <span>Subtotal:</span>
+            <span>${priceInfo?.baseAmount}</span>
+          </div>
+          <div className="price-row">
+            <span>Platform Fee:</span>
+            <span>$5.00</span>
+          </div>
           <div className="price-row total">
             <span>Total:</span>
             <span className="total-amount">
               {formatCurrency(priceInfo?.amountCents)}
             </span>
           </div>
+          
+          {priceInfo?.sessionNumber && (
+            <div className="session-info">
+              <small>
+                This is session #{priceInfo.sessionNumber} with this tutor
+                {priceInfo.sessionNumber <= 3 && 
+                  " (Probationary Period - Higher platform fee applies)"}
+              </small>
+            </div>
+          )}
         </div>
 
         {/* Important Notice */}
