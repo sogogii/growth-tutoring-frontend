@@ -741,3 +741,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+.time-slot.past {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  border-color: #e0e0e0;
+}
+
+.time-slot.past:hover {
+  background-color: #f5f5f5;
+  transform: none;
+  cursor: not-allowed;
+  border-color: #e0e0e0;
+}
