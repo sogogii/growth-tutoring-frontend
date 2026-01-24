@@ -51,7 +51,8 @@
   height: 72px;
   object-fit: contain;
   flex-shrink: 0;
-}
+  transform: scale(1.4)
+} 
 
 .logo-text {
   display: flex;
