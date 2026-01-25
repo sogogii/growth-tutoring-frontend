@@ -1,5 +1,6 @@
 import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useEffect, useState, useRef, useCallback } from 'react'  
+import { FaInstagram, FaYoutube, FaLinkedin, FaTiktok } from 'react-icons/fa'
 
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/main/AboutPage'
@@ -600,88 +601,76 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="site-footer">
-        <div className="footer-top">
-          <div className="footer-brand">
-            <div className="footer-logo-row">
-              <img src={logo} alt="Growth Tutoring" className="footer-logo" />
-
-              <div className="footer-socials">
-                <a
-                  href="https://x.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="X"
-                >
-                  𝕏
-                </a>
-                <a
-                  href="https://www.instagram.com/growthtutoringhq/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Instagram"
-                >
-                  ◎
-                </a>
-                <a
-                  href="https://youtube.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="YouTube"
-                >
-                  ▶
-                </a>
-                <a
-                  href="https://www.linkedin.com/company/growth-tutoring-llc/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="LinkedIn"
-                >
-                  in
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="footer-links-grid">
-            <div className="footer-column">
-              <h4>Growth Tutoring</h4>
-              <Link to="/about">About us</Link>
-              <Link to="/contact">Contact us</Link>
-              <Link to="/tutors">Our tutors</Link>
-              <Link to="/coming-soon">Join Us</Link>
-              <Link to="/coming-soon">FAQ</Link>
-              <Link to="/coming-soon">Technology</Link>
-              <Link to="/how-it-works">How it works</Link>
-            </div>
-
-            <div className="footer-column">
-              <h4>Explore</h4>
-              <Link to="/subjects">K-12 Math</Link>
-              <Link to="/subjects">K-12 English</Link>
-              <Link to="/subjects">K-12 Sciences</Link>
-              <Link to="/subjects">Foreign Languages</Link>
-              <Link to="/subjects">Pre College Counseling</Link>
-              <Link to="/subjects">Special Needs Tutoring</Link>
-              <Link to="/coming-soon">Online Courses</Link>
-              <Link to="/coming-soon">Community Impact Program</Link>
-            </div>
-
-            <div className="footer-column">
-              <h4>Resources</h4>
-              <Link to="/coming-soon">Tutor Guidelines</Link>
-              <Link to="/coming-soon">Learning Tips</Link>
-              <Link to="/coming-soon">Parent Support</Link>
-              <Link to="/coming-soon">Blog</Link>
-              <Link to="/coming-soon">Safety &amp; Security Policies</Link>
-              <Link to="/coming-soon">Terms of Service</Link>
-              <Link to="/coming-soon">Resource library</Link>
-            </div>
+      <footer className="app-footer">
+        {/* Social Media Section - First */}
+        <div className="footer-social-section">
+          <h3 className="footer-social-title">Follow Growth Tutoring</h3>
+          <div className="footer-social">
+            <a 
+              href="https://www.instagram.com/growthutoringhq/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="Instagram"
+            >
+              <FaInstagram />
+            </a>
+            <a 
+              href="https://www.tiktok.com/@growth.tutoring.1" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="TikTok"
+            >
+              <FaTiktok />
+            </a>
+            <a 
+              href="https://www.linkedin.com/company/growth-tutoring-llc/posts/?feedView=all" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="LinkedIn"
+            >
+              <FaLinkedin />
+            </a>
+            <a 
+              href="https://www.youtube.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label="YouTube"
+            >
+              <FaYoutube />
+            </a>
           </div>
         </div>
 
+        {/* Footer Links */}
+        <div className="footer-links">
+          <div className="footer-column">
+            <h4>Company</h4>
+            <Link to="/about">About</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/coming-soon">Feedback</Link>
+          </div>
+
+          <div className="footer-column">
+            <h4>Resources</h4>
+            <Link to="/how-it-works/students">How It Works</Link>
+            <Link to="/subjects">Subjects</Link>
+            <Link to="/tutors">Find Tutors</Link>
+          </div>
+
+          <div className="footer-column">
+            <h4>Legal</h4>
+            <Link to="/coming-soon">Privacy Policy</Link>
+            <Link to="/coming-soon">Terms of Service</Link>
+          </div>
+        </div>
+
+        {/* Copyright */}
         <div className="footer-bottom">
-          <p>© 2025 Growth Tutoring LLC. All rights reserved</p>
+          <p>&copy; 2025 Growth Tutoring LLC. All rights reserved.</p>
         </div>
       </footer>
     </div>

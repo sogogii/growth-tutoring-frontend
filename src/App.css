@@ -389,6 +389,7 @@
   text-align: center;
 }
 
+/*
 .ai-card {
   margin: 18px auto 0;
   max-width: 360px;
@@ -397,6 +398,7 @@
   padding: 20px 18px;
   background: #f9fafb;
 }
+  */
 
 .ai-icon {
   width: 40px;
@@ -412,85 +414,128 @@
 }
 
 /* Footer */
-
-.site-footer {
-  margin-top: 40px;
-  padding: 28px 40px 20px;
+/* Footer */
+.app-footer {
   background: #ffffff;
   border-top: 1px solid #e5e7eb;
-  font-size: 13px;
+  padding: 48px 32px 32px;
+  margin-top: auto;
+}
+
+/* Social Media Section - At Top */
+.footer-social-section {
+  text-align: center;
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.footer-social-title {
+  font-size: 16px;
+  font-weight: 600;
   color: #111827;
+  margin: 0 0 20px 0;
 }
 
-.footer-top {
+.footer-social {
   display: flex;
-  gap: 40px;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.footer-brand {
-  flex: 1.2;
-}
-
-.footer-logo-row {
-  display: flex;
-  flex-direction: column;
   gap: 16px;
+  justify-content: center;
 }
 
-.footer-logo {
-  width: 72px;
-  height: 72px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-/* Social icons */
-.footer-socials {
+.social-icon {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 16px;
-}
-
-.footer-socials a {
+  justify-content: center;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #6b7280;
+  transition: all 0.2s ease;
   text-decoration: none;
-  color: #111827;
+  font-size: 20px;
 }
 
-/* Link columns */
-.footer-links-grid {
-  flex: 3;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 170px));
-  gap: 40px;
+.social-icon:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Specific hover colors */
+.social-icon:nth-child(1):hover {
+  background: #E4405F; /* Instagram */
+}
+
+.social-icon:nth-child(2):hover {
+  background: #000000; /* TikTok */
+}
+
+.social-icon:nth-child(3):hover {
+  background: #0A66C2; /* LinkedIn */
+}
+
+.social-icon:nth-child(4):hover {
+  background: #FF0000; /* YouTube */
+}
+
+/* Footer links - centered */
+.footer-links {
+  display: flex;
+  gap: 64px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .footer-column h4 {
-  margin: 0 0 10px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+  color: #111827;
+  margin: 0 0 8px 0;
 }
 
 .footer-column a {
-  display: block;
-  margin-bottom: 6px;
+  font-size: 14px;
+  color: #6b7280;
   text-decoration: none;
-  color: #4b5563;
+  transition: color 0.2s ease;
 }
 
 .footer-column a:hover {
-  color: #111827;
+  color: #16a34a;
 }
 
-/* Bottom bar */
+/* Copyright */
 .footer-bottom {
-  margin-top: 24px;
+  text-align: center;
+  padding-top: 24px;
   border-top: 1px solid #e5e7eb;
-  padding-top: 10px;
-  font-size: 12px;
-  color: #6b7280;
+}
+
+.footer-bottom p {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-links {
+    gap: 32px;
+  }
+  
+  .footer-social-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+  }
 }
 
 /* Subject toggle chips (signup etc.) */
