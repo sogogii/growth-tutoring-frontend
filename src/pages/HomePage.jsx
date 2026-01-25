@@ -1,5 +1,176 @@
 import { Link } from 'react-router-dom'
 import './styles/HomePage.css'
+import { useState, useEffect, useRef } from 'react'
+import findTutorImage from '../assets/homepage-find-your-tutor.jpg'
+import bookSessionsImage from '../assets/homepage-book-sessions.jpg'
+import trackProgressImage from '../assets/homepage-track-progress.jpg'
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+
+function TopTutorsSection() {
+  const [tutors, setTutors] = useState([])
+  const [loading, setLoading] = useState(true)
+  const scrollRef = useRef(null)
+
+  useEffect(() => {
+    const fetchTopTutors = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/tutors`)
+        if (res.ok) {
+          const data = await res.json()
+          
+          const mapped = data.map((t) => ({
+            userId: t.userId,
+            name: `${t.firstName} ${t.lastName}`,
+            rating: t.ratingAvg ?? 0,
+            ratingCount: t.ratingCount ?? 0,
+            subjectLabel: t.subjectLabel,
+            headline: t.headline || '',
+            hourlyRate: t.hourlyRate,
+            profileImageUrl: t.profileImageUrl || null
+          }))
+          
+          const topTutors = mapped
+            .sort((a, b) => b.rating - a.rating)
+            .slice(0, 10)
+          
+          setTutors(topTutors)
+        }
+      } catch (err) {
+        console.error('Error loading top tutors:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTopTutors()
+  }, [])
+
+  // Auto-scroll effect
+  useEffect(() => {
+    const scrollContainer = scrollRef.current
+    if (!scrollContainer || tutors.length === 0) return
+
+    let animationFrameId
+    let isScrolling = true
+
+    const continuousScroll = () => {
+      if (!isScrolling) return
+
+      // Scroll by 1 pixel to the right (adjust for speed)
+      scrollContainer.scrollLeft += 0.5 // Change this value to control speed
+
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth
+      
+      // Loop back to start when reaching the end
+      if (scrollContainer.scrollLeft >= maxScroll) {
+        scrollContainer.scrollLeft = 0
+      }
+
+      animationFrameId = requestAnimationFrame(continuousScroll)
+    }
+
+    // Start scrolling after a short delay
+    const timeoutId = setTimeout(() => {
+      animationFrameId = requestAnimationFrame(continuousScroll)
+    }, 1000)
+
+    // Pause on hover
+    const handleMouseEnter = () => {
+      isScrolling = false
+      cancelAnimationFrame(animationFrameId)
+    }
+    
+    const handleMouseLeave = () => {
+      isScrolling = true
+      animationFrameId = requestAnimationFrame(continuousScroll)
+    }
+
+    scrollContainer.addEventListener('mouseenter', handleMouseEnter)
+    scrollContainer.addEventListener('mouseleave', handleMouseLeave)
+
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+      clearTimeout(timeoutId)
+      scrollContainer.removeEventListener('mouseenter', handleMouseEnter)
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [tutors])
+
+  if (loading) {
+    return (
+      <section className="section section-top-tutors">
+        <h2 className="top-tutors-title">Our Top Tutors</h2>
+        <p className="section-text center">Loading...</p>
+      </section>
+    )
+  }
+
+  if (tutors.length === 0) {
+    return null
+  }
+
+  return (
+    <section className="section section-top-tutors">
+      <h2 className="top-tutors-title">Our Top Tutors</h2>
+      <p className="section-text center">
+        Meet our highest-rated tutors who consistently deliver exceptional results.
+      </p>
+
+      <div className="top-tutors-carousel">
+        <div className="top-tutors-scroll" ref={scrollRef}>
+          {tutors.map((tutor) => (
+            <Link 
+              key={tutor.userId} 
+              to={`/tutors/${tutor.userId}`} 
+              className="top-tutor-card"
+            >
+              <div className="top-tutor-avatar">
+                {tutor.profileImageUrl ? (
+                  <img src={tutor.profileImageUrl} alt={tutor.name} />
+                ) : (
+                  <div className="top-tutor-avatar-placeholder">
+                    {tutor.name.charAt(0)}
+                  </div>
+                )}
+              </div>
+              
+              <div className="top-tutor-info">
+                <h3 className="top-tutor-name">{tutor.name}</h3>
+                
+                <div className="top-tutor-rating">
+                  <span className="stars">★</span>
+                  <span className="rating-number">
+                    {tutor.rating.toFixed(1)}
+                  </span>
+                  <span className="rating-count">
+                    ({tutor.ratingCount} reviews)
+                  </span>
+                </div>
+                
+                {tutor.subjectLabel && (
+                  <div className="top-tutor-subjects">
+                    {tutor.subjectLabel}
+                  </div>
+                )}
+                
+                {tutor.headline && (
+                  <p className="top-tutor-bio">{tutor.headline}</p>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="section-cta">
+        <Link to="/tutors" className="btn btn-primary">
+          View All Tutors
+        </Link>
+      </div>
+    </section>
+  )
+}
 
 function HomePage() {
   return (
@@ -13,6 +184,7 @@ function HomePage() {
       </section>
 
       {/* Enhanced Hero section */}
+      {/*
       <section className="hero">
         <p className="hero-kicker">Searching for growth?</p>
         <h1 className="hero-title">
@@ -32,6 +204,7 @@ function HomePage() {
             <button className="hero-search-button">Search</button>
           </div>
           
+          
           <div className="hero-cta-buttons">
             <Link to="/coming-soon" className="btn btn-primary">
               Get Matched Today
@@ -42,40 +215,53 @@ function HomePage() {
           </div>
         </div>
       </section>
+      */}
 
       {/* Quick How It Works */}
       <section className="section section-how-it-works">
-        <h2 className="section-title center">How Growth Tutoring Works</h2>
+        <h2 className="how-works-title">How Growth Tutoring Works</h2>
         <p className="section-text center">
           Getting started is simple. We handle the matching, you focus on learning.
         </p>
         
         <div className="steps-grid">
-          <div className="step-card">
-            <div className="step-icon">🔍</div>
-            <div className="step-number">Step 1</div>
-            <h3 className="step-title">Find Your Tutor</h3>
-            <p className="step-description">
-              Search by subject, availability, or learning style. Filter through hundreds of vetted tutors.
-            </p>
+          <div className="step-card step-card-split">
+            <div className="step-card-image">
+              <img src={findTutorImage} alt="Find Your Tutor" />
+            </div>
+            <div className="step-card-text">
+              <div className="step-number-badge">Step 1</div>
+              <h3 className="step-item-title">Find Your Tutor</h3>
+              <p className="step-item-description">
+                Search by subject, availability, or learning style. Filter through vetted tutors.
+              </p>
+            </div>
           </div>
-          
-          <div className="step-card">
-            <div className="step-icon">📅</div>
-            <div className="step-number">Step 2</div>
-            <h3 className="step-title">Book Sessions</h3>
-            <p className="step-description">
-              Schedule sessions that fit your calendar. Flexible timing with easy rescheduling.
-            </p>
+
+          <div className="step-card step-card-split">
+            <div className="step-card-image step-card-image-2">
+              <img src={bookSessionsImage} alt="Book Sessions" />
+            </div>
+            <div className="step-card-text">
+              <div className="step-number-badge">Step 2</div>
+              <h3 className="step-item-title">Book Sessions</h3>
+              <p className="step-item-description">
+                Schedule sessions that fit your calendar. Flexible timing with easy rescheduling.
+              </p>
+            </div>
           </div>
-          
-          <div className="step-card">
-            <div className="step-icon">📈</div>
-            <div className="step-number">Step 3</div>
-            <h3 className="step-title">Track Progress</h3>
-            <p className="step-description">
-              Receive detailed reports after each session. Monitor improvement with data-driven insights.
-            </p>
+
+          <div className="step-card step-card-split">
+            <div className="step-card-image">
+              <img src={trackProgressImage} alt="Track Progress" />
+            </div>
+            <div className="step-card-text">
+              <div className="step-number-badge">Step 3</div>
+              <h3 className="step-item-title">Track Progress</h3>
+              <p className="step-item-description">
+                Receive detailed reports after each session. Monitor improvement with data-driven insights.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -87,50 +273,10 @@ function HomePage() {
       </section>
 
       {/* Top tutors */}
-      <section className="section" aria-label="Top tutors">
-        <div className="section-header">
-          <h2 className="section-title">Top Tutors This Month</h2>
-          <span className="section-subtitle">December 2024</span>
-        </div>
-        <p className="section-intro-text">
-          Meet our highest-rated tutors who consistently deliver exceptional results.
-        </p>
-
-        <div className="tutor-list">
-          <TutorCard
-            name="Kyle"
-            rating={5}
-            sessions={127}
-            summary="Over 6 years of tutoring experience and a Master's degree in Mathematics Education."
-            detail="Specializes in helping students build strong foundations and exam strategies in math."
-            subjects={["Math", "Calculus", "SAT Prep"]}
-          />
-          <TutorCard
-            name="Aliya"
-            rating={5}
-            sessions={98}
-            summary="Known for making complex science topics easy to understand for younger students."
-            detail="Celebrated for clear explanations and detailed after-lesson reports."
-            subjects={["Biology", "Chemistry", "Physics"]}
-          />
-          <TutorCard
-            name="Yang"
-            rating={5}
-            sessions={84}
-            summary="Chemistry and Mandarin tutor with experience teaching diverse learners."
-            detail="Students consistently report improved grades and confidence after lessons."
-            subjects={["Chemistry", "Mandarin", "STEM"]}
-          />
-        </div>
-
-        <div className="section-cta">
-          <Link to="/tutors" className="btn btn-primary">
-            View All Tutors
-          </Link>
-        </div>
-      </section>
+      <TopTutorsSection />
 
       {/* Testimonials */}
+      {/*}
       <section className="section section-testimonials" aria-label="Testimonials">
         <h2 className="section-title center">What Families Are Saying</h2>
         <p className="section-text center">
@@ -161,12 +307,13 @@ function HomePage() {
           />
         </div>
       </section>
+      
 
       {/* Growth AI */}
       <section className="section section-ai">
         <div className="ai-content">
           <div className="ai-text-content">
-            <h2 className="section-title">Powered by Growth AI</h2>
+            <h2 className="section-title">Powered by Growth AI (COMING SOON)</h2>
             <p className="section-text">
               Our intelligent matching system pairs students with tutors based on learning style, 
               goals, and schedule compatibility. After each session, tutors provide structured 
