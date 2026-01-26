@@ -3,64 +3,46 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import './styles/ContactPage.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || 'YOUR_RECAPTCHA_SITE_KEY'
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LfiZJYqAAAAABfYL-6eKswDG0RBEJoBZrEGa_ta'
 
-// File size limit: 10MB
-const MAX_FILE_SIZE = 10 * 1024 * 1024
-const MAX_TOTAL_SIZE = 20 * 1024 * 1024 // 20MB total for all files
-const ALLOWED_FILE_TYPES = [
-  'image/jpeg',
-  'image/jpg', 
-  'image/png',
-  'image/gif',
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'text/plain'
-]
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB per file
+const MAX_TOTAL_SIZE = 20 * 1024 * 1024 // 20MB total
 
 function ContactPage() {
-  const [feedbackForm, setFeedbackForm] = useState({
-    name: '',
-    email: '',
-    comment: ''
-  })
+  const [feedbackForm, setFeedbackForm] = useState({ name: '', email: '', comment: '' })
   const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(null)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const recaptchaRef = useRef(null)
   const fileInputRef = useRef(null)
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  }
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files)
     
-    // Validate file types
-    const invalidFiles = selectedFiles.filter(
-      file => !ALLOWED_FILE_TYPES.includes(file.type)
-    )
-    
-    if (invalidFiles.length > 0) {
-      setError(`Invalid file type. Allowed types: JPG, PNG, GIF, PDF, DOC, DOCX, TXT`)
-      return
-    }
-    
     // Validate individual file sizes
-    const oversizedFiles = selectedFiles.filter(file => file.size > MAX_FILE_SIZE)
-    if (oversizedFiles.length > 0) {
-      setError(`File too large. Maximum size per file: 10MB`)
-      return
+    for (const file of selectedFiles) {
+      if (file.size > MAX_FILE_SIZE) {
+        setError(`File "${file.name}" exceeds the 10MB limit.`)
+        return
+      }
     }
-    
+
     // Validate total size
     const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0)
     if (totalSize > MAX_TOTAL_SIZE) {
-      setError(`Total file size too large. Maximum total: 20MB`)
+      setError('Total file size exceeds 20MB. Please remove some files.')
       return
     }
-    
+
     setFiles(selectedFiles)
-    setError(null)
+    setError('')
   }
 
   const removeFile = (index) => {
@@ -70,18 +52,11 @@ function ContactPage() {
     }
   }
 
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B'
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError(null)
-    setSuccess(null)
+    setError('')
+    setSuccess('')
 
-    // Validate required fields
     if (!feedbackForm.name.trim()) {
       setError('Please enter your name.')
       return
@@ -97,7 +72,6 @@ function ContactPage() {
       return
     }
 
-    // Get reCAPTCHA token
     const recaptchaToken = recaptchaRef.current.getValue()
     if (!recaptchaToken) {
       setError('Please complete the reCAPTCHA verification.')
@@ -107,7 +81,6 @@ function ContactPage() {
     setLoading(true)
 
     try {
-      // Convert files to base64
       const filePromises = files.map(file => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader()
@@ -116,7 +89,7 @@ function ContactPage() {
               name: file.name,
               type: file.type,
               size: file.size,
-              data: reader.result.split(',')[1] // Remove data URL prefix
+              data: reader.result.split(',')[1]
             })
           }
           reader.onerror = reject
@@ -158,151 +131,196 @@ function ContactPage() {
 
   return (
     <div className="contact-page">
-      {/* Top banner */}
+      {/* Hero Section */}
       <section className="contact-hero">
-        <h1>Contact Us</h1>
-      </section>
-
-      {/* Email + Phone + AI assistant */}
-      <section className="contact-row">
-        <div className="contact-left">
-          <h2>
-            Email:{" "}
-            <span className="contact-inline">info@growthtutoringhq.com</span>
-          </h2>
-          <p className="contact-note">
-            Please note that it may take 3–5 business days for us to get back to you.
-            For more urgent questions, call our official number or use our Growth AI chatbox.
+        <div className="contact-hero-content">
+          <h1 className="contact-hero-title">Contact Us</h1>
+          <p className="contact-hero-subtitle">
+            We're here to help with any questions about tutoring, scheduling, or our platform
           </p>
-
-          <h2>
-            Phone Number:{" "}
-            <span className="contact-inline">+1 (949)232–0738</span>
-          </h2>
-          <p className="contact-note">
-            We are currently available Monday–Friday, 9am–5pm.
-          </p>
-        </div>
-
-        <div className="contact-right">
-          <h2 className="contact-ai-title">Growth AI</h2>
-          <p className="contact-ai-desc">
-            We use a simple matching process to pair students with tutors who fit their learning style.
-            After each session, tutors send a structured progress report to parents.
-          </p>
-
-          <div className="contact-ai-card">
-            <div className="contact-ai-icon">💬</div>
-            <h3>Growth Chatbox</h3>
-            <p>
-              Ask questions about subjects, scheduling, or tutoring.  
-              Your future AI assistant can live here on the website.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* Feedback form */}
-      <section className="contact-feedback">
-        <h2>Leave a Feedback</h2>
-
-        {error && (
-          <div className="feedback-message feedback-error">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="feedback-message feedback-success">
-            {success}
-          </div>
-        )}
-
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className="contact-input"
-            placeholder="Your name"
-            value={feedbackForm.name}
-            onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
-            required
-          />
-
-          <input
-            type="email"
-            className="contact-input"
-            placeholder="Your email"
-            value={feedbackForm.email}
-            onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
-            required
-          />
-
-          <textarea
-            className="contact-textarea"
-            placeholder="Add your comments..."
-            rows={5}
-            value={feedbackForm.comment}
-            onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
-            required
-          />
-
-          {/* File attachment section */}
-          <div className="file-attachment-section">
-            <label className="file-input-label">
-              <input
-                ref={fileInputRef}
-                type="file"
-                className="file-input-hidden"
-                multiple
-                onChange={handleFileChange}
-                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt"
-              />
-              <span className="file-input-button">
-                📎 Attach Files (Optional)
-              </span>
-            </label>
-            <p className="file-input-hint">
-              Max 10MB per file, 20MB total. Supported: JPG, PNG, GIF, PDF, DOC, DOCX, TXT
-            </p>
-          </div>
-
-          {/* Display selected files */}
-          {files.length > 0 && (
-            <div className="file-list">
-              {files.map((file, index) => (
-                <div key={index} className="file-item">
-                  <div className="file-info">
-                    <span className="file-name">{file.name}</span>
-                    <span className="file-size">{formatFileSize(file.size)}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="file-remove"
-                    onClick={() => removeFile(index)}
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
+      {/* Main Container */}
+      <div className="contact-container">
+        
+        {/* Contact Information Section */}
+        <section className="contact-info-section">
+          <div className="contact-info-grid">
+            
+            {/* Email Card */}
+            <div className="contact-info-card">
+              <div className="contact-info-icon contact-email-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+              </div>
+              <h3 className="contact-info-title">Email Us</h3>
+              <a href="mailto:info@growthtutoringhq.com" className="contact-info-value">
+                info@growthtutoringhq.com
+              </a>
+              <p className="contact-info-note">
+                Response time: 3-5 business days
+              </p>
             </div>
-          )}
 
-          <div className="recaptcha-container">
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey={RECAPTCHA_SITE_KEY}
-            />
+            {/* Phone Card */}
+            <div className="contact-info-card">
+              <div className="contact-info-icon contact-phone-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+              <h3 className="contact-info-title">Call Us</h3>
+              <a href="tel:+19492320738" className="contact-info-value">
+                +1 (949) 232-0738
+              </a>
+              <p className="contact-info-note">
+                Monday–Friday, 9am–5pm PST
+              </p>
+            </div>
+
+            {/* AI Chatbox Card */}
+            <div className="contact-info-card contact-ai-card">
+              <div className="contact-info-icon contact-ai-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </div>
+              <h3 className="contact-info-title">Growth AI Chatbox</h3>
+              <p className="contact-ai-description">
+                Ask questions about subjects, scheduling, or tutoring. Your AI assistant is coming soon.
+              </p>
+              <span className="contact-coming-soon-badge">Coming Soon</span>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Feedback Form Section */}
+        <section className="contact-feedback-section">
+          <div className="contact-section-header">
+            <h2 className="contact-section-title">Send Us Feedback</h2>
+            <div className="contact-section-line"></div>
           </div>
 
-          <button 
-            type="submit" 
-            className="contact-submit"
-            disabled={loading}
-          >
-            {loading ? 'Submitting...' : 'Submit'}
-          </button>
-        </form>
-      </section>
+          <div className="contact-form-container">
+            {error && (
+              <div className="contact-alert contact-alert-error">
+                <span className="contact-alert-icon">⚠️</span>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {success && (
+              <div className="contact-alert contact-alert-success">
+                <span className="contact-alert-icon">✓</span>
+                <span>{success}</span>
+              </div>
+            )}
+
+            <form className="contact-form" onSubmit={handleSubmit}>
+              <div className="contact-form-row">
+                <div className="contact-form-field">
+                  <label className="contact-form-label">Name</label>
+                  <input
+                    type="text"
+                    className="contact-form-input"
+                    placeholder="Your name"
+                    value={feedbackForm.name}
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="contact-form-field">
+                  <label className="contact-form-label">Email</label>
+                  <input
+                    type="email"
+                    className="contact-form-input"
+                    placeholder="your.email@example.com"
+                    value={feedbackForm.email}
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="contact-form-field">
+                <label className="contact-form-label">Message</label>
+                <textarea
+                  className="contact-form-textarea"
+                  placeholder="Tell us how we can help..."
+                  rows={6}
+                  value={feedbackForm.comment}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
+                  required
+                />
+              </div>
+
+              {/* File attachment */}
+              <div className="contact-file-section">
+                <label className="contact-file-label">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="contact-file-input-hidden"
+                    multiple
+                    onChange={handleFileChange}
+                    accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt"
+                  />
+                  <span className="contact-file-button">
+                    📎 Attach Files (Optional)
+                  </span>
+                </label>
+                <p className="contact-file-hint">
+                  Max 10MB per file, 20MB total • Supported: JPG, PNG, PDF, DOC, TXT
+                </p>
+              </div>
+
+              {/* Display selected files */}
+              {files.length > 0 && (
+                <div className="contact-file-list">
+                  {files.map((file, index) => (
+                    <div key={index} className="contact-file-item">
+                      <div className="contact-file-info">
+                        <span className="contact-file-name">{file.name}</span>
+                        <span className="contact-file-size">{formatFileSize(file.size)}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="contact-file-remove"
+                        onClick={() => removeFile(index)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* reCAPTCHA */}
+              <div className="contact-recaptcha">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={RECAPTCHA_SITE_KEY}
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                className="contact-submit-button"
+                disabled={loading}
+              >
+                {loading ? 'Sending...' : 'Send Message'}
+              </button>
+            </form>
+          </div>
+        </section>
+
+      </div>
     </div>
   )
 }

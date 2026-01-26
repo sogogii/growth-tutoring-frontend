@@ -18,11 +18,7 @@ const SUBJECT_OPTIONS = [
   'Special needs tutoring',
 ]
 
-const METHOD_OPTIONS = [
-  { value: 'ONLINE', label: 'Online', icon: '💻' },
-  { value: 'HYBRID', label: 'Hybrid', icon: '🔄' },
-  { value: 'IN_PERSON', label: 'In-Person', icon: '👥' },
-]
+const METHOD_OPTIONS = ['ONLINE', 'HYBRID', 'IN_PERSON']
 
 function StarRating({ rating }) {
   const r = rating ?? 0
@@ -76,9 +72,11 @@ function TutorsPage({ currentUser }) {
   const [sortOption, setSortOption] = useState('ratingDesc')
   const [searchQuery, setSearchQuery] = useState('')
   
-  // Price range filter
+  // Filter states
   const [priceRange, setPriceRange] = useState([0, 150])
   const [showPricePanel, setShowPricePanel] = useState(false)
+  const [showMethodPanel, setShowMethodPanel] = useState(false)
+  const [showSubjectsPanel, setShowSubjectsPanel] = useState(false)
   
   // Subject filter - initialize from navigation state if present
   const [selectedSubjects, setSelectedSubjects] = useState(() => {
@@ -87,11 +85,9 @@ function TutorsPage({ currentUser }) {
     }
     return []
   })
-  const [showSubjectsPanel, setShowSubjectsPanel] = useState(false)
 
   // Method filter
   const [selectedMethods, setSelectedMethods] = useState([])
-  const [showMethodsPanel, setShowMethodsPanel] = useState(false)
 
   const tutorsContentRef = useRef(null)
 
@@ -219,6 +215,21 @@ function TutorsPage({ currentUser }) {
     })
   }, [currentPage])
 
+  // Click outside to close panels
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.tutors-sidebar-section') && 
+          !e.target.closest('.filter-dropdown-panel')) {
+        setShowPricePanel(false)
+        setShowMethodPanel(false)
+        setShowSubjectsPanel(false)
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const num = (v) => (v == null ? 0 : Number(v))
   const normalizedQuery = searchQuery.trim().toLowerCase()
 
@@ -248,7 +259,6 @@ function TutorsPage({ currentUser }) {
   const subjectFiltered = selectedSubjects.length > 0
     ? priceFiltered.filter((t) => {
         if (!t.subject) return false
-        // Check if any selected subject is in the tutor's subjects
         return selectedSubjects.some(selected => 
           t.subject.toLowerCase().includes(selected.toLowerCase())
         )
@@ -334,187 +344,163 @@ function TutorsPage({ currentUser }) {
               </button>
             </div>
 
-            {/* Price Range - NEW: Block style with chevron */}
+            {/* Price Range */}
             <div className="tutors-sidebar-section">
               <h3>Price Range</h3>
+              
               <button
                 type="button"
-                className={`tutors-sort-chip ${showPricePanel ? 'active' : ''}`}
-                onClick={() => {
-                  setShowPricePanel(!showPricePanel)
-                  setShowSubjectsPanel(false)
-                  setShowMethodsPanel(false)
-                }}
+                className={`filter-trigger ${showPricePanel ? 'active' : ''}`}
+                onClick={() => setShowPricePanel(!showPricePanel)}
               >
-                ${priceRange[0]} - ${priceRange[1]}/hr
-                <span className="filter-chevron">›</span>
+                <span>${priceRange[0]} - ${priceRange[1]}/hr</span>
+                <span>{showPricePanel ? '▲' : '▼'}</span>
               </button>
-            </div>
 
-            {/* Method - Block style with chevron */}
-            <div className="tutors-sidebar-section">
-              <h3>Method</h3>
-              <button
-                type="button"
-                className={`tutors-sort-chip ${showMethodsPanel ? 'active' : ''}`}
-                onClick={() => {
-                  setShowMethodsPanel(!showMethodsPanel)
-                  setShowPricePanel(false)
-                  setShowSubjectsPanel(false)
-                }}
-              >
-                {selectedMethods.length > 0 
-                  ? `${selectedMethods.length} selected` 
-                  : 'All methods'}
-                <span className="filter-chevron">›</span>
-              </button>
-            </div>
-
-            {/* Subjects - NEW: Block style with chevron */}
-            <div className="tutors-sidebar-section">
-              <h3>Subjects</h3>
-              <button
-                type="button"
-                className={`tutors-sort-chip ${showSubjectsPanel ? 'active' : ''}`}
-                onClick={() => {
-                  setShowSubjectsPanel(!showSubjectsPanel)
-                  setShowPricePanel(false)
-                  setShowMethodsPanel(false)
-                }}
-              >
-                {selectedSubjects.length > 0 
-                  ? `${selectedSubjects.length} selected` 
-                  : 'All subjects'}
-                <span className="filter-chevron">›</span>
-              </button>
-            </div>
-          </aside>
-
-          {/* EXPANSION PANEL */}
-          {(showPricePanel || showSubjectsPanel || showMethodsPanel) && (
-            <div className="expansion-panel">
               {showPricePanel && (
-                <div className="panel-content">
-                  <h3 className="panel-title">Adjust Price Range</h3>
-                  <div className="price-range-display">
-                    ${priceRange[0]} - ${priceRange[1]}/hr
+                <div className="filter-dropdown-panel">
+                  <div className="filter-panel-header">
+                    <span>Select Price Range</span>
+                    <button 
+                      className="filter-panel-close"
+                      onClick={() => setShowPricePanel(false)}
+                    >
+                      ×
+                    </button>
                   </div>
-                  <div className="price-slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="150"
-                      step="5"
-                      value={priceRange[0]}
-                      onChange={(e) => {
-                        const newMin = Number(e.target.value)
-                        if (newMin <= priceRange[1]) {
-                          setPriceRange([newMin, priceRange[1]])
-                        }
-                      }}
-                      className="price-slider"
-                    />
+                  
+                  <div className="price-range-values">
+                    <span>${priceRange[0]}/hr</span>
+                    <span>${priceRange[1]}/hr</span>
+                  </div>
+
+                  <div className="price-range-slider-container">
                     <input
                       type="range"
                       min="0"
                       max="150"
                       step="5"
                       value={priceRange[1]}
-                      onChange={(e) => {
-                        const newMax = Number(e.target.value)
-                        if (newMax >= priceRange[0]) {
-                          setPriceRange([priceRange[0], newMax])
-                        }
-                      }}
-                      className="price-slider"
+                      onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                      className="price-range-slider"
+                      style={{ '--range-percent': `${(priceRange[1] / 150) * 100}%` }}
                     />
                   </div>
-                  <div className="price-inputs">
-                    <div className="price-input-group">
-                      <label>Min</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="150"
-                        value={priceRange[0]}
-                        onChange={(e) => {
-                          const newMin = Math.max(0, Math.min(150, Number(e.target.value)))
-                          if (newMin <= priceRange[1]) {
-                            setPriceRange([newMin, priceRange[1]])
-                          }
-                        }}
-                        className="price-input"
-                      />
-                    </div>
-                    <div className="price-input-group">
-                      <label>Max</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="150"
-                        value={priceRange[1]}
-                        onChange={(e) => {
-                          const newMax = Math.max(0, Math.min(150, Number(e.target.value)))
-                          if (newMax >= priceRange[0]) {
-                            setPriceRange([priceRange[0], newMax])
-                          }
-                        }}
-                        className="price-input"
-                      />
-                    </div>
-                  </div>
+
                   <button 
-                    className="apply-button"
+                    className="filter-apply-button"
                     onClick={() => setShowPricePanel(false)}
                   >
                     Apply
                   </button>
                 </div>
               )}
+            </div>
 
-              {showMethodsPanel && (
-                <div className="panel-content">
-                  <h3 className="panel-title">Select Methods</h3>
-                  <div className="subject-filter-list">
+            {/* Method */}
+            <div className="tutors-sidebar-section">
+              <h3>Method</h3>
+              
+              <button
+                type="button"
+                className={`filter-trigger ${showMethodPanel ? 'active' : ''}`}
+                onClick={() => setShowMethodPanel(!showMethodPanel)}
+              >
+                <span>
+                  {selectedMethods.length > 0 
+                    ? `${selectedMethods.length} selected` 
+                    : 'All methods'}
+                </span>
+                <span>{showMethodPanel ? '▲' : '▼'}</span>
+              </button>
+
+              {showMethodPanel && (
+                <div className="filter-dropdown-panel">
+                  <div className="filter-panel-header">
+                    <span>Teaching Method</span>
+                    <button 
+                      className="filter-panel-close"
+                      onClick={() => setShowMethodPanel(false)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                  
+                  <div className="method-options-container">
                     {METHOD_OPTIONS.map((method) => (
-                      <label key={method.value} className="subject-checkbox-label">
+                      <label
+                        key={method}
+                        className={`method-option ${selectedMethods.includes(method) ? 'active' : ''}`}
+                      >
                         <input
                           type="checkbox"
-                          checked={selectedMethods.includes(method.value)}
-                          onChange={() => toggleMethod(method.value)}
-                          className="subject-checkbox"
+                          className="method-checkbox"
+                          checked={selectedMethods.includes(method)}
+                          onChange={() => toggleMethod(method)}
                         />
-                        <span>{method.icon} {method.label}</span>
+                        <span className="method-label">{formatTeachingMethod(method)}</span>
                       </label>
                     ))}
                   </div>
+
                   <button 
-                    className="apply-button"
-                    onClick={() => setShowMethodsPanel(false)}
+                    className="filter-apply-button"
+                    onClick={() => setShowMethodPanel(false)}
                   >
                     Apply
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* Subjects */}
+            <div className="tutors-sidebar-section">
+              <h3>Subjects</h3>
+              
+              <button
+                type="button"
+                className={`filter-trigger ${showSubjectsPanel ? 'active' : ''}`}
+                onClick={() => setShowSubjectsPanel(!showSubjectsPanel)}
+              >
+                <span>
+                  {selectedSubjects.length > 0 
+                    ? `${selectedSubjects.length} selected` 
+                    : 'All subjects'}
+                </span>
+                <span>{showSubjectsPanel ? '▲' : '▼'}</span>
+              </button>
 
               {showSubjectsPanel && (
-                <div className="panel-content">
-                  <h3 className="panel-title">Select Subjects</h3>
-                  <div className="subject-filter-list">
+                <div className="filter-dropdown-panel">
+                  <div className="filter-panel-header">
+                    <span>Select Subjects</span>
+                    <button 
+                      className="filter-panel-close"
+                      onClick={() => setShowSubjectsPanel(false)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                  
+                  <div className="subjects-options-container">
                     {SUBJECT_OPTIONS.map((subject) => (
-                      <label key={subject} className="subject-checkbox-label">
+                      <label
+                        key={subject}
+                        className={`subject-option ${selectedSubjects.includes(subject) ? 'active' : ''}`}
+                      >
                         <input
                           type="checkbox"
+                          className="subject-checkbox"
                           checked={selectedSubjects.includes(subject)}
                           onChange={() => toggleSubject(subject)}
-                          className="subject-checkbox"
                         />
-                        <span>{subject}</span>
+                        <span className="subject-label">{subject}</span>
                       </label>
                     ))}
                   </div>
+
                   <button 
-                    className="apply-button"
+                    className="filter-apply-button"
                     onClick={() => setShowSubjectsPanel(false)}
                   >
                     Apply
@@ -522,6 +508,18 @@ function TutorsPage({ currentUser }) {
                 </div>
               )}
             </div>
+          </aside>
+
+          {/* Backdrop for mobile */}
+          {(showPricePanel || showMethodPanel || showSubjectsPanel) && (
+            <div 
+              className="filter-backdrop active"
+              onClick={() => {
+                setShowPricePanel(false)
+                setShowMethodPanel(false)
+                setShowSubjectsPanel(false)
+              }}
+            />
           )}
 
           {/* RIGHT MAIN AREA */}
@@ -632,6 +630,7 @@ function TutorsPage({ currentUser }) {
                       <span className="tutor-rate-amount">${tutor.hourlyRate}</span>
                       <span className="tutor-rate-unit">/hr</span>
                     </div>
+                    {/*
                     <button
                       type="button"
                       className="tutor-chat-button"
@@ -640,6 +639,7 @@ function TutorsPage({ currentUser }) {
                     >
                       💬
                     </button>
+                    */}
                   </div>
                 </article>
               ))}

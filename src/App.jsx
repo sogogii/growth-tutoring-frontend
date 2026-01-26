@@ -607,7 +607,7 @@ function App() {
           <h3 className="footer-social-title">Follow Growth Tutoring</h3>
           <div className="footer-social">
             <a 
-              href="https://www.instagram.com/growthutoringhq/" 
+              href="https://www.instagram.com/growthtutoringhq/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="social-icon"
@@ -616,7 +616,7 @@ function App() {
               <FaInstagram />
             </a>
             <a 
-              href="https://www.tiktok.com/@growth.tutoring.1" 
+              href="https://www.tiktok.com/@growth.tutoring.l" 
               target="_blank" 
               rel="noopener noreferrer"
               className="social-icon"

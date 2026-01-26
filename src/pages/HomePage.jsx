@@ -179,7 +179,7 @@ function HomePage() {
       <section className="hero-banner">
         <div className="hero-banner-content">
           <p className="hero-banner-company">GROWTH TUTORING LLC</p>
-          <h1 className="hero-banner-text">Empowering students to excel academically</h1>
+          <h1 className="hero-banner-text">Tutor Matching Platform Built on Trust</h1>
         </div>
       </section>
 
