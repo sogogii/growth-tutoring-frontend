@@ -3,6 +3,8 @@
 .how-it-works-page {
   display: flex;
   flex-direction: column;
+  margin-top: -32px;
+  
 }
 
 /* Hero Section - Full Width */
@@ -22,26 +24,26 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0px 20px;
+  padding: 25px 20px;
 }
 
 /* Specific background images for each page */
 .how-hero-students {
   background-image: 
     linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
-    url('../assets/how-it-works-students.png');
+    url('../../../assets/how-it-works-students.jpg');
 }
 
 .how-hero-tutors {
   background-image: 
     linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
-    url('../assets/how-it-works-tutors.png');
+    url('../../../assets/how-it-works-tutors.jpg');
 }
 
 .how-hero-cip {
   background-image: 
     linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
-    url('../assets/how-it-works-cip.png');
+    url('../../../assets/how-it-works-cip.jpg');
 }
 
 .how-hero-section::before {
