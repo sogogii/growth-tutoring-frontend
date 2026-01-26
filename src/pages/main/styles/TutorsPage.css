@@ -103,6 +103,7 @@
   top: 100px;
   align-self: flex-start;
   max-height: calc(100vh - 120px);
+  z-index: 100;
 }
 
 .tutors-sidebar-header {
@@ -187,7 +188,7 @@
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   padding: 20px;
-  z-index: 100;
+  z-index: 9999;
   max-height: 500px;
   overflow-y: auto;
 }
@@ -438,27 +439,13 @@
   background: #ea580c;
 }
 
-/* Backdrop for mobile */
+/* Backdrop - Disabled (not needed for desktop-only) */
 .filter-backdrop {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  z-index: 90;
+  display: none !important;
 }
 
 .filter-backdrop.active {
-  display: block;
-}
-
-/* Only show dark backdrop on mobile */
-@media (max-width: 900px) {
-  .filter-backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
+  display: none !important;
 }
 
 /* RIGHT MAIN AREA */
@@ -518,7 +505,7 @@
 }
 
 /* ==========================================
-   ORIGINAL TUTOR CARDS - DO NOT CHANGE
+   TUTOR CARDS
    ========================================== */
 
 .tutor-card {
@@ -530,6 +517,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .tutor-card:hover {
@@ -713,100 +701,7 @@
   margin-top: 32px;
 }
 
-/* Responsive */
-
-@media (max-width: 900px) {
-  .tutor-card {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .tutor-card-left {
-    order: 1;
-  }
-
-  .tutor-card-main {
-    order: 2;
-  }
-
-  .tutor-card-right {
-    order: 3;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-@media (max-width: 1200px) {
-  .tutors-hero {
-    padding: 60px 24px 40px;
-  }
-
-  .tutors-hero h1 {
-    font-size: 36px;
-  }
-
-  .tutors-content {
-    padding: 18px 16px 24px;
-    min-width: auto;
-  }
-
-  .tutor-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .tutor-meta span {
-    white-space: normal;
-  }
-}
-
-@media (max-width: 900px) {
-  .tutors-layout {
-    flex-direction: column;
-  }
-
-  .tutors-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
-    padding-right: 0;
-    padding-bottom: 16px;
-    position: relative;
-    top: auto;
-    max-height: none;
-    overflow-y: visible;
-  }
-
-  .filter-dropdown-panel {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    margin-left: 0;
-    width: 90%;
-    max-width: 420px;
-    z-index: 100;
-  }
-
-  .filter-backdrop.active {
-    display: block;
-  }
-}
-
-@media (max-width: 480px) {
-  .tutors-hero {
-    padding: 40px 20px 32px;
-  }
-
-  .tutors-hero h1 {
-    font-size: 32px;
-  }
-
-  .tutors-empty-wrapper {
-    min-width: auto;
-  }
-}
-
+/* Verification Badge */
 .verification-badge {
   white-space: nowrap;
   transition: transform 0.15s ease;
