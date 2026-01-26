@@ -331,7 +331,7 @@ function TutorsPage({ currentUser }) {
                 }`}
                 onClick={() => setSortOption('ratingDesc')}
               >
-                ⭐ Best rating
+                Best rating
               </button>
               <button
                 type="button"
@@ -340,7 +340,7 @@ function TutorsPage({ currentUser }) {
                 }`}
                 onClick={() => setSortOption('experienceDesc')}
               >
-                ⏳ Most experience
+                Most experience
               </button>
             </div>
 
