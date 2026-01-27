@@ -27,8 +27,7 @@ import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
 import HowItWorksTutors from './pages/main/HowItWorksTutors'
 import HowItWorksCip from './pages/main/HowItWorksCip'
-import ChatListPage from './pages/chat/ChatListPage'
-import ChatPage from './pages/chat/ChatPage'
+import MessagesPage from './pages/chat/MessagesPage'  
 import AdminPage from './pages/admin/AdminPage.jsx'
 
 // relationship pages
@@ -568,18 +567,13 @@ function App() {
 
           <Route path="/contact" element={<ContactPage />} />
 
-          <Route
-            path="/messages"
-            element={<ChatListPage currentUser={currentUser} />}
+          <Route 
+            path="/messages" 
+            element={<MessagesPage currentUser={currentUser} refreshUnreadCount={refreshUnreadCount} />} 
           />
-          <Route
-            path="/chat/:conversationId"
-            element={
-              <ChatPage
-                currentUser={currentUser}
-                refreshUnreadCount={refreshUnreadCount}
-              />
-            }
+          <Route 
+            path="/messages/:conversationId" 
+            element={<MessagesPage currentUser={currentUser} refreshUnreadCount={refreshUnreadCount} />} 
           />
 
           <Route path="/checkout" element={<CheckoutPage />} />

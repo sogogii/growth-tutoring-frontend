@@ -299,7 +299,7 @@ function TutorProfilePage({ currentUser }) {
       }
 
       const conv = await res.json()
-      navigate(`/chat/${conv.id}`, {
+      navigate(`/messages/${conv.id}`, {
         state: { 
           otherName: tutor.name,
           otherUserId: tutor.userId  
