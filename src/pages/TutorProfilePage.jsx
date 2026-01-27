@@ -67,6 +67,7 @@ function TutorProfilePage({ currentUser }) {
 
   const [linkStatus, setLinkStatus] = useState('NONE')
   const [linkLoading, setLinkLoading] = useState(false)
+  const [chatLoading, setChatLoading] = useState(false)
   const [showRequestForm, setShowRequestForm] = useState(false)
 
   const [isConnected, setIsConnected] = useState(false)
@@ -273,12 +274,43 @@ function TutorProfilePage({ currentUser }) {
   }
 
   // Contact tutor
-  const handleContactTutor = () => {
+  const handleContactTutor = async () => {
     if (!currentUser) {
       navigate('/login')
       return
     }
-    navigate('/messages')
+
+    if (!isStudent) {
+      alert('Only students can message tutors')
+      return
+    }
+
+    try {
+      setChatLoading(true)
+
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutor.userId}`,
+        { method: 'POST' }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to start conversation')
+      }
+
+      const conv = await res.json()
+      navigate(`/chat/${conv.id}`, {
+        state: { 
+          otherName: tutor.name,
+          otherUserId: tutor.userId  
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to start conversation')
+    } finally {
+      setChatLoading(false)
+    }
   }
 
   // Add tutor request
@@ -507,8 +539,9 @@ function TutorProfilePage({ currentUser }) {
                 type="button"
                 className="tutor-profile-cta"
                 onClick={handleContactTutor}
+                disabled={chatLoading}
               >
-                Contact Tutor
+                {chatLoading ? 'Opening chat...' : 'Contact Tutor'}
               </button>
 
               {isStudent && (
@@ -517,8 +550,12 @@ function TutorProfilePage({ currentUser }) {
                   className="tutor-profile-secondary-cta"
                   onClick={handleAddTutorRequest}
                   disabled={addTutorDisabled}
+                  title="Add this tutor to your favorites for easy tracking"
                 >
-                  {linkLoading ? 'Sending…' : addTutorLabel}
+                  {linkLoading ? 'Loading...' : 
+                  linkStatus === 'PENDING' ? 'Request Sent' :
+                  linkStatus === 'ACCEPTED' ? 'In My Tutors' :
+                  'Add to My Tutors'}
                 </button>
               )}
             </div>
