@@ -13,10 +13,44 @@ function getInitials(name) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
+// Better time formatting
 function formatTime(isoString) {
   if (!isoString) return ''
-  const d = new Date(isoString)
-  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  
+  const now = new Date()
+  const date = new Date(isoString)
+  const diffMs = now - date
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+  
+  // Less than 1 hour ago - show minutes
+  if (diffMins < 60) {
+    if (diffMins < 1) return 'Just now'
+    return `${diffMins}m ago`
+  }
+  
+  // Today - show time
+  if (diffHours < 24 && date.getDate() === now.getDate()) {
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  }
+  
+  // Yesterday
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear()) {
+    return 'Yesterday'
+  }
+  
+  // This week - show day name
+  if (diffDays < 7) {
+    return date.toLocaleDateString([], { weekday: 'short' })
+  }
+  
+  // Older - show date
+  return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
 }
 
 function ChatListPage({ currentUser }) {
@@ -44,7 +78,7 @@ function ChatListPage({ currentUser }) {
 
         const data = await res.json()
 
-        // Sort by most recent message (defensive; backend already sorts)
+        // Sort by most recent message
         const sorted = [...data].sort((a, b) => {
           const ta = a.lastMessageCreatedAt
           const tb = b.lastMessageCreatedAt
@@ -86,7 +120,7 @@ function ChatListPage({ currentUser }) {
 
       {!loading && !error && conversations.length === 0 && (
         <p className="chat-list-empty">
-          You don&apos;t have any conversations yet.
+          You don't have any conversations yet.
         </p>
       )}
 
@@ -101,12 +135,15 @@ function ChatListPage({ currentUser }) {
               const timeLabel = hasMessages
                 ? formatTime(conv.lastMessageCreatedAt)
                 : ''
+              
+              const hasUnread = conv.unreadCount > 0
+              const hasProfileImage = !!conv.otherProfileImageUrl
 
               return (
                 <button
                   key={conv.id}
                   type="button"
-                  className="chat-card"
+                  className={`chat-card ${hasUnread ? 'has-unread' : ''}`}
                   onClick={() =>
                     navigate(`/chat/${conv.id}`, {
                       state: { otherName: conv.otherName },
@@ -115,9 +152,17 @@ function ChatListPage({ currentUser }) {
                 >
                   <div className="chat-card-content">
                     <div className="chat-card-avatar">
-                      <span className="chat-card-avatar-fallback">
-                        {getInitials(conv.otherName || 'Conversation')}
-                      </span>
+                      {hasProfileImage ? (
+                        <img 
+                          src={conv.otherProfileImageUrl} 
+                          alt={conv.otherName}
+                          className="chat-card-avatar-img"
+                        />
+                      ) : (
+                        <span className="chat-card-avatar-fallback">
+                          {getInitials(conv.otherName || 'Conversation')}
+                        </span>
+                      )}
                     </div>
 
                     <div className="chat-card-main">
@@ -136,7 +181,7 @@ function ChatListPage({ currentUser }) {
                     </div>
                   </div>
 
-                  {conv.unreadCount > 0 && (
+                  {hasUnread && (
                     <span className="chat-card-unread">
                       {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
                     </span>

@@ -2,8 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import './styles/ChatPage.css'
 
-const RAW_API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function ChatPage({ currentUser, refreshUnreadCount }) {
@@ -32,8 +31,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     el.scrollTop = el.scrollHeight
   }
 
-  const getTimestamp = (msg) =>
-    msg.createdAt || msg.sentAt || msg.timestamp || null
+  const getTimestamp = (msg) => msg.createdAt || msg.sentAt || msg.timestamp || null
 
   const formatDateLabel = (ts) => {
     if (!ts) return ''
@@ -65,23 +63,21 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     if (isMine) {
       const first = currentUser?.firstName || ''
       const last = currentUser?.lastName || ''
-      const displayName =
-        (first || last) ? `${first} ${last}`.trim() : 'You'
+      const displayName = (first || last) ? `${first} ${last}`.trim() : 'You'
       const initials = (first || last ? `${first} ${last}` : 'You')
         .split(' ')
         .filter(Boolean)
         .slice(0, 2)
         .map((p) => p[0]?.toUpperCase())
         .join('')
-      const avatarUrl = currentUser?.avatarUrl || null
+      const avatarUrl = currentUser?.profileImageUrl || null  // FIXED: use profileImageUrl
       return { displayName, initials, avatarUrl }
     }
 
     const first = msg.senderFirstName || ''
     const last = msg.senderLastName || ''
-    const fallbackName = msg.senderName || 'Tutor'
-    const displayName =
-      (first || last) ? `${first} ${last}`.trim() : fallbackName
+    const fallbackName = msg.senderName || 'User'
+    const displayName = (first || last) ? `${first} ${last}`.trim() : fallbackName
 
     const initials = (displayName || fallbackName)
       .split(' ')
@@ -95,13 +91,12 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     return { displayName, initials, avatarUrl }
   }
 
-  // Handle click on avatar/name to go to profile
   const handleProfileClick = () => {
     if (!otherUserId) return
     navigate(`/tutors/${otherUserId}`)
   }
 
-  // fetch messages + poll
+  // Fetch messages + poll
   useEffect(() => {
     if (!conversationId) return
 
@@ -179,7 +174,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
     }
   }, [messages])
 
-  // mark read
+  // Mark read
   useEffect(() => {
     if (!currentUser || !conversationId) return
     if (messages.length === 0) return
@@ -254,7 +249,6 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
 
   return (
     <div className="chat-page">
-      {/* MAKE HEADER TITLE CLICKABLE */}
       <h1 
         onClick={handleProfileClick}
         style={{ 
@@ -287,10 +281,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
               const showDateDivider = dateKey && dateKey !== lastDateKey
               if (dateKey) lastDateKey = dateKey
 
-              const { displayName, initials, avatarUrl } = getSenderInfo(
-                msg,
-                isMine
-              )
+              const { displayName, initials, avatarUrl } = getSenderInfo(msg, isMine)
 
               return (
                 <div key={msg.id}>
@@ -300,11 +291,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
                     </div>
                   )}
 
-                  <div
-                    className={`chat-message-row ${
-                      isMine ? 'mine' : 'theirs'
-                    }`}
-                  >
+                  <div className={`chat-message-row ${isMine ? 'mine' : 'theirs'}`}>
                     {!isMine && (
                       <div 
                         className="chat-avatar"
@@ -312,10 +299,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
                         style={{ cursor: 'pointer' }}
                       >
                         {avatarUrl ? (
-                          <img
-                            src={avatarUrl}
-                            alt={`${displayName}'s avatar`}
-                          />
+                          <img src={avatarUrl} alt={`${displayName}'s avatar`} />
                         ) : (
                           <div className="chat-avatar-fallback">
                             {initials || '?'}
@@ -348,11 +332,8 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
 
                     {isMine && (
                       <div className="chat-avatar mine-avatar">
-                        {currentUser?.avatarUrl ? (
-                          <img
-                            src={currentUser.avatarUrl}
-                            alt="Your avatar"
-                          />
+                        {currentUser?.profileImageUrl ? (
+                          <img src={currentUser.profileImageUrl} alt="Your avatar" />
                         ) : (
                           <div className="chat-avatar-fallback">
                             {getSenderInfo(msg, true).initials || 'Y'}
@@ -383,7 +364,7 @@ function ChatPage({ currentUser, refreshUnreadCount }) {
           <button
             type="submit"
             disabled={sending || !text.trim()}
-            className="chat-send-btn btn btn-primary"
+            className="chat-send-btn"
           >
             {sending ? 'Sending…' : 'Send'}
           </button>
