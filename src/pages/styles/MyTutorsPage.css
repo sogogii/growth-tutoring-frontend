@@ -1,6 +1,5 @@
 /* Root container */
 .my-profile-page {
-  width: 900px;
   margin: 0 auto;
   padding: 24px 4px 40px;
 }
@@ -9,6 +8,7 @@
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 12px;
+  min-width: 1100px;
 }
 
 .auth-error {

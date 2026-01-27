@@ -336,7 +336,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
         {/* Main Form */}
         <form className="profile-form" onSubmit={handleSubmit}>
           {/* Personal Information Section */}
-          <div className="profile-section">
+          <div className="my-profile-section">
             <div className="section-header">
               <h2 className="section-title">Personal Information</h2>
               <span className="section-subtitle">Your basic account details</span>
@@ -461,7 +461,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
 
           {/* Tutor-only section */}
           {currentUser.role === 'TUTOR' && (
-            <div className="profile-section tutor-section">
+            <div className="my-profile-section tutor-section">
               <div className="section-header">
                 <h2 className="section-title">Tutor Profile</h2>
                 <span className="section-subtitle">
@@ -662,7 +662,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
           )}
 
           {/* Account Information Section */}
-          <div className="profile-section readonly-section">
+          <div className="my-profile-section readonly-section">
             <div className="section-header">
               <h2 className="section-title">Account Information</h2>
               <span className="section-subtitle">Read-only account details</span>
