@@ -277,6 +277,20 @@ function SignupPage({ fixedRole }) {
             </li>
           </ul>
 
+          {/* Tutor-specific notices - ONLY for tutors */}
+          {roleToSend === 'TUTOR' && step === 1 && (
+            <div className="auth-notice-box">
+              <div className="auth-notice-item auth-notice-warning">
+                <strong>Account Approval Required:</strong> Your profile will require admin approval after signup and won't be visible 
+                in our tutor directory until an administrator reviews and activates your account.
+              </div>
+              <div className="auth-notice-item auth-notice-alert">
+                <strong>Applications Currently Closed:</strong> We are not currently accepting new tutor applications. 
+                If you have questions, please contact us at <a href="mailto:info@growthtutoringhq.com">info@growthtutoringhq.com</a>.
+              </div>
+            </div>
+          )}
+
           <p className="auth-secondary-link">
             Already have an account? <a href="/login">Log in</a>
           </p>

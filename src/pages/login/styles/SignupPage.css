@@ -747,6 +747,50 @@
   margin-bottom: 0;      /* No margin at bottom */
 }
 
+/* Notice boxes for tutor warnings */
+.auth-notice-box {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-notice-item {
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  border-left: 4px solid;
+}
+
+.auth-notice-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.auth-notice-warning {
+  background-color: #fffbeb;
+  border-left-color: #f59e0b;
+  color: #92400e;
+}
+
+.auth-notice-alert {
+  background-color: #fef2f2;
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+.auth-notice-item a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.auth-notice-item a:hover {
+  opacity: 0.8;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
