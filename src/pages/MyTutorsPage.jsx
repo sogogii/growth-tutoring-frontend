@@ -66,7 +66,7 @@ function MyTutorsPage({ currentUser }) {
       }
 
       const conv = await res.json()
-      navigate(`/chat/${conv.id}`, {
+      navigate(`/messages/${conv.id}`, {
         state: { 
           otherName: `${tutor.firstName} ${tutor.lastName}`,  // ✅ FIXED: Changed from 'student' to 'tutor'
           otherUserId: tutor.userId  // ✅ FIXED: Changed from 'student' to 'tutor'
