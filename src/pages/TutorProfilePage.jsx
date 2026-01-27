@@ -532,10 +532,18 @@ function TutorProfilePage({ currentUser }) {
             <div className="tutor-profile-section">
               <h2>Overview</h2>
               <ul className="tutor-profile-list">
+                {/*
                 <li>
                   <strong>Joined:</strong>
                   <span>{tutor.joined}</span>
                 </li>
+                */}
+                {tutor.education && (
+                  <li>
+                    <strong>Education:</strong>
+                    <span>{tutor.education}</span>
+                  </li>
+                )}
                 <li>
                   <strong>Experience:</strong>
                   <span>
@@ -547,12 +555,6 @@ function TutorProfilePage({ currentUser }) {
                   <strong>Method:</strong>
                   <span>{tutor.teachingMethod}</span>
                 </li>
-                {tutor.education && (
-                  <li>
-                    <strong>Education:</strong>
-                    <span>{tutor.education}</span>
-                  </li>
-                )}
               </ul>
             </div>
 

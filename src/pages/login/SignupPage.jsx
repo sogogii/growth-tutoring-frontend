@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './styles/SignupPage.css'
 
+import EducationInput from '../../components/EducationInput'
+
 const SUBJECT_OPTIONS = [
   'K-12 Math',
   'K-12 English',
@@ -76,6 +78,7 @@ function SignupPage({ fixedRole }) {
     confirmPassword: '',
     userUid: '',
     subjects: [],
+    education: ''
   })
 
   const [verificationCode, setVerificationCode] = useState('')
@@ -83,6 +86,7 @@ function SignupPage({ fixedRole }) {
   const [success, setSuccess] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
+  const [education, setEducation] = useState('')
 
   const roleToSend = fixedRole || 'TUTOR'
   const roleLabel = roleToSend === 'TUTOR' ? 'Tutor' : 'Student'
@@ -129,6 +133,11 @@ function SignupPage({ fixedRole }) {
 
     if (roleToSend === 'TUTOR' && form.subjects.length === 0) {
       setError('Please select at least one subject you can teach.')
+      return
+    }
+
+    if (roleToSend === 'TUTOR' && !form.education.trim()) {
+      setError('Please provide your educational background.')
       return
     }
 
@@ -194,6 +203,7 @@ function SignupPage({ fixedRole }) {
           userUid: form.userUid,
           subjectLabel:
             roleToSend === 'TUTOR' ? form.subjects.join(', ') : null,
+          education: roleToSend === 'TUTOR' ? form.education : null,
         }),
       })
 
@@ -406,6 +416,18 @@ function SignupPage({ fixedRole }) {
                 />
 
                 {roleToSend === 'TUTOR' && (
+                  <>
+                  <div className="auth-field">
+                    <label htmlFor="education">
+                      Educational Background <span style={{color: '#ef4444'}}>*</span>
+                    </label>
+                    <EducationInput
+                      value={form.education}
+                      onChange={(value) => setForm(prev => ({ ...prev, education: value }))}
+                      required={true}
+                      placeholder="e.g., Bachelor of Science in Biology, University of California, Irvine"
+                    />
+                  </div>
                   <div className="auth-field">
                     <label>Subjects you can teach</label>
                     <div className="subjects-grid">
@@ -429,6 +451,7 @@ function SignupPage({ fixedRole }) {
                       Click to select or unselect each subject.
                     </div>
                   </div>
+                  </>
                 )}
 
                 {error && <p className="auth-error">{error}</p>}

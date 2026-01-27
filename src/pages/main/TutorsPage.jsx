@@ -178,7 +178,8 @@ function TutorsPage({ currentUser }) {
           summary: t.headline || '',
           hourlyRate: t.hourlyRate,
           profileImageUrl: t.profileImageUrl || null,
-          verificationTier: t.verificationTier || 'TIER_1'
+          verificationTier: t.verificationTier || 'TIER_1',
+          education: t.education || ''
         }))
 
         setTutors(mapped)
@@ -600,12 +601,19 @@ function TutorsPage({ currentUser }) {
                     </div>
 
                     <div className="tutor-meta">
+                      {/*
                       <span>
                         <strong>Joined:</strong> {tutor.joined}
                       </span>
+                      */}
                       <span>
                         <strong>Subject:</strong> {tutor.subject}
                       </span>
+                      {tutor.education && (
+                        <span>
+                          <strong>Education:</strong> {tutor.education}
+                        </span>
+                      )}
                       <span>
                         <strong>Experience:</strong> {tutor.experienceYears} year
                         {tutor.experienceYears > 1 ? 's' : ''}
