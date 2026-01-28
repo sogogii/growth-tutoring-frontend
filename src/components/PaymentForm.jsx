@@ -23,14 +23,14 @@ function PaymentForm({ onCreateSessionRequest, amount }) {
     setError(null)
 
     try {
-      // Create session request and get client secret
+      // Step 1: Create session request and get client secret
       const sessionData = await onCreateSessionRequest()
       
       if (!sessionData?.clientSecret) {
         throw new Error('Failed to initialize payment')
       }
 
-      // Confirm payment
+      // Step 2: Confirm payment with Stripe
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
         sessionData.clientSecret,
         {
@@ -41,19 +41,39 @@ function PaymentForm({ onCreateSessionRequest, amount }) {
       )
 
       if (stripeError) {
+        // Payment failed - session stays in PAYMENT_PENDING (won't be visible to tutor)
         throw new Error(stripeError.message)
       }
 
-      if (paymentIntent.status === 'requires_capture') {
-        navigate('/booking-success', {
-          state: {
-            sessionRequestId: sessionData.sessionRequest.id,
-            message: 'Session request sent! Payment authorized.',
-          },
-        })
-      } else {
+      if (paymentIntent.status !== 'requires_capture') {
         throw new Error('Payment authorization failed')
       }
+
+      // Step 3: Payment authorized successfully - confirm it on backend
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+      const confirmRes = await fetch(
+        `${API_BASE}/api/session-requests/${sessionData.sessionRequest.id}/confirm-payment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+      if (!confirmRes.ok) {
+        const errorText = await confirmRes.text()
+        throw new Error(`Failed to confirm booking: ${errorText}`)
+      }
+
+      // Success! Navigate to success page
+      navigate('/booking-success', {
+        state: {
+          sessionRequestId: sessionData.sessionRequest.id,
+          message: 'Session request sent! Payment authorized.',
+        },
+      })
+      
     } catch (err) {
       setError(err.message || 'Payment failed. Please try again.')
     } finally {
