@@ -147,6 +147,19 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     setSaving(true)
 
     try {
+      // VALIDATION: Check hourly rate maximum limit
+      if (currentUser.role === 'TUTOR' && tutorProfile && tutorForm.hourlyRate) {
+        const hourlyRateNum = Number(tutorForm.hourlyRate)
+        
+        if (hourlyRateNum > 150) {
+          throw new Error('Hourly rate cannot exceed $150.00')
+        }
+        
+        if (hourlyRateNum <= 0) {
+          throw new Error('Hourly rate must be greater than $0')
+        }
+      }
+
       // 1) update user profile
       const res = await fetch(
         `${API_BASE}/api/users/${currentUser.userId}`,
@@ -538,10 +551,14 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                         onChange={handleTutorChange}
                         className="form-input with-prefix"
                         min="0"
+                        max="150"
                         step="1"
                         placeholder="40"
                       />
                       <span className="input-suffix">/hour</span>
+                      <small style={{ display: 'block', color: '#666', marginTop: '4px', fontSize: '12px' }}>
+                        Maximum: $150/hour
+                      </small>
                     </div>
                   ) : (
                     <div className="field-value price">
