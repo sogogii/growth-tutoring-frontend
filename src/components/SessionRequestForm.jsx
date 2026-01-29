@@ -190,6 +190,20 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
   }
 
   const handleTimeClick = (time) => {
+
+    // If clicking selected start time → deselect both
+    if (selectedStartTime && selectedStartTime.time24 === time.time24) {
+      setSelectedStartTime(null)
+      setSelectedEndTime(null)
+      return
+    }
+
+    // If clicking selected end time → deselect end only
+    if (selectedEndTime && selectedEndTime.time24 === time.time24) {
+      setSelectedEndTime(null)
+      return
+    }
+
     if (isTimeSlotBooked(time)) { 
       return
     }
@@ -200,26 +214,27 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
 
     if (!selectedStartTime) {
       setSelectedStartTime(time)
-      // Auto-suggest 1 hour session
-      const endHour = time.hour + 1
-      const endTime = availableTimes.find(t => 
-        t.hour === endHour && t.minute === time.minute
-      )
-      if (endTime && !isTimePast(endTime)) {
-        setSelectedEndTime(endTime)
-      }
+      setSelectedEndTime(null)
     } else if (!selectedEndTime) {
-      // Validate end time is after start time
+      // Selecting end time
       const startMinutes = selectedStartTime.hour * 60 + selectedStartTime.minute
       const endMinutes = time.hour * 60 + time.minute
       
+      // Validate end time is after start time
       if (endMinutes <= startMinutes) {
         alert('End time must be after start time')
         return
       }
       
-      if (endMinutes - startMinutes < 60) {
-        alert('Sessions must be at least 1 hour long')
+      // Validate minimum session length (1 hour)
+      if (endMinutes - startMinutes < 30) {
+        alert('Sessions must be at least 30 minutes long')
+        return
+      }
+      
+      // NEW: Validate that all time slots between start and end are available
+      if (!isTimeRangeContinuous(selectedStartTime, time)) {
+        alert('The selected time range spans across unavailable time slots. Please select a continuous time range within the tutor\'s availability.')
         return
       }
       
@@ -230,6 +245,78 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
       setSelectedEndTime(null)
     }
   }
+
+  /**
+   * Check if all time slots between start and end are continuously available
+   * This prevents booking across gaps in tutor availability
+   */
+  const isTimeRangeContinuous = (startTime, endTime) => {
+    const startMinutes = startTime.hour * 60 + startTime.minute
+    const endMinutes = endTime.hour * 60 + endTime.minute
+    
+    // Check every 30-minute slot between start and end
+    for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
+      const hour = Math.floor(minutes / 60)
+      const minute = minutes % 60
+      
+      // Find if this time slot exists in availableTimes
+      const slotExists = availableTimes.some(t => 
+        t.hour === hour && t.minute === minute
+      )
+      
+      if (!slotExists) {
+        // This slot is not available - there's a gap!
+        return false
+      }
+      
+      // Also check if this slot is booked
+      const time = { hour, minute }
+      if (isTimeSlotBooked(time)) {
+        return false
+      }
+    }
+    
+    return true
+  }
+
+   /**
+   * Group available times into continuous windows
+   * Each window represents a continuous block of availability (e.g., 9am-5pm, 7pm-9pm)
+   */
+  const groupTimesIntoWindows = (times) => {
+    if (!times || times.length === 0) return []
+    
+    const windows = []
+    let currentWindow = [times[0]]
+    
+    for (let i = 1; i < times.length; i++) {
+      const prevTime = times[i - 1]
+      const currentTime = times[i]
+      
+      // Calculate time difference in minutes
+      const prevMinutes = prevTime.hour * 60 + prevTime.minute
+      const currentMinutes = currentTime.hour * 60 + currentTime.minute
+      
+      // If gap is exactly 30 minutes, it's continuous
+      if (currentMinutes - prevMinutes === 30) {
+        currentWindow.push(currentTime)
+      } else {
+        // Gap detected - start new window
+        windows.push(currentWindow)
+        currentWindow = [currentTime]
+      }
+    }
+    
+    // Add the last window
+    if (currentWindow.length > 0) {
+      windows.push(currentWindow)
+    }
+    
+    return windows
+  }
+  
+  // Get grouped windows
+  const timeWindows = groupTimesIntoWindows(availableTimes)
 
   // ============ UPDATED FOR PAYMENT INTEGRATION ============
   const handleSubmit = async (e) => {
@@ -399,34 +486,45 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
                 <p className="no-times">No available times on this date</p>
               ) : (
                 <>
-                  <div className="time-grid">
-                    {availableTimes.map(time => {
-                      const isBooked = isTimeSlotBooked(time)
-                      const isPast = isTimePast(time)
-                      const isStartSelected = selectedStartTime?.time24 === time.time24
-                      const isEndSelected = selectedEndTime?.time24 === time.time24
-                      const isInRange = selectedStartTime && selectedEndTime &&
-                        time.hour * 60 + time.minute > selectedStartTime.hour * 60 + selectedStartTime.minute &&
-                        time.hour * 60 + time.minute < selectedEndTime.hour * 60 + selectedEndTime.minute
+                  {/* Render each availability window separately */}
+                  {timeWindows.map((window, windowIndex) => (
+                    <div key={windowIndex} className="time-window">
+                      {/* Window header showing time range */}
+                      <div className="time-window-header">
+                        Available: {window[0].time12} - {window[window.length - 1].time12}
+                      </div>
+                      
+                      {/* Time slots in this window */}
+                      <div className="time-grid">
+                        {window.map(time => {
+                          const isBooked = isTimeSlotBooked(time)
+                          const isPast = isTimePast(time)
+                          const isStartSelected = selectedStartTime?.time24 === time.time24
+                          const isEndSelected = selectedEndTime?.time24 === time.time24
+                          const isInRange = selectedStartTime && selectedEndTime &&
+                            time.hour * 60 + time.minute > selectedStartTime.hour * 60 + selectedStartTime.minute &&
+                            time.hour * 60 + time.minute < selectedEndTime.hour * 60 + selectedEndTime.minute
 
-                      return (
-                        <button
-                          key={time.time24}
-                          type="button"
-                          onClick={() => handleTimeClick(time)}
-                          disabled={isBooked || isPast}
-                          className={`time-slot ${
-                            isBooked ? 'booked' : '' 
-                          } ${ isStartSelected ? 'start-selected' : ''
-                          } ${isEndSelected ? 'end-selected' : ''} ${
-                            isInRange ? 'in-range' : ''
-                          }`}
-                        >
-                          {time.time12}
-                        </button>
-                      )
-                    })}
-                  </div>
+                          return (
+                            <button
+                              key={time.time24}
+                              type="button"
+                              onClick={() => handleTimeClick(time)}
+                              disabled={isBooked || isPast}
+                              className={`time-slot ${
+                                isBooked ? 'booked' : '' 
+                              } ${ isStartSelected ? 'start-selected' : ''
+                              } ${isEndSelected ? 'end-selected' : ''} ${
+                                isInRange ? 'in-range' : ''
+                              }`}
+                            >
+                              {time.time12}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
 
                   {selectedStartTime && selectedEndTime && (
                     <div className="selected-time-summary">
@@ -440,7 +538,7 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
 
                   <p className="time-hint">
                     Click to select start time, then click again to select end time.
-                    Minimum 1 hour session.
+                    Minimum 30 minutes session.
                   </p>
                 </>
               )}
