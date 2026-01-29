@@ -1,0 +1,288 @@
+/* ==========================================
+   FAQ PAGE - CLEAN PROFESSIONAL DESIGN
+   ========================================== */
+
+.faq-page {
+  min-height: 100vh;
+  background: #fafafa;
+  margin-top: -32px;
+}
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+
+.faq-hero {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: linear-gradient(to bottom, #fff7ed 0%, #ffedd5 100%);
+  padding: 80px 24px 60px;
+  text-align: center;
+  border-bottom: 1px solid #fed7aa;
+}
+
+.faq-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-hero-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+}
+
+.faq-hero-subtitle {
+  font-size: 18px;
+  color: #78716c;
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+
+.faq-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+/* ==========================================
+   CONTACT SECTION (TOP)
+   ========================================== */
+
+.faq-contact-section {
+  text-align: center;
+  margin-bottom: 60px;
+  padding: 24px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+}
+
+.faq-contact-text {
+  font-size: 16px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.faq-contact-text a {
+  color: #16a34a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.faq-contact-text a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   FAQ CATEGORIES
+   ========================================== */
+
+.faq-category {
+  margin-bottom: 60px;
+}
+
+.faq-category-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.faq-category-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.01em;
+}
+
+.faq-category-line {
+  width: 60px;
+  height: 3px;
+  background: #16a34a;
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+/* ==========================================
+   FAQ QUESTIONS (ACCORDION)
+   ========================================== */
+
+.faq-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faq-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Question Button */
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  transition: background 0.2s ease;
+}
+
+.faq-question:hover {
+  background: #f9fafb;
+}
+
+.faq-question.active {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.faq-question span {
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* Icon */
+.faq-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: #9ca3af;
+}
+
+.faq-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.faq-question.active .faq-icon {
+  color: #16a34a;
+}
+
+/* Answer */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-answer.open {
+  max-height: 1000px;
+  padding: 12px 24px 12px 24px;
+}
+
+.faq-answer p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ==========================================
+   BOTTOM SECTION
+   ========================================== */
+
+.faq-bottom-section {
+  margin-top: 60px;
+  padding: 40px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.faq-bottom-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.faq-bottom-text {
+  font-size: 16px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.7;
+}
+
+.faq-bottom-text a {
+  color: #16a34a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.faq-bottom-text a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .faq-hero-title {
+    font-size: 36px;
+  }
+
+  .faq-hero-subtitle {
+    font-size: 16px;
+  }
+
+  .faq-container {
+    padding: 40px 16px 60px;
+  }
+
+  .faq-category-title {
+    font-size: 24px;
+  }
+
+  .faq-question {
+    font-size: 15px;
+    padding: 16px 20px;
+  }
+
+  .faq-answer.open {
+    padding: 0 20px 20px 20px;
+  }
+
+  .faq-answer p {
+    font-size: 14px;
+  }
+
+  .faq-bottom-section {
+    padding: 32px 24px;
+  }
+
+  .faq-bottom-title {
+    font-size: 20px;
+  }
+
+  .faq-bottom-text {
+    font-size: 15px;
+  }
+}
