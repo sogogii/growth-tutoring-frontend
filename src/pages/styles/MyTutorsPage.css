@@ -1,3 +1,8 @@
+/* ==========================================
+   MY TUTORS PAGE - COMPLETE CSS
+   Updated with layout and spacing fixes
+   ========================================== */
+
 /* Root container */
 .my-profile-page {
   margin: 0 auto;
@@ -11,6 +16,7 @@
   min-width: 1100px;
 }
 
+/* Error messages */
 .auth-error {
   color: #b91c1c;
   background: #fef2f2;
@@ -21,13 +27,16 @@
   margin-bottom: 12px;
 }
 
+/* General text */
 .profile-value {
   font-size: 14px;
   color: #4b5563;
   margin: 4px 0;
 }
 
-/* Sections (Pending / Matched) */
+/* ==========================================
+   SECTIONS (Pending / Matched)
+   ========================================== */
 
 .profile-section {
   background: #ffffff;
@@ -37,13 +46,16 @@
   margin-top: 16px;
 }
 
-.profile-section-title {
-  font-size: 16px;
+.profile-section h2 {
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  color: #111827;
 }
 
-/* List + cards */
+/* ==========================================
+   PROFILE CARDS LIST
+   ========================================== */
 
 .profile-list {
   display: flex;
@@ -57,8 +69,7 @@
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   padding: 12px 14px;
-  transition: box-shadow 0.15s ease, transform 0.15s ease,
-    border-color 0.15s ease;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
 }
 
 .profile-card:hover {
@@ -67,24 +78,82 @@
   transform: translateY(-1px);
 }
 
+/* ==========================================
+   PROFILE CARD MAIN LAYOUT (NEW)
+   ========================================== */
+
+/* Main container - spreads content and button */
 .profile-card-main {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: space-between;  /* Pushes button to far right */
+  gap: 16px;
+  width: 100%;
 }
 
+/* Left content area (name, user ID, status) */
+.profile-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;  /* Takes up remaining space */
+  min-width: 0;  /* Allows text to truncate if needed */
+}
+
+/* ==========================================
+   PROFILE CARD TITLE & SUBTITLE
+   ========================================== */
+
+/* Title row - name and user ID on same line */
 .profile-card-title {
   font-size: 15px;
   font-weight: 600;
   color: #111827;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
+/* User ID subtitle - lighter color, smaller */
 .profile-card-subtitle {
   font-size: 13px;
+  font-weight: 400;
   color: #6b7280;
-  margin-top: 2px;
 }
+
+/* ==========================================
+   STATUS ROW (Pending Requests)
+   ========================================== */
+
+/* Status container */
+.profile-card-status {
+  display: flex;
+  align-items: center;
+}
+
+/* Pending status text */
+.pending-note {
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ==========================================
+   PROFILE CARD ACTIONS (Matched Tutors)
+   ========================================== */
+
+/* Button container for matched tutors */
+.profile-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ==========================================
+   PROFILE CARD LINE (General Text)
+   ========================================== */
 
 .profile-card-line {
   font-size: 13px;
@@ -92,15 +161,11 @@
   line-height: 1.35;
 }
 
-/* Button container for matched tutors */
-.profile-card-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+/* ==========================================
+   BUTTONS
+   ========================================== */
 
-/* Button adjustments for this page */
-
+/* Standard buttons for matched tutors */
 .profile-card .btn.btn-primary,
 .profile-card .btn.btn-outline {
   padding: 6px 14px;
@@ -109,54 +174,37 @@
   white-space: nowrap;
 }
 
-/* Small helper texts */
-.my-profile-page p {
-  margin: 4px 0;
+/* Withdraw button styling */
+.btn-outline-danger {
+  padding: 8px 16px;
+  font-size: 13px;
+  border-radius: 999px;
+  border: 1px solid #dc2626;
+  background: #ffffff;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;  /* ✅ THIS LINE PUSHES BUTTON TO FAR RIGHT */
 }
 
-/* Responsive tweaks */
-
-@media (max-width: 640px) {
-  .my-profile-page {
-    padding: 20px 0 32px;
-  }
-
-  .profile-card-main {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .profile-card-actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .profile-card .btn.btn-primary,
-  .profile-card .btn.btn-outline {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
+.btn-outline-danger:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #b91c1c;
+  color: #b91c1c;
 }
 
-.profile-card-details-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.btn-outline-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.profile-card-details-left {
-  display: flex;
-  gap: 16px;
-}
+/* ==========================================
+   TUTOR STATS (Matched Tutors)
+   ========================================== */
 
-.pending-note {
-  font-size: 0.8rem;
-  white-space: nowrap;  
-  margin-left: 24px;
-}
-
-.tutor-stats, .tutor-stats {
+.tutor-stats {
   margin-top: 15px;
   padding: 10px;
   background-color: #f8f9fa;
@@ -164,10 +212,47 @@
   font-size: 0.9em;
 }
 
-.tutor-stats p, .tutor-stats p {
+.tutor-stats p {
   margin: 5px 0;
 }
 
-.tutor-stats strong, .tutor-stats strong {
+.tutor-stats strong {
   color: #495057;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+
+@media (max-width: 640px) {
+  /* Adjust page padding */
+  .my-profile-page {
+    padding: 20px 0 32px;
+  }
+
+  /* Stack profile card main content vertically */
+  .profile-card-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Make withdraw button full width on mobile */
+  .btn-outline-danger {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  /* Stack actions vertically on mobile */
+  .profile-card-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  /* Make matched tutor buttons full width */
+  .profile-card .btn.btn-primary,
+  .profile-card .btn.btn-outline {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
 }

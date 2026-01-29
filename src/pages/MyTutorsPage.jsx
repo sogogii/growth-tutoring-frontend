@@ -12,6 +12,7 @@ function MyTutorsPage({ currentUser }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [chatLoadingId, setChatLoadingId] = useState(null)
+  const [withdrawingId, setWithdrawingId] = useState(null)
 
   const navigate = useNavigate()
 
@@ -80,6 +81,39 @@ function MyTutorsPage({ currentUser }) {
     }
   }
 
+  const handleWithdrawRequest = async (linkId) => {
+    if (!window.confirm('Are you sure you want to withdraw this tutor request?')) {
+      return
+    }
+
+    try {
+      setWithdrawingId(linkId)
+
+      const res = await fetch(
+        `${API_BASE}/api/student-tutor-links/${linkId}?studentUserId=${currentUser.userId}`,
+        { method: 'DELETE' }
+      )
+
+      if (!res.ok) {
+        const text = await res.text()
+        alert(text || 'Failed to withdraw request')
+        return
+      }
+
+      // Remove the withdrawn request from the list
+      setPendingTutors(prevTutors => 
+        prevTutors.filter(tutor => tutor.linkId !== linkId)
+      )
+
+      alert('Request withdrawn successfully')
+    } catch (err) {
+      console.error(err)
+      alert(err.message || 'Failed to withdraw request')
+    } finally {
+      setWithdrawingId(null)
+    }
+  }
+
   if (!currentUser) {
     return (
       <div className="my-profile-page">
@@ -109,19 +143,24 @@ function MyTutorsPage({ currentUser }) {
                 {pendingTutors.map((tutor) => (
                   <div key={tutor.linkId} className="profile-card">
                     <div className="profile-card-main">
-                      <div>
+                      <div className="profile-card-content">
                         <div className="profile-card-title">
                           {tutor.firstName} {tutor.lastName}
+                          <span className="profile-card-subtitle">User ID: {tutor.userUid}</span>
                         </div>
-                        <div className="profile-card-details-row">
-                          <div className="profile-card-details-left">
-                            <span className="profile-card-line">{tutor.email}</span>
-                            <span className="profile-card-line">User ID: {tutor.userUid}</span>
-                          </div>
-
+                        <div className="profile-card-status">
                           <span className="pending-note">Waiting for tutor's decision…</span>
                         </div>
                       </div>
+                      
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger"
+                        onClick={() => handleWithdrawRequest(tutor.linkId)}
+                        disabled={withdrawingId === tutor.linkId}
+                      >
+                        {withdrawingId === tutor.linkId ? 'Withdrawing...' : 'Withdraw'}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -142,7 +181,6 @@ function MyTutorsPage({ currentUser }) {
                         <div className="profile-card-title">
                           {tutor.firstName} {tutor.lastName}
                         </div>
-                        <div className="profile-card-line">{tutor.email}</div>
                         <div className="profile-card-line">
                           User ID: {tutor.userUid}
                         </div>
