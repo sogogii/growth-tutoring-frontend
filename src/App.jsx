@@ -27,6 +27,7 @@ import HowItWorksPage from './pages/main/HowItWorksPage'
 import HowItWorksStudents from './pages/main/HowItWorksStudents'
 import HowItWorksTutors from './pages/main/HowItWorksTutors'
 import HowItWorksCip from './pages/main/HowItWorksCip'
+import FAQPage from './pages/main/FAQPage'
 import MessagesPage from './pages/chat/MessagesPage'  
 import AdminPage from './pages/admin/AdminPage.jsx'
 
@@ -73,6 +74,9 @@ function App() {
 
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false)
   const howItWorksRef = useRef(null)
+
+  const [isSupportOpen, setIsSupportOpen] = useState(false)
+  const supportRef = useRef(null)
 
   const handleLogout = (isIdle = false) => {
     localStorage.removeItem('currentUser')
@@ -134,6 +138,20 @@ function App() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isHowItWorksOpen])
+
+  // Close Support dropdown when clicking outside
+  useEffect(() => {
+    if (!isSupportOpen) return
+
+    const handleClickOutside = (e) => {
+      if (supportRef.current && !supportRef.current.contains(e.target)) {
+        setIsSupportOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isSupportOpen])
 
   // --- Pending student requests (for tutors) ---
   useEffect(() => {
@@ -277,9 +295,37 @@ function App() {
           <Link to="/subjects" className="nav-link">
             Subjects
           </Link>
-          <Link to="/contact" className="nav-link">
-            Contact Us
-          </Link>
+          <div className="nav-dropdown" ref={supportRef}>
+            <button
+              type="button"
+              className="nav-link nav-dropdown-trigger"
+              onClick={() => setIsSupportOpen(!isSupportOpen)}
+            >
+              Support
+              <span className={`nav-dropdown-caret ${isSupportOpen ? 'open' : ''}`}>
+                ▾
+              </span>
+            </button>
+            
+            {isSupportOpen && (
+              <div className="nav-dropdown-menu">
+                <Link
+                  to="/contact"
+                  className="nav-dropdown-item"
+                  onClick={() => setIsSupportOpen(false)}
+                >
+                  Contact Us
+                </Link>
+                <Link
+                  to="/faq"
+                  className="nav-dropdown-item"
+                  onClick={() => setIsSupportOpen(false)}
+                >
+                  FAQ
+                </Link>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="header-right">
@@ -565,6 +611,8 @@ function App() {
           <Route path="/how-it-works/tutors" element={<HowItWorksTutors />} />
           <Route path="/how-it-works/cip" element={<HowItWorksCip />} />
 
+          <Route path="/faq" element={<FAQPage />} />
+
           <Route path="/contact" element={<ContactPage />} />
 
           <Route 
@@ -645,7 +693,7 @@ function App() {
             <h4>Company</h4>
             <Link to="/about">About</Link>
             <Link to="/contact">Contact</Link>
-            <Link to="/coming-soon">FAQ</Link>
+            <Link to="/faq">FAQ</Link>
           </div>
 
           <div className="footer-column">
