@@ -756,3 +756,35 @@
   cursor: not-allowed;
   border-color: #e0e0e0;
 }
+
+/* ============================================
+   TIME WINDOW GROUPING - MINIMAL VERSION
+   ============================================ */
+
+.time-window {
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.time-window:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: -1.25rem;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+}
+
+.time-window-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 0.5rem 0;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.time-window .time-grid {
+  margin-bottom: 0;
+}
