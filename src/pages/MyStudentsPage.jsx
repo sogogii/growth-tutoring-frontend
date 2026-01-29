@@ -156,9 +156,6 @@ function MyStudentsPage({ currentUser }) {
                         <div className="profile-card-title">
                           {student.firstName} {student.lastName}
                         </div>
-                        <div className="profile-card-subtitle">
-                          {student.email}
-                        </div>
                       </div>
 
                       <div className="my-students-actions">
@@ -209,7 +206,7 @@ function MyStudentsPage({ currentUser }) {
                           {student.firstName} {student.lastName}
                         </div>
                         <div className="profile-card-subtitle">
-                          {student.email} • User ID: {student.userUid}
+                          User ID: {student.userUid}
                         </div>
                       </div>
 
