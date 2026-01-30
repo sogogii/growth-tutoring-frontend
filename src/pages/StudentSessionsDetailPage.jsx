@@ -163,7 +163,7 @@ function StudentSessionsDetailPage() {
         )}
       </div>
 
-      {!isPastCategory && !isCancelledCategory && (session.status === 'PENDING' || session.status === 'ACCEPTED') && (
+      {!isPastCategory && !isCancelledCategory && (session.status === 'PENDING') && (
         <button
           className="btn btn-danger"
           onClick={() => handleCancel(session.id)}
