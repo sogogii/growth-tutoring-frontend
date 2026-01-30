@@ -103,7 +103,7 @@
   top: 100px;
   align-self: flex-start;
   max-height: calc(100vh - 120px);
-  z-index: 100;
+  z-index: 10;
 }
 
 .tutors-sidebar-header {
@@ -180,7 +180,8 @@
 .filter-dropdown-panel {
   position: absolute;
   left: 100%;
-  top: 32px;
+  top: auto;
+  bottom: -80px;
   margin-left: 20px;
   width: 320px;
   background: #ffffff;
@@ -189,7 +190,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   padding: 20px;
   z-index: 9999;
-  max-height: 500px;
+  max-height: calc(100vh - 200px);
   overflow-y: auto;
 }
 
