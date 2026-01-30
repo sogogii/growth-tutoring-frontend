@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './styles/StudentSessionsPage.css' // Reuse same styles
+import CancellationModal from '../components/CancellationModal'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
@@ -10,6 +11,8 @@ function TutorSessionsPage({ currentUser }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [processing, setProcessing] = useState(null)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [sessionToCancel, setSessionToCancel] = useState(null)
 
   useEffect(() => {
     if (currentUser?.userId) {
@@ -39,6 +42,17 @@ function TutorSessionsPage({ currentUser }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleOpenCancelModal = (session) => {
+    setSessionToCancel(session)
+    setShowCancelModal(true)
+  }
+
+  const handleCancellationSuccess = async () => {
+    await loadSessions()
+    setShowCancelModal(false)
+    setSessionToCancel(null)
   }
 
   const handleDecision = async (requestId, decision) => {
@@ -135,44 +149,51 @@ function TutorSessionsPage({ currentUser }) {
           getStatusBadge(session.status)
         )}
       </div>
-
+      
       <div className="session-details">
-        <p><strong>Student Email:</strong> {session.studentEmail}</p>
-        <p><strong>Date & Time:</strong> {formatDateTime(session.requestedStart)}</p>
-        <p><strong>Duration:</strong> {Math.round((new Date(session.requestedEnd) - new Date(session.requestedStart)) / 60000)} minutes</p>
-        {session.subject && <p><strong>Subject:</strong> {session.subject}</p>}
+        <p>Date & Time: {formatDateTime(session.requestedStart)}</p>
+        <p>Duration: {Math.round((new Date(session.requestedEnd) - new Date(session.requestedStart)) / 60000)} minutes</p>
+        {session.subject && <p>Subject: {session.subject}</p>}
         {session.message && (
           <p className="student-message">
-            <strong>Student Message:</strong> {session.message}
-          </p>
-        )}
-        {session.tutorResponseMessage && (
-          <p className="response-message">
-            <strong>Your Response:</strong> {session.tutorResponseMessage}
+            Student Message: {session.message}
           </p>
         )}
       </div>
 
-      {showActions && session.status === 'PENDING' && (
+      {/* UPDATED: Show accept/decline for PENDING, or cancel button for ACCEPTED */}
+      {!isPast && (
         <div className="session-actions">
-          <button
-            className="btn btn-primary"
-            onClick={() => handleDecision(session.id, 'ACCEPT')}
-            disabled={processing === session.id}
-          >
-            {processing === session.id ? 'Processing...' : 'Accept'}
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => handleDecision(session.id, 'DECLINE')}
-            disabled={processing === session.id}
-          >
-            {processing === session.id ? 'Processing...' : 'Decline'}
-          </button>
+          {session.status === 'PENDING' && showActions ? (
+            <>
+              <button
+                className="btn btn-success"
+                onClick={() => handleDecision(session.id, 'ACCEPT')}
+                disabled={processing === session.id}
+              >
+                {processing === session.id ? 'Processing...' : 'Accept'}
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => handleRespond(session.id, 'DECLINE')}
+                disabled={processing === session.id}
+              >
+                Decline
+              </button>
+            </>
+          ) : session.status === 'ACCEPTED' ? (
+            <button
+              className="btn btn-danger"
+              onClick={() => handleOpenCancelModal(session)}
+            >
+              Cancel Session
+            </button>
+          ) : null}
         </div>
       )}
     </div>
   )
+
 
   if (loading) return <div className="page-container"><h1>Loading...</h1></div>
   if (error) return <div className="page-container"><h1>Error: {error}</h1></div>
@@ -324,6 +345,17 @@ function TutorSessionsPage({ currentUser }) {
             </div>
           )}
         </section>
+        {showCancelModal && sessionToCancel && (
+          <CancellationModal
+            session={sessionToCancel}
+            userRole="tutor"
+            onClose={() => {
+              setShowCancelModal(false)
+              setSessionToCancel(null)
+            }}
+            onSuccess={handleCancellationSuccess}
+          />
+        )}
       </div>
   )
 }
