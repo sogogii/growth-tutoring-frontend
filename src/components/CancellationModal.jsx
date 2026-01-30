@@ -59,7 +59,7 @@ const CancellationModal = ({
     try {
       const endpoint = userRole === 'student' 
         ? `${API_BASE}/api/session-requests/${session.id}/cancel-confirmed`
-        : `${API_BASE}/api/tutor/sessions/${session.id}/cancel`
+        : `${API_BASE}/api/session-requests/tutor/sessions/${session.id}/cancel`
 
       const res = await fetch(endpoint, {
         method: 'POST',
