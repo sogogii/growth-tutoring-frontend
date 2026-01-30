@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './styles/StudentSessionsPage.css'
+import CancellationModal from '../components/CancellationModal'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
@@ -9,6 +10,8 @@ function StudentSessionsDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [cancellingId, setCancellingId] = useState(null)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [sessionToCancel, setSessionToCancel] = useState(null)
   const navigate = useNavigate()
   const { category } = useParams() // pending, confirmed, past, cancelled
 
@@ -41,6 +44,17 @@ function StudentSessionsDetailPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleOpenCancelModal = (session) => {
+    setSessionToCancel(session)
+    setShowCancelModal(true)
+  }
+
+  const handleCancellationSuccess = async () => {
+    await loadSessions()
+    setShowCancelModal(false)
+    setSessionToCancel(null)
   }
 
   const handleCancel = async (sessionId) => {
@@ -163,15 +177,26 @@ function StudentSessionsDetailPage() {
         )}
       </div>
 
-      {!isPastCategory && !isCancelledCategory && (session.status === 'PENDING') && (
-        <button
-          className="btn btn-danger"
-          onClick={() => handleCancel(session.id)}
-          disabled={cancellingId === session.id}
-        >
-          {cancellingId === session.id ? 'Cancelling...' : 
-           session.status === 'PENDING' ? 'Cancel Request' : 'Cancel Session'}
-        </button>
+      {/* UPDATED: Show cancel button for both PENDING and ACCEPTED sessions */}
+      {!isPastCategory && !isCancelledCategory && (session.status === 'PENDING' || session.status === 'ACCEPTED') && (
+        <div className="session-actions">
+          {session.status === 'PENDING' ? (
+            <button
+              className="btn btn-danger"
+              onClick={() => handleCancel(session.id)}
+              disabled={cancellingId === session.id}
+            >
+              {cancellingId === session.id ? 'Cancelling...' : 'Cancel Request'}
+            </button>
+          ) : (
+            <button
+              className="btn btn-danger"
+              onClick={() => handleOpenCancelModal(session)}
+            >
+              Cancel Session
+            </button>
+          )}
+        </div>
       )}
     </div>
   )
@@ -210,6 +235,17 @@ function StudentSessionsDetailPage() {
           </div>
         )}
       </div>
+      {showCancelModal && sessionToCancel && (
+        <CancellationModal
+          session={sessionToCancel}
+          userRole="student"
+          onClose={() => {
+            setShowCancelModal(false)
+            setSessionToCancel(null)
+          }}
+          onSuccess={handleCancellationSuccess}
+        />
+      )}
     </div>
   )
 }

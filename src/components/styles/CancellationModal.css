@@ -1,0 +1,237 @@
+/* Cancellation Modal Styles */
+
+.cancellation-modal {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.cancellation-modal h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.75rem;
+}
+
+.cancellation-modal h3 {
+  margin-bottom: 12px;
+  color: #555;
+  font-size: 1.25rem;
+}
+
+/* Session Summary */
+.session-summary {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.session-summary p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.session-summary strong {
+  color: #333;
+}
+
+/* Refund Preview */
+.refund-preview {
+  margin-bottom: 20px;
+}
+
+.refund-policy-box {
+  background: #e8f4f8;
+  border-left: 4px solid #17a2b8;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.policy-text {
+  font-weight: 600;
+  color: #0c5460;
+  margin-bottom: 15px;
+}
+
+.refund-breakdown {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.refund-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.refund-row:last-child {
+  border-bottom: none;
+}
+
+.refund-row.highlight {
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 2px solid #28a745;
+}
+
+.refund-amount {
+  color: #28a745;
+  font-size: 1.1rem;
+}
+
+.refund-percentage {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.time-remaining {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Warning and Info Boxes */
+.warning-box {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+}
+
+.warning-box p {
+  margin: 8px 0;
+  color: #856404;
+}
+
+.info-box {
+  background: #d1ecf1;
+  border-left: 4px solid #17a2b8;
+  padding: 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+}
+
+.info-box p {
+  margin: 8px 0;
+  color: #0c5460;
+}
+
+.tutor-cancellation-warning {
+  margin-bottom: 20px;
+}
+
+/* Cancellation Reason */
+.cancellation-reason {
+  margin-bottom: 25px;
+}
+
+.cancellation-reason label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.cancellation-reason .required {
+  color: #dc3545;
+}
+
+.cancellation-reason textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.cancellation-reason textarea:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  text-align: center;
+  padding: 30px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Error Message */
+.error-message {
+  background: #f8d7da;
+  border-left: 4px solid #dc3545;
+  padding: 15px;
+  border-radius: 6px;
+  color: #721c24;
+  margin-bottom: 20px;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.modal-actions .btn {
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.modal-actions .btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.modal-actions .btn-secondary:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.modal-actions .btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.modal-actions .btn-danger:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.modal-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .cancellation-modal {
+    max-width: 95%;
+    padding: 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
