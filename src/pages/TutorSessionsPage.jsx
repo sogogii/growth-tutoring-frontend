@@ -175,7 +175,7 @@ function TutorSessionsPage({ currentUser }) {
               </button>
               <button
                 className="btn btn-danger"
-                onClick={() => handleRespond(session.id, 'DECLINE')}
+                onClick={() => handleDecision(session.id, 'DECLINE')}  // Changed from handleRespond
                 disabled={processing === session.id}
               >
                 Decline
