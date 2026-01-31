@@ -156,3 +156,58 @@
     text-align: left;
   }
 }
+
+/* Cancellation Policy Warnings */
+.checkout-warning {
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.checkout-warning h3 {
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkout-warning p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.checkout-warning.danger {
+  background-color: #fee2e2;
+  border-left-color: #dc2626;
+}
+
+.checkout-warning.danger h3 {
+  color: #991b1b;
+}
+
+.checkout-warning.danger p {
+  color: #7f1d1d;
+}
+
+.checkout-warning.caution {
+  background-color: #fef3c7;
+  border-left-color: #f59e0b;
+}
+
+.checkout-warning.caution h3 {
+  color: #92400e;
+}
+
+.checkout-warning.caution p {
+  color: #78350f;
+}
+
+.warning-highlight {
+  padding: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  font-weight: 600;
+  margin: 1rem 0 !important;
+}

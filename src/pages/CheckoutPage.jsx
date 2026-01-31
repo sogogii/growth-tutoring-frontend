@@ -7,7 +7,7 @@ import './styles/CheckoutPage.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-// Initialize Stripe - REPLACE WITH YOUR PUBLISHABLE KEY
+// Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 function CheckoutPage() {
@@ -30,6 +30,7 @@ function CheckoutPage() {
   const [sessionRequestData, setSessionRequestData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [hoursUntilSession, setHoursUntilSession] = useState(null)
 
   useEffect(() => {
     if (!tutorUserId || !selectedDate || !selectedStartTime || !selectedEndTime) {
@@ -37,7 +38,17 @@ function CheckoutPage() {
       return
     }
     calculatePrice()
+    calculateTimeUntilSession()
   }, [])
+
+  const calculateTimeUntilSession = () => {
+    const startDateTime = new Date(selectedDate)
+    startDateTime.setHours(selectedStartTime.hour, selectedStartTime.minute, 0, 0)
+    
+    const now = new Date()
+    const hoursUntil = (startDateTime - now) / (1000 * 60 * 60)
+    setHoursUntilSession(hoursUntil)
+  }
 
   const calculatePrice = async () => {
     try {
@@ -112,6 +123,49 @@ function CheckoutPage() {
     return `$${(cents / 100).toFixed(2)}`
   }
 
+  // Render cancellation warning based on timing
+  const renderCancellationWarning = () => {
+    if (hoursUntilSession === null) return null
+
+    if (hoursUntilSession < 2) {
+      // Less than 2 hours - NO REFUND
+      return (
+        <div className="checkout-warning danger">
+          <h3>⚠️ Important: Last-Minute Booking</h3>
+          <p>
+            This session starts in <strong>less than 2 hours</strong>. According to our cancellation policy:
+          </p>
+          <p className="warning-highlight">
+            <strong>No refund will be provided if you cancel after the booking is confirmed.</strong>
+          </p>
+          <p>
+            Please make sure you can attend before confirming this booking.
+          </p>
+        </div>
+      )
+    } else if (hoursUntilSession < 24) {
+      // 2-24 hours - 70% REFUND (30% FEE)
+      return (
+        <div className="checkout-warning caution">
+          <h3>Cancellation Policy Notice</h3>
+          <p>
+            This session starts in approximately <strong>{Math.round(hoursUntilSession)} hours</strong>. 
+            According to our cancellation policy:
+          </p>
+          <p className="warning-highlight">
+            <strong>If you cancel after the booking is confirmed: 70% refund (30% cancellation fee applies)</strong>
+          </p>
+          <p>
+            For a full refund, cancellations must be made 24+ hours before the session.
+          </p>
+        </div>
+      )
+    }
+
+    // 24+ hours - no warning needed
+    return null
+  }
+
   if (loading) return <div className="checkout-page"><h1>Loading...</h1></div>
   if (error) return <div className="checkout-page"><h1>Error: {error}</h1></div>
 
@@ -119,6 +173,9 @@ function CheckoutPage() {
     <div className="checkout-page">
       <div className="checkout-container">
         <h1>Complete Your Booking</h1>
+
+        {/* Cancellation Policy Warning (if applicable) */}
+        {renderCancellationWarning()}
 
         {/* Session Details */}
         <div className="checkout-section">
