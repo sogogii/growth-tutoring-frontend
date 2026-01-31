@@ -12,6 +12,23 @@ const DAY_LABELS = {
   saturday: 'Sat'
 }
 
+// Generate all 30-minute time slots for the entire day
+const generateTimeOptions = () => {
+  const options = []
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute of [0, 30]) {
+      const time24 = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+      const period = hour >= 12 ? 'PM' : 'AM'
+      const displayHour = hour % 12 || 12
+      const time12 = `${displayHour}:${String(minute).padStart(2, '0')} ${period}`
+      options.push({ value: time24, label: time12 })
+    }
+  }
+  return options
+}
+
+const TIME_OPTIONS = generateTimeOptions()
+
 function ScheduleEditor({ schedule, onScheduleChange }) {
   const [selectedDay, setSelectedDay] = useState('monday')
 
@@ -70,7 +87,7 @@ function ScheduleEditor({ schedule, onScheduleChange }) {
     <div className="schedule-editor">
       <div className="schedule-header">
         <h3>Weekly Availability</h3>
-        <p className="schedule-subtitle">Set your available hours for each day</p>
+        <p className="schedule-subtitle">Set your available hours for each day (30-minute increments)</p>
       </div>
 
       {/* Day selector */}
@@ -103,14 +120,14 @@ function ScheduleEditor({ schedule, onScheduleChange }) {
                   onClick={() => copyToAllDays(selectedDay)}
                   title="Copy this day's schedule to all days"
                 >
-                  📋 Copy to All Days
+                  Copy to All Days
                 </button>
                 <button
                   className="btn-clear-day"
                   onClick={() => clearDay(selectedDay)}
                   title="Clear this day's schedule"
                 >
-                  🗑️ Clear
+                  Clear
                 </button>
               </>
             )}
@@ -124,24 +141,36 @@ function ScheduleEditor({ schedule, onScheduleChange }) {
             </div>
           ) : (
             daySlots.map((slot, index) => (
-              <div key={index} className="time-slot-row">
+              <div key={`${selectedDay}-${index}`} className="time-slot-row">
                 <div className="time-inputs">
                   <div className="time-input-group">
                     <label>Start</label>
-                    <input
-                      type="time"
+                    <select
                       value={slot.start}
                       onChange={(e) => updateTimeSlot(selectedDay, index, 'start', e.target.value)}
-                    />
+                      className="time-select"
+                    >
+                      {TIME_OPTIONS.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <span className="time-separator">→</span>
                   <div className="time-input-group">
                     <label>End</label>
-                    <input
-                      type="time"
+                    <select
                       value={slot.end}
                       onChange={(e) => updateTimeSlot(selectedDay, index, 'end', e.target.value)}
-                    />
+                      className="time-select"
+                    >
+                      {TIME_OPTIONS.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <button
@@ -174,7 +203,7 @@ function ScheduleEditor({ schedule, onScheduleChange }) {
               <div className="overview-slots">
                 {currentSchedule[day]?.length > 0 ? (
                   currentSchedule[day].map((slot, i) => (
-                    <div key={i} className="overview-slot">
+                    <div key={`${day}-slot-${i}-${slot.start}-${slot.end}`} className="overview-slot">
                       {slot.start} - {slot.end}
                     </div>
                   ))

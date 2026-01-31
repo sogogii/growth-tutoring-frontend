@@ -49,7 +49,7 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
       let currentHour = startHour
       let currentMin = startMin
       
-      while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
+      while (currentHour < endHour || (currentHour === endHour && currentMin <= endMin)) {
         const time24 = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`
         const time12 = formatTime12Hour(time24)
         
