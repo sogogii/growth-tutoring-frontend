@@ -1,6 +1,6 @@
-import './styles/TermsOfServicePage.css'
+import './styles/ClientTermsPage.css'
 
-function TermsOfServicePage() {
+function ClientTermsPage() {
   return (
     <div className="terms-page">
       <div className="terms-container">
@@ -1198,4 +1198,4 @@ function TermsOfServicePage() {
   )
 }
 
-export default TermsOfServicePage
+export default ClientTermsPage

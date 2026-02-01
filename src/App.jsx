@@ -28,7 +28,9 @@ import HowItWorksStudents from './pages/main/HowItWorksStudents'
 import HowItWorksTutors from './pages/main/HowItWorksTutors'
 import HowItWorksCip from './pages/main/HowItWorksCip'
 import FAQPage from './pages/main/FAQPage'
-import TermsOfServicePage from './pages/main/TermsOfServicePage'
+import ClientTermsPage from './pages/main/ClientTermsPage'
+import TutorTermsPage from './pages/main/TutorTermsPage'
+import PrivacyPolicyPage from './pages/main/PrivacyPolicyPage'
 import MessagesPage from './pages/chat/MessagesPage'  
 import AdminPage from './pages/admin/AdminPage.jsx'
 
@@ -325,11 +327,25 @@ function App() {
                   FAQ
                 </Link>
                 <Link
-                  to="/terms-of-service"
+                  to="/terms/clients"
                   className="nav-dropdown-item"
                   onClick={() => setIsSupportOpen(false)}
                 >
-                  Terms of Service
+                  Terms of Service (Clients)
+                </Link>
+                <Link
+                  to="/terms/tutors"
+                  className="nav-dropdown-item"
+                  onClick={() => setIsSupportOpen(false)}
+                >
+                  Terms of Service (Tutors)
+                </Link>
+                <Link
+                  to="/privacy-policy"
+                  className="nav-dropdown-item"
+                  onClick={() => setIsSupportOpen(false)}
+                >
+                  Privacy Policy
                 </Link>
               </div>
             )}
@@ -620,7 +636,9 @@ function App() {
           <Route path="/how-it-works/cip" element={<HowItWorksCip />} />
 
           <Route path="/faq" element={<FAQPage />} />
-          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+          <Route path="/terms/clients" element={<ClientTermsPage />} />
+          <Route path="/terms/tutors" element={<TutorTermsPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
           <Route path="/contact" element={<ContactPage />} />
 
@@ -714,8 +732,9 @@ function App() {
 
           <div className="footer-column">
             <h4>Legal</h4>
-            <Link to="/coming-soon">Privacy Policy</Link>
-            <Link to="/terms-of-service">Terms of Service</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/terms/clients">Terms of Service (Clients)</Link>
+            <Link to="/terms/tutors">Terms of Service (Tutors)</Link>
           </div>
         </div>
 

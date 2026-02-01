@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './styles/TermsOfServiceModal.css'
 
-const TermsOfServiceModal = ({ isOpen, onClose }) => {
+const ClientTermsModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
   return (
@@ -1212,4 +1212,4 @@ const TermsOfServiceModal = ({ isOpen, onClose }) => {
   )
 }
 
-export default TermsOfServiceModal
+export default ClientTermsModal
