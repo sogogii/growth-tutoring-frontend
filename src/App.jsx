@@ -28,6 +28,7 @@ import HowItWorksStudents from './pages/main/HowItWorksStudents'
 import HowItWorksTutors from './pages/main/HowItWorksTutors'
 import HowItWorksCip from './pages/main/HowItWorksCip'
 import FAQPage from './pages/main/FAQPage'
+import TermsOfServicePage from './pages/main/TermsOfServicePage'
 import MessagesPage from './pages/chat/MessagesPage'  
 import AdminPage from './pages/admin/AdminPage.jsx'
 
@@ -323,6 +324,13 @@ function App() {
                 >
                   FAQ
                 </Link>
+                <Link
+                  to="/terms-of-service"
+                  className="nav-dropdown-item"
+                  onClick={() => setIsSupportOpen(false)}
+                >
+                  Terms of Service
+                </Link>
               </div>
             )}
           </div>
@@ -612,6 +620,7 @@ function App() {
           <Route path="/how-it-works/cip" element={<HowItWorksCip />} />
 
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
           <Route path="/contact" element={<ContactPage />} />
 
@@ -706,7 +715,7 @@ function App() {
           <div className="footer-column">
             <h4>Legal</h4>
             <Link to="/coming-soon">Privacy Policy</Link>
-            <Link to="/coming-soon">Terms of Service</Link>
+            <Link to="/terms-of-service">Terms of Service</Link>
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './styles/SignupPage.css'
 
 import EducationInput from '../../components/EducationInput'
+import TermsOfServiceModal from '../../components/TermsOfServiceModal'
 
 const SUBJECT_OPTIONS = [
   'K-12 Math',
@@ -86,6 +87,8 @@ function SignupPage({ fixedRole }) {
   const [success, setSuccess] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
   const [education, setEducation] = useState('')
 
   const roleToSend = fixedRole || 'TUTOR'
@@ -138,6 +141,11 @@ function SignupPage({ fixedRole }) {
 
     if (roleToSend === 'TUTOR' && !form.education.trim()) {
       setError('Please provide your educational background.')
+      return
+    }
+
+    if (!termsAccepted) {
+      setError('You must accept the Terms of Service to continue.')
       return
     }
 
@@ -454,6 +462,32 @@ function SignupPage({ fixedRole }) {
                   </>
                 )}
 
+                {/* Terms of Service Checkbox */}
+                <div className="signup-terms-container">
+                  <label className="signup-terms-label">
+                    <input
+                      type="checkbox"
+                      checked={termsAccepted}
+                      onChange={(e) => {
+                        setTermsAccepted(e.target.checked)
+                        setError(null)
+                      }}
+                      className="signup-terms-checkbox"
+                    />
+                    <span className="signup-terms-text">
+                      I agree to the{' '}
+                      <button
+                        type="button"
+                        className="signup-terms-link"
+                        onClick={() => setShowTermsModal(true)}
+                      >
+                        Terms of Service
+                      </button>
+                      <span style={{color: '#ef4444'}}>    *</span>
+                    </span>
+                  </label>
+                </div>
+
                 {error && <p className="auth-error">{error}</p>}
                 {success && <p className="auth-success">{success}</p>}
 
@@ -538,6 +572,10 @@ function SignupPage({ fixedRole }) {
           )}
         </div>
       </div>
+      <TermsOfServiceModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+      />
     </div>
   )
 }
