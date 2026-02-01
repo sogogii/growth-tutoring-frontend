@@ -2,7 +2,8 @@ import { useState } from 'react'
 import './styles/SignupPage.css'
 
 import EducationInput from '../../components/EducationInput'
-import TermsOfServiceModal from '../../components/TermsOfServiceModal'
+import ClientTermsModal from '../../components/ClientTermsModal'
+import TutorTermsModal from '../../components/TutorTermsModal'
 
 const SUBJECT_OPTIONS = [
   'K-12 Math',
@@ -481,7 +482,7 @@ function SignupPage({ fixedRole }) {
                         className="signup-terms-link"
                         onClick={() => setShowTermsModal(true)}
                       >
-                        Terms of Service
+                        {roleToSend === 'STUDENT' ? 'Client Terms of Service' : 'Tutor Terms of Service'}
                       </button>
                       <span style={{color: '#ef4444'}}>    *</span>
                     </span>
@@ -572,10 +573,17 @@ function SignupPage({ fixedRole }) {
           )}
         </div>
       </div>
-      <TermsOfServiceModal
-        isOpen={showTermsModal}
-        onClose={() => setShowTermsModal(false)}
-      />
+      {roleToSend === 'STUDENT' ? (
+        <ClientTermsModal
+          isOpen={showTermsModal}
+          onClose={() => setShowTermsModal(false)}
+        />
+      ) : (
+        <TutorTermsModal
+          isOpen={showTermsModal}
+          onClose={() => setShowTermsModal(false)}
+        />
+      )}
     </div>
   )
 }
