@@ -419,7 +419,7 @@ function FAQPage() {
         <section className="faq-bottom-section">
           <h3 className="faq-bottom-title">Still have questions?</h3>
           <p className="faq-bottom-text">
-            Our support team is here to help! Reach out to us at <a href="mailto:support@growthtutoring.org">support@growthtutoring.org</a> and we'll get back to you as soon as possible.
+            Our support team is here to help! Reach out to us at <a href="mailto:info@growthtutoringhq.com">info@growthtutoringhq.com</a> and we'll get back to you as soon as possible.
           </p>
         </section>
 
