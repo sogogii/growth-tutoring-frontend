@@ -1,18 +1,21 @@
-import './styles/ClientTermsPage.css'
+import './styles/TermsOfServicePage.css'
 
 function ClientTermsPage() {
   return (
     <div className="terms-page">
-      <div className="terms-container">
-        <div className="terms-header">
-          <h1>Client Terms of Service</h1>
-          <p className="terms-meta">
-            <strong>Effective Date:</strong> 01/31/2026<br />
-            <strong>Last Updated:</strong> 01/31/2026<br />
+      <section className="terms-hero">
+        <div className="terms-hero-content">
+          <h1 className="terms-hero-title">Client Terms of Service</h1>
+          <p className="terms-hero-subtitle">
+            <strong>Effective Date:</strong> 01/31/2026 &nbsp;|&nbsp; 
+            <strong>Last Updated:</strong> 01/31/2026 &nbsp;|&nbsp; 
             <strong>Version:</strong> 1.0
           </p>
         </div>
+      </section>
 
+      {/* Main Container */}
+      <div className="terms-container">
         <div className="terms-content">
           
           <section className="tos-section">

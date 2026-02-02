@@ -1,24 +1,22 @@
-import './styles/ClientTermsPage.css'
+import './styles/TermsOfServicePage.css'
 
 function TutorTermsPage() {
   return (
     <div className="terms-page">
-      <div className="terms-container">
-        <div className="terms-header">
-          <h1>Tutor Terms of Service</h1>
-          <p className="terms-meta">
-            <strong>Effective Date:</strong> 01/31/2026<br />
-            <strong>Last Updated:</strong> 01/31/2026<br />
+      <section className="terms-hero">
+        <div className="terms-hero-content">
+          <h1 className="terms-hero-title">Tutor Terms of Service</h1>
+          <p className="terms-hero-subtitle">
+            Independent Contractor Agreement &nbsp;|&nbsp; 
+            <strong>Effective Date:</strong> 01/31/2026 &nbsp;|&nbsp; 
             <strong>Version:</strong> 1.0
           </p>
         </div>
+      </section>
 
-        <div className="tos-modal-body">
-          <div className="tos-content">
-            <p className="tos-effective-date">
-              <strong>Effective Date:</strong> 01/31/2026<br />
-              <strong>Version:</strong> 1.0
-            </p>
+      {/* Main Container */}
+      <div className="terms-container">
+        <div className="terms-content">
 
             <section className="tos-section">
               <p>
@@ -748,7 +746,6 @@ function TutorTermsPage() {
             </div>
           </div>
       </div>
-    </div>
   )
 }
 

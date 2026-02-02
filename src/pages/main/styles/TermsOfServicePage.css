@@ -1,0 +1,171 @@
+/* ==========================================
+   TERMS OF SERVICE PAGE - MATCHING FAQ STYLE
+   ========================================== */
+
+.terms-page {
+  min-height: 100vh;
+  background: #fafafa;
+  margin-top: -32px;
+}
+
+/* ==========================================
+   HERO SECTION - MATCHES FAQ PAGE
+   ========================================== */
+
+.terms-hero {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: linear-gradient(to bottom, #fff7ed 0%, #ffedd5 100%);
+  padding: 80px 24px 60px;
+  text-align: center;
+  border-bottom: 1px solid #fed7aa;
+}
+
+.terms-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.terms-hero-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+}
+
+.terms-hero-subtitle {
+  font-size: 16px;
+  color: #78716c;
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+
+.terms-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+.terms-content {
+  color: #374151;
+  line-height: 1.7;
+}
+
+/* ==========================================
+   SECTION STYLING
+   ========================================== */
+
+.tos-section {
+  margin-bottom: 40px;
+}
+
+.tos-section h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+  margin-top: 32px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tos-section h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.tos-section p {
+  margin-bottom: 16px;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.tos-section ul,
+.tos-section ol {
+  margin-left: 24px;
+  margin-bottom: 16px;
+}
+
+.tos-section li {
+  margin-bottom: 8px;
+  line-height: 1.7;
+}
+
+.tos-section ul ul {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.tos-section strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .terms-hero-title {
+    font-size: 36px;
+  }
+
+  .terms-hero-subtitle {
+    font-size: 14px;
+  }
+
+  .terms-container {
+    padding: 40px 16px 60px;
+  }
+
+  .tos-section h3 {
+    font-size: 20px;
+  }
+
+  .tos-section h4 {
+    font-size: 16px;
+  }
+
+  .tos-section p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .terms-hero {
+    padding: 60px 16px 40px;
+  }
+
+  .terms-hero-title {
+    font-size: 28px;
+  }
+
+  .terms-hero-subtitle {
+    font-size: 13px;
+  }
+
+  .terms-container {
+    padding: 32px 12px 60px;
+  }
+
+  .tos-section h3 {
+    font-size: 18px;
+  }
+
+  .tos-section h4 {
+    font-size: 15px;
+  }
+}
