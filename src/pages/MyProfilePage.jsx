@@ -461,11 +461,15 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                   />
                 ) : (
                   <div className="field-value">
-                    {new Date(form.birthday).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {(() => {
+                      const [year, month, day] = form.birthday.split('-').map(Number);
+                      const date = new Date(year, month - 1, day);
+                      return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      });
+                    })()}
                   </div>
                 )}
               </div>
