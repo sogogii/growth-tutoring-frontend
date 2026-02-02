@@ -271,7 +271,7 @@ function EducationInput({ value, onChange, required = false, placeholder = "e.g.
       )}
       
       <div className="education-hint">
-        💡 Example: "Bachelor of Science in Biology, University of California" or just the university name
+        Example: "Bachelor of Science in Biology, University of California" or just the university name
       </div>
     </div>
   )
