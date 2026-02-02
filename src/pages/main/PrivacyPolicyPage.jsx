@@ -3,15 +3,18 @@ import './styles/PrivacyPolicyPage.css'
 function PrivacyPolicyPage() {
   return (
     <div className="privacy-page">
-      <div className="privacy-header">
-        <h1>Privacy Policy</h1>
-        <p className="privacy-meta">
-          <strong>Effective Date:</strong> 01/31/2026<br />
-          <strong>Last Updated:</strong> 01/31/2026<br />
-          <strong>Version:</strong> 1.0
-        </p>
-      </div>
+      <section className="privacy-hero">
+        <div className="privacy-hero-content">
+          <h1 className="privacy-hero-title">Privacy Policy</h1>
+          <p className="privacy-hero-subtitle">
+            <strong>Effective Date:</strong> 01/31/2026 &nbsp;|&nbsp; 
+            <strong>Last Updated:</strong> 01/31/2026 &nbsp;|&nbsp; 
+            <strong>Version:</strong> 1.0
+          </p>
+        </div>
+      </section>
 
+      {/* Main Container */}
       <div className="privacy-container">
         <div className="privacy-content">
           
