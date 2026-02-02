@@ -4,6 +4,7 @@ import './styles/SignupPage.css'
 import EducationInput from '../../components/EducationInput'
 import ClientTermsModal from '../../components/ClientTermsModal'
 import TutorTermsModal from '../../components/TutorTermsModal'
+import PrivacyPolicyModal from '../../components/PrivacyPolicyModal'
 
 const SUBJECT_OPTIONS = [
   'K-12 Math',
@@ -90,6 +91,7 @@ function SignupPage({ fixedRole }) {
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [showTermsModal, setShowTermsModal] = useState(false)
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false)
   const [education, setEducation] = useState('')
 
   const roleToSend = fixedRole || 'TUTOR'
@@ -146,7 +148,7 @@ function SignupPage({ fixedRole }) {
     }
 
     if (!termsAccepted) {
-      setError('You must accept the Terms of Service to continue.')
+      setError('You must accept the Terms of Service and Privacy Policy to continue.')
       return
     }
 
@@ -484,6 +486,14 @@ function SignupPage({ fixedRole }) {
                       >
                         {roleToSend === 'STUDENT' ? 'Client Terms of Service' : 'Tutor Terms of Service'}
                       </button>
+                      {' '}and{' '}
+                      <button
+                        type="button"
+                        className="signup-terms-link"
+                        onClick={() => setShowPrivacyModal(true)}
+                      >
+                        Privacy Policy
+                      </button>
                       <span style={{color: '#ef4444'}}>    *</span>
                     </span>
                   </label>
@@ -584,6 +594,11 @@ function SignupPage({ fixedRole }) {
           onClose={() => setShowTermsModal(false)}
         />
       )}
+
+      <PrivacyPolicyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+      />
     </div>
   )
 }
