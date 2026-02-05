@@ -64,6 +64,7 @@ function TutorProfilePage({ currentUser }) {
   const [openMenuReviewId, setOpenMenuReviewId] = useState(null)
 
   const isStudent = currentUser?.role === 'STUDENT'
+  const isAdmin = currentUser?.role === 'ADMIN'
 
   const [linkStatus, setLinkStatus] = useState('NONE')
   const [linkLoading, setLinkLoading] = useState(false)
@@ -280,8 +281,9 @@ function TutorProfilePage({ currentUser }) {
       return
     }
 
-    if (!isStudent) {
-      alert('Only students can message tutors')
+    // Allow both students and admins to message tutors
+    if (!isStudent && !isAdmin) {
+      alert('Only students and admins can message tutors')
       return
     }
 
@@ -289,7 +291,7 @@ function TutorProfilePage({ currentUser }) {
       setChatLoading(true)
 
       const res = await fetch(
-        `${API_BASE}/api/chat/conversation?studentUserId=${currentUser.userId}&tutorUserId=${tutor.userId}`,
+        `${API_BASE}/api/chat/conversation?initiatorUserId=${currentUser.userId}&tutorUserId=${tutor.userId}`,
         { method: 'POST' }
       )
 

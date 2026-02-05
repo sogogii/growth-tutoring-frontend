@@ -1,8 +1,11 @@
 /* ==========================================
-   HOME PAGE STYLES - ORGANIZED
+   HOME PAGE STYLES - COMPLETE WITH MOBILE OPTIMIZATION
+   Based on HomePage.jsx structure
    ========================================== */
 
-/* ===== BASE LAYOUT ===== */
+/* ==========================================
+   BASE LAYOUT
+   ========================================== */
 
 .home {
   display: flex;
@@ -11,7 +14,9 @@
   padding-bottom: 32px;
 }
 
-/* ===== FULL-WIDTH BANNER SECTION ===== */
+/* ==========================================
+   FULL-WIDTH BANNER SECTION
+   ========================================== */
 
 .hero-banner {
   position: relative;
@@ -82,7 +87,9 @@
   font-family: 'Georgia', 'Times New Roman', serif;
 }
 
-/* ===== HERO SECTION (YELLOW BOX) ===== */
+/* ==========================================
+   HERO SECTION (YELLOW BOX)
+   ========================================== */
 
 .hero {
   margin-top: 16px;
@@ -171,7 +178,9 @@
   flex-wrap: wrap;
 }
 
-/* ===== BUTTON STYLES ===== */
+/* ==========================================
+   BUTTON STYLES
+   ========================================== */
 
 .btn {
   display: inline-block;
@@ -222,7 +231,9 @@
   background: #f9fafb;
 }
 
-/* ===== GENERIC SECTION STYLES ===== */
+/* ==========================================
+   GENERIC SECTION STYLES
+   ========================================== */
 
 .section {
   background: #ffffff;
@@ -272,8 +283,14 @@
 }
 
 .section-intro-text {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-top: 10px;
+  text-align: center;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 16px;
 }
 
@@ -283,7 +300,9 @@
   margin-top: 20px;
 }
 
-/* ===== HOW IT WORKS SECTION ===== */
+/* ==========================================
+   HOW IT WORKS SECTION
+   ========================================== */
 
 .section-how-it-works {
   background: transparent;
@@ -357,7 +376,27 @@
   margin-bottom: 16px;
 }
 
+.step-number-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #dcfce7;
+  color: #16a34a;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
 .step-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #111827;
+}
+
+.step-item-title {
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 12px;
@@ -371,7 +410,16 @@
   margin: 0;
 }
 
-/* ===== TOP TUTORS CAROUSEL SECTION ===== */
+.step-item-description {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ==========================================
+   TOP TUTORS CAROUSEL SECTION
+   ========================================== */
 
 .section-top-tutors {
   background: #ffffff;
@@ -513,7 +561,9 @@
   margin: 0;
 }
 
-/* ===== TESTIMONIALS SECTION ===== */
+/* ==========================================
+   TESTIMONIALS SECTION
+   ========================================== */
 
 .section-testimonials {
   background: #f9fafb;
@@ -600,7 +650,9 @@
   font-size: 13px;
 }
 
-/* ===== GROWTH AI SECTION ===== */
+/* ==========================================
+   GROWTH AI SECTION
+   ========================================== */
 
 .section-ai {
   background: #f9fafb;
@@ -651,9 +703,9 @@
 }
 
 .ai-card {
-  background: #fff7ed; /* Very soft orange/peach */
+  background: #fff7ed;
   border-radius: 12px;
-  border: 1px solid #fed7aa; /* Matching border */
+  border: 1px solid #fed7aa;
   padding: 24px 20px;
   text-align: center;
 }
@@ -663,14 +715,16 @@
   margin-bottom: 12px;
 }
 
-/* ===== FINAL CTA SECTION ===== */
+/* ==========================================
+   FINAL CTA SECTION
+   ========================================== */
 
 .section-final-cta {
-  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%); /* Subtle gradient */
+  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
   border: 1px solid #e5e7eb;
   text-align: center;
-  padding: 56px 32px; /* Slightly more padding */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); /* Very subtle shadow */
+  padding: 56px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .final-cta-content {
@@ -679,8 +733,8 @@
 }
 
 .final-cta-subtitle {
-  font-size: 17px; /* Slightly larger */
-  color: #4b5563; /* Darker for better contrast */
+  font-size: 17px;
+  color: #4b5563;
   line-height: 1.7;
   margin: 0 0 36px 0;
   font-weight: 400;
@@ -691,7 +745,7 @@
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 48px; /* More space before quote */
+  margin-bottom: 48px;
 }
 
 .cta-button {
@@ -710,7 +764,7 @@
   background: #16a34a;
   color: #ffffff;
   border-color: #16a34a;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25); /* Slightly stronger shadow */
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
 }
 
 .cta-button-primary:hover {
@@ -721,10 +775,10 @@
 }
 
 .cta-button-secondary {
-  background: #ffffff; /* Pure white instead of gray */
+  background: #ffffff;
   color: #374151;
   border-color: #d1d5db;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .cta-button-secondary:hover {
@@ -735,15 +789,15 @@
 }
 
 .final-cta-divider {
-  width: 60px; /* Shorter */
-  height: 2px; /* Slightly thicker */
-  background: linear-gradient(to right, transparent, #d1d5db, transparent); /* Fade effect */
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #d1d5db, transparent);
   margin: 0 auto 36px;
 }
 
 .final-cta-quote {
-  font-size: 16px; /* Slightly larger */
-  color: #6b7280; /* Darker for readability */
+  font-size: 16px;
+  color: #6b7280;
   line-height: 1.8;
   font-style: italic;
   margin: 0 0 12px 0;
@@ -759,7 +813,9 @@
   margin: 0;
 }
 
-/* ===== LEGACY TUTOR CARDS (IF STILL USED) ===== */
+/* ==========================================
+   LEGACY TUTOR CARDS
+   ========================================== */
 
 .tutor-list {
   display: flex;
@@ -857,25 +913,55 @@
   line-height: 1.5;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
+/* ==========================================
+   MOBILE OPTIMIZATION - TABLET (≤1024px)
+   ========================================== */
 
 @media (max-width: 1024px) {
-  .steps-grid {
-    grid-template-columns: 1fr;
+  /* Remove min-width restrictions */
+  .section-how-it-works,
+  .section-top-tutors {
+    min-width: auto;
   }
 
+  /* Steps to single column */
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* AI content to single column */
   .ai-content {
     grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .ai-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Testimonials to 2 columns */
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 }
 
+/* ==========================================
+   MOBILE OPTIMIZATION - LARGE PHONES (≤768px)
+   ========================================== */
+
 @media (max-width: 768px) {
+  /* Base layout */
   .home {
     gap: 32px;
   }
 
+  /* Hero banner */
   .hero-banner {
     min-height: 70vh;
+    margin-top: -20px;
   }
 
   .hero-banner-content {
@@ -892,8 +978,10 @@
     font-size: 42px;
   }
 
+  /* Hero section */
   .hero {
     padding: 28px 20px;
+    margin-top: 12px;
   }
 
   .hero-title {
@@ -904,80 +992,11 @@
     font-size: 13px;
   }
 
-  .hero-cta-buttons {
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .section {
-    padding: 20px 18px;
-  }
-
-  .section-title {
-    font-size: 20px;
-  }
-
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .tutor-card-main {
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .final-cta-subtitle {
-    font-size: 15px;
-  }
-
-  .final-cta-buttons {
-    flex-direction: column;
-    margin-bottom: 32px;
-  }
-
-  .cta-button {
-    width: 100%;
-  }
-
-  .final-cta-quote {
-    font-size: 14px;
-  }
-
-  .top-tutors-title {
-    font-size: 28px;
-  }
-  
-  .top-tutor-card {
-    min-width: 280px;
-    max-width: 280px;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-banner {
-    min-height: 60vh;
-  }
-
-  .hero-banner-content {
-    padding: 0 16px;
-    gap: 16px;
-  }
-
-  .hero-banner-company {
+  .hero-kicker {
     font-size: 12px;
-    letter-spacing: 0.1em;
   }
 
-  .hero-banner-text {
-    font-size: 32px;
-    line-height: 1.4;
-  }
-
+  /* Search bar stacks */
   .hero-search {
     flex-direction: column;
     border-radius: 12px;
@@ -992,18 +1011,463 @@
   .hero-search-button {
     border-radius: 8px;
     width: 100%;
+    margin-top: 4px;
   }
 
-  .tutor-subjects {
+  /* CTA buttons full width */
+  .hero-cta-buttons {
     flex-direction: column;
   }
 
-  .subject-tag {
+  .hero-cta-buttons .btn {
+    width: 100%;
     text-align: center;
+  }
+
+  /* Sections */
+  .section {
+    padding: 20px 18px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .section-how-it-works {
+    padding: 32px 20px;
+  }
+
+  .how-works-title {
+    font-size: 28px;
+  }
+
+  .section-top-tutors {
+    padding: 32px 20px;
+  }
+
+  .top-tutors-title {
+    font-size: 28px;
+  }
+
+  /* Top tutor cards smaller */
+  .top-tutor-card {
+    min-width: 280px;
+    max-width: 280px;
+    padding: 20px;
+  }
+
+  .top-tutor-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .top-tutor-name {
+    font-size: 18px;
+  }
+
+  /* Testimonials to single column */
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Tutor cards stack */
+  .tutor-card-main {
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .avatar-large {
+    margin: 0 auto;
+  }
+
+  .tutor-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .tutor-subjects {
+    justify-content: center;
+  }
+
+  /* Final CTA */
+  .section-final-cta {
+    padding: 40px 20px;
+  }
+
+  .final-cta-subtitle {
+    font-size: 15px;
+  }
+
+  .final-cta-buttons {
+    flex-direction: column;
+    margin-bottom: 32px;
+    gap: 12px;
+  }
+
+  .cta-button {
+    width: 100%;
+    padding: 12px 24px;
+  }
+
+  .final-cta-quote {
+    font-size: 14px;
+  }
+
+  .final-cta-author {
+    font-size: 13px;
+  }
+}
+
+/* ==========================================
+   MOBILE OPTIMIZATION - SMALL PHONES (≤640px)
+   ========================================== */
+
+@media (max-width: 640px) {
+  /* Base layout */
+  .home {
+    gap: 24px;
+    padding-bottom: 24px;
+  }
+
+  /* Hero banner even smaller */
+  .hero-banner {
+    min-height: 60vh;
+    margin-top: -16px;
+  }
+
+  .hero-banner-content {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .hero-banner-company {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-banner-text {
+    font-size: 36px;
+    line-height: 1.35;
+  }
+
+  /* Hero section */
+  .hero {
+    padding: 24px 16px;
+    margin-top: 8px;
+    border-radius: 12px;
+  }
+
+  .hero-title {
+    font-size: 24px;
+  }
+
+  .hero-subtitle {
+    font-size: 12px;
+  }
+
+  /* Sections */
+  .section {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .section-subtitle {
+    font-size: 12px;
+  }
+
+  .section-text {
+    font-size: 13px;
+  }
+
+  .section-intro-text {
+    font-size: 13px;
+  }
+
+  .section-how-it-works {
+    padding: 28px 16px;
+  }
+
+  .how-works-title {
+    font-size: 24px;
+  }
+
+  .step-card {
+    padding: 24px 16px;
+  }
+
+  .step-title,
+  .step-item-title {
+    font-size: 16px;
+  }
+
+  .step-description,
+  .step-item-description {
+    font-size: 13px;
+  }
+
+  /* Top tutors section */
+  .section-top-tutors {
+    padding: 28px 16px;
+  }
+
+  .top-tutors-title {
+    font-size: 24px;
   }
 
   .top-tutor-card {
     min-width: 260px;
     max-width: 260px;
+    padding: 18px;
+  }
+
+  .top-tutor-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .top-tutor-name {
+    font-size: 17px;
+  }
+
+  .top-tutor-rating {
+    font-size: 13px;
+  }
+
+  .top-tutor-subjects {
+    font-size: 13px;
+  }
+
+  .top-tutor-bio {
+    font-size: 13px;
+  }
+
+  /* Testimonials */
+  .testimonial-card {
+    padding: 16px;
+  }
+
+  .testimonial-card h3 {
+    font-size: 14px;
+  }
+
+  .testimonial-text {
+    font-size: 12px;
+  }
+
+  /* AI section */
+  .section-ai {
+    padding: 18px 16px;
+  }
+
+  .ai-card {
+    padding: 20px 16px;
+  }
+
+  .ai-icon {
+    font-size: 40px;
+  }
+
+  /* Final CTA */
+  .section-final-cta {
+    padding: 32px 16px;
+  }
+
+  .final-cta-subtitle {
+    font-size: 14px;
+  }
+
+  .cta-button {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .final-cta-divider {
+    width: 50px;
+    margin: 0 auto 28px;
+  }
+
+  .final-cta-quote {
+    font-size: 13px;
+  }
+
+  .final-cta-author {
+    font-size: 12px;
+  }
+
+  /* Buttons */
+  .btn {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+
+  .btn-outline-sm {
+    font-size: 11px;
+    padding: 5px 10px;
   }
 }
+
+/* ==========================================
+   MOBILE OPTIMIZATION - EXTRA SMALL (≤480px)
+   ========================================== */
+
+@media (max-width: 480px) {
+  /* Hero banner minimal */
+  .hero-banner {
+    min-height: 50vh;
+  }
+
+  .hero-banner-content {
+    padding: 0 12px;
+    gap: 12px;
+  }
+
+  .hero-banner-company {
+    font-size: 11px;
+  }
+
+  .hero-banner-text {
+    font-size: 30px;
+    line-height: 1.4;
+  }
+
+  /* Hero section minimal */
+  .hero {
+    padding: 20px 14px;
+  }
+
+  .hero-title {
+    font-size: 22px;
+  }
+
+  .hero-subtitle {
+    font-size: 11px;
+  }
+
+  /* Sections minimal */
+  .section {
+    padding: 16px 12px;
+  }
+
+  .section-title {
+    font-size: 17px;
+  }
+
+  .section-how-it-works,
+  .section-top-tutors {
+    padding: 24px 12px;
+  }
+
+  .how-works-title,
+  .top-tutors-title {
+    font-size: 22px;
+  }
+
+  .step-card {
+    padding: 20px 14px;
+  }
+
+  /* Top tutor cards minimal */
+  .top-tutor-card {
+    min-width: 240px;
+    max-width: 240px;
+    padding: 16px;
+  }
+
+  .top-tutor-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .top-tutor-name {
+    font-size: 16px;
+  }
+
+  /* Testimonials minimal */
+  .testimonial-card {
+    padding: 14px;
+  }
+
+  /* Subject tags wrap better */
+  .tutor-subjects {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subject-tag {
+    text-align: center;
+    min-width: 100px;
+  }
+
+  /* AI features list */
+  .ai-features-list li {
+    font-size: 12px;
+  }
+
+  .ai-feature-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  /* Final CTA minimal */
+  .section-final-cta {
+    padding: 28px 12px;
+  }
+
+  .final-cta-buttons {
+    gap: 10px;
+  }
+
+  .cta-button {
+    padding: 11px 18px;
+    font-size: 13px;
+  }
+}
+
+/* ==========================================
+   TOUCH-FRIENDLY ENHANCEMENTS
+   ========================================== */
+
+@media (max-width: 768px) {
+  /* Ensure all tappable elements are 44px minimum */
+  .btn,
+  .cta-button,
+  .top-tutor-card,
+  .testimonial-card {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Increase spacing for touch targets */
+  .hero-cta-buttons {
+    gap: 12px;
+  }
+
+  .final-cta-buttons {
+    gap: 14px;
+  }
+
+  /* Make buttons more prominent */
+  .btn-primary,
+  .cta-button-primary {
+    font-weight: 600;
+  }
+
+  /* Step cards easier to tap */
+  .step-card {
+    min-height: 120px;
+  }
+}
+
+/* ==========================================
+   END OF MOBILE OPTIMIZATION
+   ========================================== */
