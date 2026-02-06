@@ -31,11 +31,74 @@
   border-bottom-color: #2563eb;
 }
 
+/* Users Tab Container */
+.users-tab-container {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Search Bar Styles */
+.users-search-container {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.users-search-input {
+  width: 100%;
+  padding: 14px 48px 14px 16px;
+  font-size: 15px;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.users-search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.users-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.users-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #e5e7eb;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.users-search-clear:hover {
+  background: #d1d5db;
+  color: #374151;
+}
+
+.users-search-results {
+  margin-bottom: 16px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Users Table */
 .admin-users-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -71,10 +134,57 @@
   border-bottom: none;
 }
 
-.admin-users-table .btn {
-  margin-right: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
+/* Admin Actions Container */
+.admin-actions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Admin Buttons */
+.admin-users-table .admin-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #374151;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-users-table .admin-btn:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.admin-users-table .admin-btn:active {
+  background-color: #f3f4f6;
+}
+
+/* Message Button - Special Styling */
+.admin-btn-message {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-color: #f97316;
+  color: white;
+  font-weight: 600;
+}
+
+.admin-btn-message:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  border-color: #ea580c;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.admin-btn-message:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(249, 115, 22, 0.2);
 }
 
 /* Verification Tier Section */
@@ -201,6 +311,15 @@
     padding: 12px 8px;
   }
   
+  .admin-actions-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .admin-btn {
+    width: 100%;
+  }
+  
   .tier-buttons {
     flex-direction: column;
   }
@@ -213,11 +332,14 @@
     padding: 10px 16px;
     font-size: 14px;
   }
+  
+  .users-search-input {
+    font-size: 14px;
+  }
 }
 
 /* ========================================
    FEEDBACK MANAGEMENT STYLES
-   Added below - does not modify above
    ======================================== */
 
 /* Feedback Management Section */
@@ -322,47 +444,46 @@
   margin-bottom: 12px;
 }
 
-.feedback-list-user {
+.feedback-item-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.feedback-list-user strong {
-  font-size: 16px;
+.feedback-item-name {
+  font-weight: 600;
   color: #111827;
+  font-size: 15px;
 }
 
-.feedback-list-email {
-  font-size: 14px;
+.feedback-item-email {
   color: #6b7280;
+  font-size: 13px;
 }
 
-.feedback-list-meta {
+.feedback-item-meta {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
-/* Feedback Status Badges */
 .feedback-status-badge {
-  display: inline-block;
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.feedback-status-new {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.feedback-status-in-progress {
+.feedback-status-pending {
   background: #fef3c7;
   color: #92400e;
+}
+
+.feedback-status-in_progress {
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .feedback-status-resolved {
@@ -371,67 +492,51 @@
 }
 
 .feedback-status-archived {
-  background: #f3f4f6;
-  color: #4b5563;
-}
-
-.feedback-unread-dot {
-  color: #3b82f6;
-  font-size: 20px;
-  line-height: 1;
-}
-
-.feedback-list-comment {
-  color: #374151;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 12px;
-}
-
-.feedback-list-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
+  background: #e5e7eb;
   color: #6b7280;
 }
 
-.feedback-list-date {
-  font-weight: 500;
+.feedback-item-date {
+  font-size: 12px;
+  color: #9ca3af;
 }
 
-.feedback-list-attachments {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.feedback-item-comment {
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.feedback-item-attachments {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
 }
 
 /* Pagination */
 .feedback-pagination {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding: 20px 0;
+  padding: 16px 0;
 }
 
-.feedback-page-btn {
+.feedback-btn-page {
   padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
   background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.feedback-page-btn:hover:not(:disabled) {
+.feedback-btn-page:hover:not(:disabled) {
   background: #f9fafb;
   border-color: #9ca3af;
 }
 
-.feedback-page-btn:disabled {
+.feedback-btn-page:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -470,114 +575,113 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 24px 16px;
+  padding: 24px;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .feedback-modal-header h2 {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #111827;
   margin: 0;
 }
 
 .feedback-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #9ca3af;
+  cursor: pointer;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  border: none;
-  background: #f3f4f6;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .feedback-modal-close:hover {
-  background: #e5e7eb;
+  background: #f3f4f6;
+  color: #374151;
 }
 
 .feedback-modal-body {
   padding: 24px;
 }
 
-.feedback-modal-section {
+.feedback-detail-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.feedback-detail-row strong {
+  color: #6b7280;
+  min-width: 100px;
+}
+
+.feedback-status-select {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.feedback-detail-section {
   margin-bottom: 20px;
 }
 
-.feedback-modal-section label {
+.feedback-detail-section strong {
   display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
+  color: #6b7280;
   margin-bottom: 8px;
-}
-
-.feedback-modal-section a {
-  color: #3b82f6;
-  text-decoration: none;
-}
-
-.feedback-modal-section a:hover {
-  text-decoration: underline;
-}
-
-.feedback-status-dropdown {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
   font-size: 14px;
-  background: white;
 }
 
-.feedback-status-dropdown:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.feedback-modal-comment {
-  color: #111827;
-  font-size: 15px;
-  line-height: 1.7;
+.feedback-comment-text {
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.6;
   white-space: pre-wrap;
   background: #f9fafb;
-  padding: 16px;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
 }
 
-.feedback-modal-attachments {
+.feedback-attachments-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.feedback-modal-attachment {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+.feedback-attachment-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: #eff6ff;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
-.feedback-attachment-size {
-  font-size: 13px;
-  color: #6b7280;
+.feedback-attachment-link:hover {
+  background: #dbeafe;
+  text-decoration: underline;
 }
 
-.feedback-notes-textarea {
+.feedback-admin-notes {
   width: 100%;
   padding: 12px;
-  border-radius: 8px;
   border: 1px solid #d1d5db;
+  border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
   resize: vertical;
 }
 
-.feedback-notes-textarea:focus {
+.feedback-admin-notes:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
@@ -587,13 +691,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 20px 24px;
   border-top: 1px solid #e5e7eb;
 }
 
 .feedback-modal-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 
 .feedback-btn-save,
@@ -602,44 +706,44 @@
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
+  transition: all 0.2s;
 }
 
 .feedback-btn-save {
-  background: #3b82f6;
+  background: #2563eb;
   color: white;
+  border: none;
 }
 
 .feedback-btn-save:hover {
-  background: #2563eb;
+  background: #1d4ed8;
 }
 
 .feedback-btn-cancel {
-  background: #f3f4f6;
+  background: white;
   color: #374151;
+  border: 1px solid #d1d5db;
 }
 
 .feedback-btn-cancel:hover {
-  background: #e5e7eb;
+  background: #f9fafb;
 }
 
 .feedback-btn-delete {
-  background: #fee;
-  color: #dc2626;
-  border: 1px solid #fca5a5;
+  background: #dc2626;
+  color: white;
+  border: none;
 }
 
 .feedback-btn-delete:hover {
-  background: #fecaca;
+  background: #b91c1c;
 }
 
-/* States */
-.feedback-loading,
-.feedback-empty,
-.feedback-error-msg {
+/* Loading and Empty States */
+.feedback-loading-msg,
+.feedback-empty-msg {
   text-align: center;
   padding: 60px 20px;
   color: #6b7280;
@@ -651,6 +755,8 @@
   background: #fee;
   border-radius: 12px;
   border: 1px solid #fca5a5;
+  padding: 20px;
+  text-align: center;
 }
 
 /* Responsive for Feedback */
@@ -697,42 +803,7 @@
 }
 
 /* ========================================
-   ADMIN BUTTON FIX - ONLY THIS IS NEW
-   Added at the very end - does not modify anything above
-   ======================================== */
-
-/* Simple admin buttons for users table ONLY */
-.admin-users-table .admin-btn {
-  display: inline-block;
-  margin-right: 8px;
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid #d1d5db;
-  background-color: white;
-  color: #374151;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.admin-users-table .admin-btn:last-child {
-  margin-right: 0;
-}
-
-.admin-users-table .admin-btn:hover {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.admin-users-table .admin-btn:active {
-  background-color: #f3f4f6;
-}
-
-/* ========================================
    SESSION MANAGEMENT STYLES
-   Added for Session Management tab
    ======================================== */
 
 /* Session Management Section */
@@ -806,9 +877,9 @@
 .sessions-table-container {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
   overflow-x: auto;
   margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .sessions-table {
@@ -817,12 +888,12 @@
 }
 
 .sessions-table thead {
-  background-color: #f9fafb;
+  background: #f9fafb;
 }
 
 .sessions-table th,
 .sessions-table td {
-  padding: 12px 16px;
+  padding: 16px;
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -836,18 +907,13 @@
 }
 
 .sessions-table tbody tr:hover {
-  background-color: #f9fafb;
+  background: #f9fafb;
 }
 
-.sessions-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Session User Info */
 .session-user-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .session-user-name {
@@ -857,152 +923,88 @@
 }
 
 .session-user-email {
-  font-size: 12px;
   color: #6b7280;
+  font-size: 12px;
 }
 
 .session-datetime {
-  font-size: 13px;
   color: #374151;
+  font-size: 13px;
 }
 
 /* Session Status Badges */
-.session-badge-pending {
-  display: inline-block;
-  padding: 4px 12px;
+.session-status-pending {
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   background: #fef3c7;
   color: #92400e;
+  text-transform: uppercase;
 }
 
-.session-badge-accepted {
-  display: inline-block;
-  padding: 4px 12px;
+.session-status-accepted {
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   background: #d1fae5;
   color: #065f46;
-}
-
-.session-badge-declined {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: #fee2e2;
-  color: #991b1b;
 }
 
-.session-badge-cancelled {
-  display: inline-block;
-  padding: 4px 12px;
+.session-status-declined {
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: #f3f4f6;
-  color: #4b5563;
-}
-
-.session-badge-default {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: #e5e7eb;
-  color: #374151;
-}
-
-/* Payment Badges */
-.payment-badge-captured {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 8px;
   font-size: 11px;
   font-weight: 600;
+  background: #fee2e2;
+  color: #991b1b;
   text-transform: uppercase;
-  background: #d1fae5;
+}
+
+.session-status-cancelled {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.session-status-default {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #374151;
+  text-transform: uppercase;
+}
+
+.session-payment-yes {
   color: #065f46;
-}
-
-.payment-badge-authorized {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.payment-badge-cancelled {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  background: #f3f4f6;
-  color: #4b5563;
-}
-
-.payment-badge-refunded {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.payment-badge-default {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.session-payment-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* Session Action Button */
-.session-action-btn {
-  padding: 6px 14px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background: white;
-  color: #374151;
-  font-size: 13px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  font-size: 13px;
 }
 
-.session-action-btn:hover {
+.session-payment-no {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.session-btn-view {
+  padding: 6px 14px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.session-btn-view:hover {
   background: #f9fafb;
   border-color: #9ca3af;
 }
@@ -1010,29 +1012,27 @@
 /* Session Pagination */
 .session-pagination {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding: 20px 0;
+  padding: 16px 0;
 }
 
-.session-page-btn {
+.session-btn-page {
   padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
   background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.session-page-btn:hover:not(:disabled) {
+.session-btn-page:hover:not(:disabled) {
   background: #f9fafb;
   border-color: #9ca3af;
 }
 
-.session-page-btn:disabled {
+.session-btn-page:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -1060,7 +1060,7 @@
 .session-modal-box {
   background: white;
   border-radius: 16px;
-  max-width: 700px;
+  max-width: 600px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -1071,173 +1071,146 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 24px 16px;
+  padding: 24px;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .session-modal-header h2 {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #111827;
   margin: 0;
 }
 
 .session-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #9ca3af;
+  cursor: pointer;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  border: none;
-  background: #f3f4f6;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .session-modal-close:hover {
-  background: #e5e7eb;
+  background: #f3f4f6;
+  color: #374151;
 }
 
 .session-modal-body {
   padding: 24px;
 }
 
-.session-modal-section {
+.session-detail-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.session-detail-row strong {
+  color: #6b7280;
+  min-width: 100px;
+}
+
+.session-detail-section {
   margin-bottom: 20px;
 }
 
-.session-modal-section label {
+.session-detail-section strong {
   display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
+  color: #6b7280;
   margin-bottom: 8px;
+  font-size: 14px;
 }
 
-.session-modal-section p {
-  color: #111827;
+.session-detail-section p {
+  color: #374151;
   font-size: 14px;
   line-height: 1.6;
-  margin: 0;
-}
-
-.session-modal-message {
   background: #f9fafb;
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  white-space: pre-wrap;
+}
+
+.session-cancel-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.session-cancel-section label {
+  display: block;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .session-cancel-textarea {
   width: 100%;
   padding: 12px;
-  border-radius: 8px;
   border: 1px solid #d1d5db;
+  border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
   resize: vertical;
+  margin-bottom: 12px;
 }
 
 .session-cancel-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.session-btn-cancel-action {
+  padding: 10px 20px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.session-btn-cancel-action:hover {
+  background: #b91c1c;
 }
 
 .session-modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
-  border-top: 1px solid #e5e7eb;
 }
 
 .session-btn-close {
   padding: 10px 20px;
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  background: #f3f4f6;
-  color: #374151;
+  transition: all 0.2s;
 }
 
 .session-btn-close:hover {
-  background: #e5e7eb;
+  background: #f9fafb;
 }
 
-.session-btn-cancel {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  background: #fee;
-  color: #dc2626;
-  border: 1px solid #fca5a5;
-}
-
-.session-btn-cancel:hover {
-  background: #fecaca;
-}
-
-/* States */
-.session-loading,
-.session-empty,
-.session-error-msg {
+.session-loading {
   text-align: center;
   padding: 60px 20px;
   color: #6b7280;
   font-size: 16px;
-}
-
-.session-error-msg {
-  color: #dc2626;
-  background: #fee;
-  border-radius: 12px;
-  border: 1px solid #fca5a5;
-}
-
-/* Responsive for Sessions */
-@media (max-width: 768px) {
-  .session-filters-row {
-    flex-direction: column;
-  }
-  
-  .session-filter-input,
-  .session-filter-select {
-    width: 100%;
-  }
-  
-  .session-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .sessions-table {
-    font-size: 13px;
-  }
-  
-  .sessions-table th,
-  .sessions-table td {
-    padding: 8px;
-  }
-  
-  .session-modal-box {
-    border-radius: 0;
-    max-height: 100vh;
-    height: 100vh;
-  }
-  
-  .session-modal-footer {
-    flex-direction: column;
-  }
-  
-  .session-btn-close,
-  .session-btn-cancel {
-    width: 100%;
-  }
 }
