@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './styles/AdminPage.css'
 
 const RAW_API_BASE_URL =
@@ -6,12 +7,17 @@ const RAW_API_BASE_URL =
 const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
 function AdminPage({ currentUser }) {
+  const navigate = useNavigate()
+  
   // ORIGINAL STATE
   const [users, setUsers] = useState([])
   const [tutors, setTutors] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState('users')
+  
+  // USER SEARCH STATE
+  const [userSearchTerm, setUserSearchTerm] = useState('')
 
   // ORIGINAL FEEDBACK STATE
   const [feedback, setFeedback] = useState([])
@@ -151,7 +157,7 @@ function AdminPage({ currentUser }) {
     }
   }
 
-  const handleStatusChange = async (id, status) => {
+  const handleUpdateStatus = async (id, status) => {
     try {
       const res = await fetch(`${API_BASE}/api/admin/feedback/${id}/status`, {
         method: 'PATCH',
@@ -161,7 +167,7 @@ function AdminPage({ currentUser }) {
       if (res.ok) {
         loadFeedback()
         loadFeedbackStats()
-        if (selectedFeedback && selectedFeedback.id === id) {
+        if (selectedFeedback?.id === id) {
           setSelectedFeedback({ ...selectedFeedback, status })
         }
       }
@@ -176,12 +182,12 @@ function AdminPage({ currentUser }) {
       const res = await fetch(`${API_BASE}/api/admin/feedback/${selectedFeedback.id}/notes`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notes: adminNotes })
+        body: JSON.stringify({ adminNotes })
       })
       if (res.ok) {
-        alert('Notes saved successfully')
+        setSelectedFeedback({ ...selectedFeedback, adminNotes })
         loadFeedback()
-        setShowModal(false)
+        alert('Notes saved successfully')
       }
     } catch (err) {
       console.error('Failed to save notes:', err)
@@ -192,11 +198,14 @@ function AdminPage({ currentUser }) {
   const handleDeleteFeedback = async (id) => {
     if (!confirm('Are you sure you want to delete this feedback?')) return
     try {
-      const res = await fetch(`${API_BASE}/api/admin/feedback/${id}`, { method: 'DELETE' })
+      const res = await fetch(`${API_BASE}/api/admin/feedback/${id}`, {
+        method: 'DELETE'
+      })
       if (res.ok) {
         loadFeedback()
         loadFeedbackStats()
         setShowModal(false)
+        setSelectedFeedback(null)
       }
     } catch (err) {
       console.error('Failed to delete feedback:', err)
@@ -204,25 +213,27 @@ function AdminPage({ currentUser }) {
     }
   }
 
-  const openModal = (item) => {
+  const openFeedbackModal = (item) => {
     setSelectedFeedback(item)
     setAdminNotes(item.adminNotes || '')
     setShowModal(true)
-    if (!item.isRead) handleMarkAsRead(item.id, true)
+    if (!item.isRead) {
+      handleMarkAsRead(item.id, true)
+    }
   }
 
-  const formatDate = (dateString) => new Date(dateString).toLocaleString()
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B'
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  const formatDate = (isoString) => {
+    return new Date(isoString).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    })
   }
-  const getStatusBadgeClass = (status) => {
-    const map = { NEW: 'feedback-status-new', IN_PROGRESS: 'feedback-status-in-progress', RESOLVED: 'feedback-status-resolved', ARCHIVED: 'feedback-status-archived' }
-    return `feedback-status-badge ${map[status] || ''}`
-  }
-  const getStatusLabel = (status) => {
-    const map = { NEW: 'New', IN_PROGRESS: 'In Progress', RESOLVED: 'Resolved', ARCHIVED: 'Archived' }
+
+  const formatStatusLabel = (status) => {
+    const map = { PENDING: 'Pending', IN_PROGRESS: 'In Progress', RESOLVED: 'Resolved', ARCHIVED: 'Archived' }
     return map[status] || status
   }
 
@@ -302,72 +313,67 @@ function AdminPage({ currentUser }) {
 
   const cancelSession = async () => {
     if (!confirm('Are you sure you want to cancel this session?')) return
+    if (!selectedSession) return
 
     try {
       const res = await fetch(
         `${API_BASE}/api/admin/sessions/${selectedSession.sessionId}/cancel`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ adminNote: cancelNote }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cancelNote: cancelNote || 'Cancelled by admin' }),
         }
       )
 
       if (!res.ok) throw new Error('Failed to cancel session')
 
-      await loadSessions()
-      await loadSessionStats()
-      setShowSessionModal(false)
       alert('Session cancelled successfully')
+      setShowSessionModal(false)
+      loadSessions()
+      loadSessionStats()
     } catch (err) {
       console.error(err)
       alert(err.message || 'Failed to cancel session')
     }
   }
 
-  const formatCurrency = (cents) => {
-    if (!cents) return '$0.00'
-    return `$${(cents / 100).toFixed(2)}`
-  }
-
-  const formatDateTime = (dateString) => {
-    if (!dateString) return 'N/A'
-    return new Date(dateString).toLocaleString()
+  const formatDateTime = (isoString) => {
+    if (!isoString) return 'N/A'
+    return new Date(isoString).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    })
   }
 
   const getSessionStatusBadgeClass = (status) => {
-    const statusMap = {
-      PENDING: 'session-badge-pending',
-      ACCEPTED: 'session-badge-accepted',
-      DECLINED: 'session-badge-declined',
-      CANCELLED: 'session-badge-cancelled',
+    switch (status) {
+      case 'PENDING':
+        return 'session-status-pending'
+      case 'ACCEPTED':
+        return 'session-status-accepted'
+      case 'DECLINED':
+        return 'session-status-declined'
+      case 'CANCELLED':
+        return 'session-status-cancelled'
+      default:
+        return 'session-status-default'
     }
-    return statusMap[status] || 'session-badge-default'
   }
 
-  const getPaymentStatusClass = (status) => {
-    const statusMap = {
-      CAPTURED: 'payment-badge-captured',
-      AUTHORIZED: 'payment-badge-authorized',
-      CANCELLED: 'payment-badge-cancelled',
-      REFUNDED: 'payment-badge-refunded',
-    }
-    return statusMap[status] || 'payment-badge-default'
-  }
-
-  // ORIGINAL USER FUNCTIONS
-  const updateStatus = async (id, status) => {
-    if (!adminUserId) return
-
+  // ORIGINAL FUNCTIONS
+  const updateStatus = async (userId, newStatus) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/admin/users/${id}/status?adminUserId=${adminUserId}`,
+        `${API_BASE}/api/admin/users/${userId}/status?adminUserId=${adminUserId}`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status }),
-          credentials: 'include',
+          body: JSON.stringify({ status: newStatus }),
+          credentials: 'include'
         }
       )
 
@@ -376,7 +382,7 @@ function AdminPage({ currentUser }) {
       }
 
       setUsers((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, status } : u))
+        prev.map((u) => (u.id === userId ? { ...u, status: newStatus } : u))
       )
     } catch (err) {
       console.error(err)
@@ -384,17 +390,15 @@ function AdminPage({ currentUser }) {
     }
   }
 
-  const updateVerificationTier = async (userId, tier) => {
-    if (!adminUserId) return
-
+  const updateVerificationTier = async (userId, newTier) => {
     try {
       const res = await fetch(
         `${API_BASE}/api/admin/tutors/${userId}/verification-tier?adminUserId=${adminUserId}`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ verificationTier: tier }),
-          credentials: 'include',
+          body: JSON.stringify({ verificationTier: newTier }),
+          credentials: 'include'
         }
       )
 
@@ -402,19 +406,79 @@ function AdminPage({ currentUser }) {
         throw new Error((await res.text()) || 'Failed to update verification tier')
       }
 
-      setTutors(prev => ({
+      setTutors((prev) => ({
         ...prev,
-        [userId]: {
-          ...prev[userId],
-          verificationTier: tier
-        }
+        [userId]: { ...prev[userId], verificationTier: newTier }
       }))
-
-      alert('Verification tier updated successfully!')
     } catch (err) {
       console.error(err)
       alert(err.message || 'Failed to update verification tier')
     }
+  }
+
+  // NEW FUNCTION: Handle messaging a user
+  const handleMessageUser = async (user) => {
+    try {
+      // Create or get existing conversation with this user
+      const res = await fetch(
+        `${API_BASE}/api/chat/conversations/with/${user.id}?userId=${adminUserId}`,
+        {
+          method: 'POST',
+          credentials: 'include'
+        }
+      )
+
+      if (!res.ok) {
+        throw new Error('Failed to create conversation')
+      }
+
+      const conversation = await res.json()
+      
+      // Navigate to the messages page with this conversation
+      navigate(`/messages/${conversation.id}`)
+    } catch (err) {
+      console.error(err)
+      alert('Failed to open message: ' + err.message)
+    }
+  }
+
+  // NEW FUNCTION: Filter users based on search term
+  const getFilteredUsers = () => {
+    if (!userSearchTerm.trim()) {
+      return users
+    }
+
+    const searchLower = userSearchTerm.toLowerCase().trim()
+    
+    return users.filter((user) => {
+      // Search by ID (exact or partial match)
+      if (user.id.toString().includes(searchLower)) {
+        return true
+      }
+      
+      // Search by email
+      if (user.email.toLowerCase().includes(searchLower)) {
+        return true
+      }
+      
+      // Search by full name
+      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase()
+      if (fullName.includes(searchLower)) {
+        return true
+      }
+      
+      // Search by first name
+      if (user.firstName.toLowerCase().includes(searchLower)) {
+        return true
+      }
+      
+      // Search by last name
+      if (user.lastName.toLowerCase().includes(searchLower)) {
+        return true
+      }
+      
+      return false
+    })
   }
 
   if (!currentUser || currentUser.role !== 'ADMIN') {
@@ -422,6 +486,7 @@ function AdminPage({ currentUser }) {
   }
 
   const tutorUsers = users.filter((u) => u.role === 'TUTOR')
+  const filteredUsers = getFilteredUsers()
 
   return (
     <div className="my-profile-page">
@@ -457,53 +522,100 @@ function AdminPage({ currentUser }) {
       {loading && activeTab !== 'feedback' && activeTab !== 'sessions' && <p className="profile-value">Loading...</p>}
       {error && <p className="auth-error">{error}</p>}
 
-      {/* USERS TAB */}
+      {/* USERS TAB - IMPROVED */}
       {!loading && !error && activeTab === 'users' && (
-        <table className="admin-users-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>EMAIL</th>
-              <th>NAME</th>
-              <th>ROLE</th>
-              <th>STATUS</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>{u.email}</td>
-                <td>
-                  {u.firstName} {u.lastName}
-                </td>
-                <td>{u.role}</td>
-                <td>{u.status}</td>
-                <td>
-                  <button
-                    className="admin-btn"
-                    onClick={() => updateStatus(u.id, 'ACTIVE')}
-                  >
-                    Activate
-                  </button>
-                  <button
-                    className="admin-btn"
-                    onClick={() => updateStatus(u.id, 'SUSPENDED')}
-                  >
-                    Suspend
-                  </button>
-                  <button
-                    className="admin-btn"
-                    onClick={() => updateStatus(u.id, 'DEACTIVATED')}
-                  >
-                    Deactivate
-                  </button>
-                </td>
+        <div className="users-tab-container">
+          {/* Search bar */}
+          <div className="users-search-container">
+            <input
+              type="text"
+              placeholder="Search by name, email, or ID..."
+              value={userSearchTerm}
+              onChange={(e) => setUserSearchTerm(e.target.value)}
+              className="users-search-input"
+            />
+            {userSearchTerm && (
+              <button
+                className="users-search-clear"
+                onClick={() => setUserSearchTerm('')}
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Results count */}
+          {userSearchTerm && (
+            <div className="users-search-results">
+              Found {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''}
+            </div>
+          )}
+
+          {/* Users table */}
+          <table className="admin-users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>EMAIL</th>
+                <th>NAME</th>
+                <th>ROLE</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+                    {userSearchTerm ? 'No users found matching your search' : 'No users found'}
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((u) => (
+                  <tr key={u.id}>
+                    <td>{u.id}</td>
+                    <td>{u.email}</td>
+                    <td>
+                      {u.firstName} {u.lastName}
+                    </td>
+                    <td>{u.role}</td>
+                    <td>{u.status}</td>
+                    <td>
+                      <div className="admin-actions-container">
+                        <button
+                          className="admin-btn"
+                          onClick={() => updateStatus(u.id, 'ACTIVE')}
+                        >
+                          Activate
+                        </button>
+                        <button
+                          className="admin-btn"
+                          onClick={() => updateStatus(u.id, 'SUSPENDED')}
+                        >
+                          Suspend
+                        </button>
+                        <button
+                          className="admin-btn"
+                          onClick={() => updateStatus(u.id, 'DEACTIVATED')}
+                        >
+                          Deactivate
+                        </button>
+                        <button
+                          className="admin-btn admin-btn-message"
+                          onClick={() => handleMessageUser(u)}
+                          title={`Message ${u.firstName} ${u.lastName}`}
+                        >
+                          Message
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* TUTORS TAB */}
@@ -514,75 +626,58 @@ function AdminPage({ currentUser }) {
             Update verification tiers for tutors. Higher tiers indicate greater
             verification levels.
           </p>
-
           <table className="admin-users-table">
             <thead>
               <tr>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Current Tier</th>
-                <th>Change Tier</th>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>STATUS</th>
+                <th>CURRENT TIER</th>
+                <th>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
-              {tutorUsers.map((tutor) => {
-                const tutorData = tutors[tutor.id]
-                const currentTier = tutorData?.verificationTier || 'TIER_1'
+              {tutorUsers.map((u) => {
+                const tutor = tutors[u.id]
+                const currentTier = tutor?.verificationTier || 'TIER_1'
 
                 return (
-                  <tr key={tutor.id}>
-                    <td>{tutor.id}</td>
+                  <tr key={u.id}>
+                    <td>{u.id}</td>
                     <td>
-                      {tutor.firstName} {tutor.lastName}
+                      {u.firstName} {u.lastName}
                     </td>
-                    <td>{tutor.email}</td>
+                    <td>{u.email}</td>
                     <td>
-                      <span
-                        className={`status-badge status-${tutor.status.toLowerCase()}`}
-                      >
-                        {tutor.status}
+                      <span className={`status-badge status-${u.status.toLowerCase()}`}>
+                        {u.status}
                       </span>
                     </td>
                     <td>
-                      <span
-                        className={`tier-badge tier-${currentTier.toLowerCase()}`}
-                      >
+                      <span className={`tier-badge tier-${currentTier.toLowerCase()}`}>
                         {currentTier.replace('_', ' ')}
                       </span>
                     </td>
                     <td>
                       <div className="tier-buttons">
                         <button
-                          className={`btn-tier ${
-                            currentTier === 'TIER_1' ? 'active' : ''
-                          }`}
-                          onClick={() =>
-                            updateVerificationTier(tutor.id, 'TIER_1')
-                          }
+                          className={`btn-tier ${currentTier === 'TIER_1' ? 'active' : ''}`}
+                          onClick={() => updateVerificationTier(u.id, 'TIER_1')}
                           disabled={currentTier === 'TIER_1'}
                         >
                           Tier 1
                         </button>
                         <button
-                          className={`btn-tier ${
-                            currentTier === 'TIER_2' ? 'active' : ''
-                          }`}
-                          onClick={() =>
-                            updateVerificationTier(tutor.id, 'TIER_2')
-                          }
+                          className={`btn-tier ${currentTier === 'TIER_2' ? 'active' : ''}`}
+                          onClick={() => updateVerificationTier(u.id, 'TIER_2')}
                           disabled={currentTier === 'TIER_2'}
                         >
                           Tier 2
                         </button>
                         <button
-                          className={`btn-tier ${
-                            currentTier === 'TIER_3' ? 'active' : ''
-                          }`}
-                          onClick={() =>
-                            updateVerificationTier(tutor.id, 'TIER_3')
-                          }
+                          className={`btn-tier ${currentTier === 'TIER_3' ? 'active' : ''}`}
+                          onClick={() => updateVerificationTier(u.id, 'TIER_3')}
                           disabled={currentTier === 'TIER_3'}
                         >
                           Tier 3
@@ -594,77 +689,195 @@ function AdminPage({ currentUser }) {
               })}
             </tbody>
           </table>
-
-          {tutorUsers.length === 0 && (
-            <p className="profile-value">No tutors found.</p>
-          )}
         </div>
       )}
 
-      {/* ORIGINAL FEEDBACK TAB */}
+      {/* FEEDBACK TAB */}
       {activeTab === 'feedback' && (
         <div className="feedback-management-section">
           {feedbackStats && (
             <div className="feedback-stats-grid">
-              <div className="feedback-stat-card"><div className="feedback-stat-value">{feedbackStats.total}</div><div className="feedback-stat-label">Total</div></div>
-              <div className="feedback-stat-card"><div className="feedback-stat-value">{feedbackStats.unread}</div><div className="feedback-stat-label">Unread</div></div>
-              <div className="feedback-stat-card"><div className="feedback-stat-value">{feedbackStats.new}</div><div className="feedback-stat-label">New</div></div>
-              <div className="feedback-stat-card"><div className="feedback-stat-value">{feedbackStats.inProgress}</div><div className="feedback-stat-label">In Progress</div></div>
-              <div className="feedback-stat-card"><div className="feedback-stat-value">{feedbackStats.resolved}</div><div className="feedback-stat-label">Resolved</div></div>
+              <div className="feedback-stat-card">
+                <div className="feedback-stat-value">{feedbackStats.total}</div>
+                <div className="feedback-stat-label">Total</div>
+              </div>
+              <div className="feedback-stat-card">
+                <div className="feedback-stat-value">{feedbackStats.unread}</div>
+                <div className="feedback-stat-label">Unread</div>
+              </div>
+              <div className="feedback-stat-card">
+                <div className="feedback-stat-value">{feedbackStats.pending}</div>
+                <div className="feedback-stat-label">Pending</div>
+              </div>
+              <div className="feedback-stat-card">
+                <div className="feedback-stat-value">{feedbackStats.inProgress}</div>
+                <div className="feedback-stat-label">In Progress</div>
+              </div>
+              <div className="feedback-stat-card">
+                <div className="feedback-stat-value">{feedbackStats.resolved}</div>
+                <div className="feedback-stat-label">Resolved</div>
+              </div>
             </div>
           )}
+
           <div className="feedback-filters-row">
-            <input type="text" className="feedback-filter-input" placeholder="Search by name, email, or comment..." value={filters.search} onChange={(e) => handleFilterChange('search', e.target.value)} />
-            <select className="feedback-filter-select" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
-              <option value="">All Statuses</option><option value="NEW">New</option><option value="IN_PROGRESS">In Progress</option><option value="RESOLVED">Resolved</option><option value="ARCHIVED">Archived</option>
+            <input
+              type="text"
+              placeholder="Search feedback..."
+              value={filters.search}
+              onChange={(e) => handleFilterChange('search', e.target.value)}
+              className="feedback-filter-input"
+            />
+            <select
+              value={filters.status}
+              onChange={(e) => handleFilterChange('status', e.target.value)}
+              className="feedback-filter-select"
+            >
+              <option value="">All Statuses</option>
+              <option value="PENDING">Pending</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="RESOLVED">Resolved</option>
+              <option value="ARCHIVED">Archived</option>
             </select>
-            <select className="feedback-filter-select" value={filters.isRead} onChange={(e) => handleFilterChange('isRead', e.target.value)}>
-              <option value="">All</option><option value="false">Unread</option><option value="true">Read</option>
+            <select
+              value={filters.isRead}
+              onChange={(e) => handleFilterChange('isRead', e.target.value)}
+              className="feedback-filter-select"
+            >
+              <option value="">All</option>
+              <option value="true">Read</option>
+              <option value="false">Unread</option>
             </select>
           </div>
-          {feedbackError && <div className="feedback-error-msg">{feedbackError}</div>}
-          {feedbackLoading ? <div className="feedback-loading">Loading feedback...</div> : feedback.length === 0 ? <div className="feedback-empty">No feedback found</div> : (
+
+          {feedbackLoading ? (
+            <div className="feedback-loading-msg">Loading feedback...</div>
+          ) : feedbackError ? (
+            <div className="feedback-error-msg">{feedbackError}</div>
+          ) : feedback.length === 0 ? (
+            <div className="feedback-empty-msg">No feedback found</div>
+          ) : (
             <>
               <div className="feedback-items-list">
                 {feedback.map((item) => (
-                  <div key={item.id} className={`feedback-list-item ${!item.isRead ? 'feedback-item-unread' : ''}`} onClick={() => openModal(item)}>
+                  <div
+                    key={item.id}
+                    className={`feedback-list-item ${!item.isRead ? 'feedback-item-unread' : ''}`}
+                    onClick={() => openFeedbackModal(item)}
+                  >
                     <div className="feedback-list-header">
-                      <div className="feedback-list-user"><strong>{item.name}</strong><span className="feedback-list-email">{item.email}</span></div>
-                      <div className="feedback-list-meta"><span className={getStatusBadgeClass(item.status)}>{getStatusLabel(item.status)}</span>{!item.isRead && <span className="feedback-unread-dot">●</span>}</div>
+                      <div className="feedback-item-info">
+                        <span className="feedback-item-name">{item.name}</span>
+                        <span className="feedback-item-email">{item.email}</span>
+                      </div>
+                      <div className="feedback-item-meta">
+                        <span className={`feedback-status-badge feedback-status-${item.status.toLowerCase()}`}>
+                          {formatStatusLabel(item.status)}
+                        </span>
+                        <span className="feedback-item-date">{formatDate(item.createdAt)}</span>
+                      </div>
                     </div>
-                    <div className="feedback-list-comment">{item.comment.length > 150 ? item.comment.substring(0, 150) + '...' : item.comment}</div>
-                    <div className="feedback-list-footer">
-                      <span className="feedback-list-date">{formatDate(item.createdAt)}</span>
-                      {item.attachments && item.attachments.length > 0 && <span className="feedback-list-attachments">📎 {item.attachments.length} file(s)</span>}
+                    <div className="feedback-item-comment">
+                      {item.comment.length > 120 ? `${item.comment.slice(0, 120)}...` : item.comment}
                     </div>
+                    {item.attachments && item.attachments.length > 0 && (
+                      <div className="feedback-item-attachments">
+                        📎 {item.attachments.length} attachment{item.attachments.length !== 1 ? 's' : ''}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
+
               <div className="feedback-pagination">
-                <button className="feedback-page-btn" disabled={currentPage === 0} onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-                <span className="feedback-page-info">Page {currentPage + 1} of {totalPages} ({totalItems} total)</span>
-                <button className="feedback-page-btn" disabled={currentPage >= totalPages - 1} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+                <button
+                  className="feedback-btn-page"
+                  onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                  disabled={currentPage === 0}
+                >
+                  Previous
+                </button>
+                <span className="feedback-page-info">
+                  Page {currentPage + 1} of {totalPages || 1} ({totalItems} total)
+                </span>
+                <button
+                  className="feedback-btn-page"
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  Next
+                </button>
               </div>
             </>
           )}
+
           {showModal && selectedFeedback && (
             <div className="feedback-modal-overlay" onClick={() => setShowModal(false)}>
               <div className="feedback-modal-box" onClick={(e) => e.stopPropagation()}>
-                <div className="feedback-modal-header"><h2>Feedback Details</h2><button className="feedback-modal-close" onClick={() => setShowModal(false)}>✕</button></div>
-                <div className="feedback-modal-body">
-                  <div className="feedback-modal-section"><label>From:</label><div><strong>{selectedFeedback.name}</strong><br /><a href={`mailto:${selectedFeedback.email}`}>{selectedFeedback.email}</a></div></div>
-                  <div className="feedback-modal-section"><label>Date:</label><div>{formatDate(selectedFeedback.createdAt)}</div></div>
-                  <div className="feedback-modal-section"><label>Status:</label><select className="feedback-status-dropdown" value={selectedFeedback.status} onChange={(e) => handleStatusChange(selectedFeedback.id, e.target.value)}>
-                    <option value="NEW">New</option><option value="IN_PROGRESS">In Progress</option><option value="RESOLVED">Resolved</option><option value="ARCHIVED">Archived</option>
-                  </select></div>
-                  <div className="feedback-modal-section"><label>Feedback:</label><div className="feedback-modal-comment">{selectedFeedback.comment}</div></div>
-                  {selectedFeedback.attachments && selectedFeedback.attachments.length > 0 && (
-                    <div className="feedback-modal-section"><label>Attachments:</label><div className="feedback-modal-attachments">
-                      {selectedFeedback.attachments.map((att) => <div key={att.id} className="feedback-modal-attachment"><span>{att.fileName}</span><span className="feedback-attachment-size">{formatFileSize(att.fileSize)}</span></div>)}
-                    </div></div>
-                  )}
-                  <div className="feedback-modal-section"><label>Admin Notes:</label><textarea className="feedback-notes-textarea" value={adminNotes} onChange={(e) => setAdminNotes(e.target.value)} rows={4} placeholder="Add internal notes..." /></div>
+                <div className="feedback-modal-header">
+                  <h2>Feedback Details</h2>
+                  <button className="feedback-modal-close" onClick={() => setShowModal(false)}>✕</button>
                 </div>
+
+                <div className="feedback-modal-body">
+                  <div className="feedback-detail-row">
+                    <strong>Name:</strong> {selectedFeedback.name}
+                  </div>
+                  <div className="feedback-detail-row">
+                    <strong>Email:</strong> {selectedFeedback.email}
+                  </div>
+                  <div className="feedback-detail-row">
+                    <strong>Submitted:</strong> {formatDate(selectedFeedback.createdAt)}
+                  </div>
+                  <div className="feedback-detail-row">
+                    <strong>Status:</strong>
+                    <select
+                      value={selectedFeedback.status}
+                      onChange={(e) => handleUpdateStatus(selectedFeedback.id, e.target.value)}
+                      className="feedback-status-select"
+                    >
+                      <option value="PENDING">Pending</option>
+                      <option value="IN_PROGRESS">In Progress</option>
+                      <option value="RESOLVED">Resolved</option>
+                      <option value="ARCHIVED">Archived</option>
+                    </select>
+                  </div>
+                  <div className="feedback-detail-section">
+                    <strong>Comment:</strong>
+                    <p className="feedback-comment-text">{selectedFeedback.comment}</p>
+                  </div>
+
+                  {selectedFeedback.attachments && selectedFeedback.attachments.length > 0 && (
+                    <div className="feedback-detail-section">
+                      <strong>Attachments:</strong>
+                      <div className="feedback-attachments-list">
+                        {selectedFeedback.attachments.map((url, idx) => (
+                          <a
+                            key={idx}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="feedback-attachment-link"
+                          >
+                            Attachment {idx + 1}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="feedback-detail-section">
+                    <strong>Admin Notes:</strong>
+                    <textarea
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      className="feedback-admin-notes"
+                      placeholder="Add internal notes here..."
+                      rows="4"
+                    />
+                  </div>
+                </div>
+
                 <div className="feedback-modal-footer">
                   <button className="feedback-btn-delete" onClick={() => handleDeleteFeedback(selectedFeedback.id)}>Delete</button>
                   <div className="feedback-modal-actions">
@@ -678,7 +891,7 @@ function AdminPage({ currentUser }) {
         </div>
       )}
 
-      {/* NEW SESSION TAB */}
+      {/* SESSION TAB */}
       {activeTab === 'sessions' && (
         <div className="session-management-section">
           {sessionStats && (
@@ -704,9 +917,7 @@ function AdminPage({ currentUser }) {
                 <div className="session-stat-label">Declined</div>
               </div>
               <div className="session-stat-card">
-                <div className="session-stat-value">
-                  {sessionStats.cancelled}
-                </div>
+                <div className="session-stat-value">{sessionStats.cancelled}</div>
                 <div className="session-stat-label">Cancelled</div>
               </div>
             </div>
@@ -715,19 +926,15 @@ function AdminPage({ currentUser }) {
           <div className="session-filters-row">
             <input
               type="text"
-              className="session-filter-input"
-              placeholder="Search by student, tutor, or subject..."
+              placeholder="Search sessions..."
               value={sessionFilters.search}
-              onChange={(e) =>
-                handleSessionFilterChange('search', e.target.value)
-              }
+              onChange={(e) => handleSessionFilterChange('search', e.target.value)}
+              className="session-filter-input"
             />
             <select
-              className="session-filter-select"
               value={sessionFilters.status}
-              onChange={(e) =>
-                handleSessionFilterChange('status', e.target.value)
-              }
+              onChange={(e) => handleSessionFilterChange('status', e.target.value)}
+              className="session-filter-select"
             >
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -736,10 +943,6 @@ function AdminPage({ currentUser }) {
               <option value="CANCELLED">Cancelled</option>
             </select>
           </div>
-
-          {sessionError && (
-            <div className="session-error-msg">{sessionError}</div>
-          )}
 
           {sessionLoading ? (
             <div className="session-loading">Loading sessions...</div>
@@ -796,27 +999,14 @@ function AdminPage({ currentUser }) {
                         </td>
                         <td>
                           {session.paymentId ? (
-                            <div className="session-payment-info">
-                              <div>
-                                <strong>
-                                  {formatCurrency(session.paymentAmountCents)}
-                                </strong>
-                              </div>
-                              <span
-                                className={getPaymentStatusClass(
-                                  session.paymentStatus
-                                )}
-                              >
-                                {session.paymentStatus}
-                              </span>
-                            </div>
+                            <span className="session-payment-yes">✓ Paid</span>
                           ) : (
-                            'No payment'
+                            <span className="session-payment-no">No payment</span>
                           )}
                         </td>
                         <td>
                           <button
-                            className="session-action-btn"
+                            className="session-btn-view"
                             onClick={() => openSessionModal(session.sessionId)}
                           >
                             View Details
@@ -826,192 +1016,99 @@ function AdminPage({ currentUser }) {
                     ))}
                   </tbody>
                 </table>
-
-                {sessions.length === 0 && (
-                  <div className="session-empty">No sessions found</div>
-                )}
               </div>
 
-              {sessionTotalPages > 1 && (
-                <div className="session-pagination">
-                  <button
-                    className="session-page-btn"
-                    onClick={() => setSessionPage((p) => Math.max(0, p - 1))}
-                    disabled={sessionPage === 0}
-                  >
-                    Previous
-                  </button>
-                  <span className="session-page-info">
-                    Page {sessionPage + 1} of {sessionTotalPages}
-                  </span>
-                  <button
-                    className="session-page-btn"
-                    onClick={() =>
-                      setSessionPage((p) =>
-                        Math.min(sessionTotalPages - 1, p + 1)
-                      )
-                    }
-                    disabled={sessionPage === sessionTotalPages - 1}
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
+              <div className="session-pagination">
+                <button
+                  className="session-btn-page"
+                  onClick={() => setSessionPage((p) => Math.max(0, p - 1))}
+                  disabled={sessionPage === 0}
+                >
+                  Previous
+                </button>
+                <span className="session-page-info">
+                  Page {sessionPage + 1} of {sessionTotalPages || 1}
+                </span>
+                <button
+                  className="session-btn-page"
+                  onClick={() => setSessionPage((p) => p + 1)}
+                  disabled={sessionPage >= sessionTotalPages - 1}
+                >
+                  Next
+                </button>
+              </div>
             </>
           )}
-        </div>
-      )}
 
-      {/* SESSION MODAL */}
-      {showSessionModal && selectedSession && (
-        <div className="session-modal-overlay">
-          <div className="session-modal-box">
-            <div className="session-modal-header">
-              <h2>Session Details</h2>
-              <button
-                className="session-modal-close"
-                onClick={() => setShowSessionModal(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="session-modal-body">
-              <div className="session-modal-section">
-                <label>Session ID:</label>
-                <p>{selectedSession.sessionId}</p>
-              </div>
-
-              <div className="session-modal-section">
-                <label>Student:</label>
-                <p>
-                  {selectedSession.studentName} ({selectedSession.studentEmail})
-                </p>
-              </div>
-
-              <div className="session-modal-section">
-                <label>Tutor:</label>
-                <p>
-                  {selectedSession.tutorName} ({selectedSession.tutorEmail})
-                </p>
-              </div>
-
-              <div className="session-modal-section">
-                <label>Schedule:</label>
-                <p>
-                  <strong>Start:</strong>{' '}
-                  {formatDateTime(selectedSession.requestedStart)}
-                  <br />
-                  <strong>End:</strong>{' '}
-                  {formatDateTime(selectedSession.requestedEnd)}
-                  <br />
-                  <strong>Timezone:</strong> {selectedSession.timezone}
-                </p>
-              </div>
-
-              <div className="session-modal-section">
-                <label>Subject:</label>
-                <p>{selectedSession.subject}</p>
-              </div>
-
-              <div className="session-modal-section">
-                <label>Status:</label>
-                <p>
-                  <span className={getSessionStatusBadgeClass(selectedSession.status)}>
-                    {selectedSession.status}
-                  </span>
-                </p>
-              </div>
-
-              {selectedSession.studentMessage && (
-                <div className="session-modal-section">
-                  <label>Student Message:</label>
-                  <p className="session-modal-message">
-                    {selectedSession.studentMessage}
-                  </p>
+          {showSessionModal && selectedSession && (
+            <div className="session-modal-overlay" onClick={() => setShowSessionModal(false)}>
+              <div className="session-modal-box" onClick={(e) => e.stopPropagation()}>
+                <div className="session-modal-header">
+                  <h2>Session Details</h2>
+                  <button className="session-modal-close" onClick={() => setShowSessionModal(false)}>✕</button>
                 </div>
-              )}
 
-              {selectedSession.tutorResponse && (
-                <div className="session-modal-section">
-                  <label>Tutor Response:</label>
-                  <p className="session-modal-message">
-                    {selectedSession.tutorResponse}
-                  </p>
-                </div>
-              )}
-
-              {selectedSession.paymentId && (
-                <div className="session-modal-section">
-                  <label>Payment Information:</label>
-                  <p>
-                    <strong>Amount:</strong>{' '}
-                    {formatCurrency(selectedSession.paymentAmountCents)}
-                    <br />
-                    <strong>Status:</strong>{' '}
-                    <span
-                      className={getPaymentStatusClass(
-                        selectedSession.paymentStatus
-                      )}
-                    >
-                      {selectedSession.paymentStatus}
+                <div className="session-modal-body">
+                  <div className="session-detail-row">
+                    <strong>Session ID:</strong> {selectedSession.sessionId}
+                  </div>
+                  <div className="session-detail-row">
+                    <strong>Student:</strong> {selectedSession.studentName} ({selectedSession.studentEmail})
+                  </div>
+                  <div className="session-detail-row">
+                    <strong>Tutor:</strong> {selectedSession.tutorName} ({selectedSession.tutorEmail})
+                  </div>
+                  <div className="session-detail-row">
+                    <strong>Subject:</strong> {selectedSession.subject}
+                  </div>
+                  <div className="session-detail-row">
+                    <strong>Start Time:</strong> {formatDateTime(selectedSession.requestedStart)}
+                  </div>
+                  <div className="session-detail-row">
+                    <strong>End Time:</strong> {formatDateTime(selectedSession.requestedEnd)}
+                  </div>
+                  <div className="session-detail-row">
+                    <strong>Status:</strong>
+                    <span className={getSessionStatusBadgeClass(selectedSession.status)}>
+                      {selectedSession.status}
                     </span>
-                    <br />
-                    {selectedSession.stripePaymentIntentId && (
-                      <>
-                        <strong>Stripe ID:</strong>{' '}
-                        {selectedSession.stripePaymentIntentId}
-                      </>
-                    )}
-                  </p>
-                </div>
-              )}
-
-              <div className="session-modal-section">
-                <label>Timestamps:</label>
-                <p>
-                  <strong>Created:</strong>{' '}
-                  {formatDateTime(selectedSession.createdAt)}
-                  <br />
-                  {selectedSession.respondedAt && (
-                    <>
-                      <strong>Responded:</strong>{' '}
-                      {formatDateTime(selectedSession.respondedAt)}
-                    </>
+                  </div>
+                  {selectedSession.studentNote && (
+                    <div className="session-detail-section">
+                      <strong>Student Note:</strong>
+                      <p>{selectedSession.studentNote}</p>
+                    </div>
                   )}
-                </p>
-              </div>
+                  {selectedSession.declineNote && (
+                    <div className="session-detail-section">
+                      <strong>Decline/Cancel Note:</strong>
+                      <p>{selectedSession.declineNote}</p>
+                    </div>
+                  )}
 
-              {(selectedSession.status === 'PENDING' ||
-                selectedSession.status === 'ACCEPTED') && (
-                <div className="session-modal-section">
-                  <label>Cancel Session:</label>
-                  <textarea
-                    className="session-cancel-textarea"
-                    placeholder="Admin cancellation note (optional)"
-                    value={cancelNote}
-                    onChange={(e) => setCancelNote(e.target.value)}
-                    rows="3"
-                  />
+                  {selectedSession.status === 'ACCEPTED' && (
+                    <div className="session-cancel-section">
+                      <label>Cancel Reason:</label>
+                      <textarea
+                        value={cancelNote}
+                        onChange={(e) => setCancelNote(e.target.value)}
+                        placeholder="Enter reason for cancellation..."
+                        rows="3"
+                        className="session-cancel-textarea"
+                      />
+                      <button className="session-btn-cancel-action" onClick={cancelSession}>
+                        Cancel This Session
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="session-modal-footer">
-              <button
-                className="session-btn-close"
-                onClick={() => setShowSessionModal(false)}
-              >
-                Close
-              </button>
-              {(selectedSession.status === 'PENDING' ||
-                selectedSession.status === 'ACCEPTED') && (
-                <button className="session-btn-cancel" onClick={cancelSession}>
-                  Cancel Session
-                </button>
-              )}
+                <div className="session-modal-footer">
+                  <button className="session-btn-close" onClick={() => setShowSessionModal(false)}>Close</button>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
