@@ -908,3 +908,532 @@
   color: #9ca3af;
   margin: 0;
 }
+
+/* ==========================================
+   MOBILE RESPONSIVE STYLES
+   ========================================== */
+
+/* Tablets and below (768px) */
+@media (max-width: 768px) {
+  
+  /* ===== HEADER ===== */
+  .app-header {
+    padding: 10px 12px;
+    gap: 0; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-left {
+    position: absolute; /* ✅ Position absolutely to center */
+    left: 50%;
+    transform: translateX(-50%);
+    order: 2;
+  }
+
+  .header-left-link {
+    gap: 8px;
+  }
+
+  /* Hide logo tagline on smaller screens */
+  .logo-tagline {
+    display: none;
+  }
+
+  /* Make logo smaller */
+  .logo-image {
+    width: 45px;
+    height: 45px;
+    transform: scale(1.1);
+  }
+
+  .logo-name {
+    font-size: 13px;
+  }
+
+  .header-nav {
+    display: none !important; 
+  }
+
+  .header-right {
+    flex: 0 0 auto; /* Don't grow or shrink */
+    gap: 6px;
+    display: flex;
+    align-items: center;
+    order: 3;
+    margin-left: auto;
+  }
+
+  .header-right > a.btn-primary:first-child,
+  .header-right a[href="/get-matched"] {
+    display: none;
+  }
+
+  /* Make auth buttons smaller on mobile */
+  .header-right .btn {
+    padding: 7px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Hide "Get Matched Today" text, keep it shorter */
+  .header-right .btn-primary:first-child {
+    display: none; /* Hide "Get Matched Today" on mobile to save space */
+  }
+
+  /* Make buttons smaller */
+  .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* User avatar smaller */
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .user-menu-label {
+    display: none;
+  }
+
+  /* ===== FOOTER ===== */
+  .app-footer {
+    padding: 32px 16px 24px;
+  }
+
+  /* Social section */
+  .footer-social-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+  }
+
+  .footer-social-title {
+    font-size: 14px;
+  }
+
+  .social-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    max-width: 36px;
+    max-height: 36px;
+    font-size: 18px;
+  }
+
+  /* Footer links - stack columns */
+  .footer-links {
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .footer-column {
+    text-align: center;
+    width: 100%;
+  }
+
+  .footer-column h4 {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .footer-column a {
+    font-size: 13px;
+  }
+
+  /* Footer bottom */
+  .footer-bottom p {
+    font-size: 12px;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .app-main {
+    padding: 24px 12px 48px;
+  }
+
+  /* Hero section */
+  .hero {
+    padding: 24px 16px;
+    margin-top: 12px;
+  }
+
+  .hero-title {
+    font-size: 24px;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+  }
+
+  .hero-search {
+    flex-wrap: wrap;
+  }
+
+  .hero-search-input {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .hero-search-button {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  /* Generic sections */
+  .section {
+    padding: 20px 16px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .section-subtitle {
+    font-size: 12px;
+  }
+
+  /* Show mobile menu button */
+  .mobile-menu-btn {
+    display: block;
+    flex: 0 0 auto; /* Don't grow or shrink */
+    order: 1;
+    margin-right: auto;
+  }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+  
+  /* ===== HEADER ===== */
+  .app-header {
+    padding: 8px 10px;
+  }
+
+  .logo-image {
+    width: 40px;
+    height: 40px;
+    transform: scale(1);
+  }
+
+  .logo-name {
+    font-size: 12px;
+  }
+
+  /* Even smaller buttons on tiny screens */
+  .header-right .btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+
+  /* Even smaller buttons */
+  .btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .user-menu-label {
+    display: none; /* Hide username, show only avatar */
+  }
+
+  /* ===== FOOTER ===== */
+  .app-footer {
+    padding: 24px 12px 20px;
+  }
+
+  .footer-social-title {
+    font-size: 13px;
+  }
+
+  .social-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    font-size: 16px;
+  }
+
+  .footer-links {
+    gap: 20px;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .app-main {
+    padding: 16px 8px 40px;
+  }
+
+  .hero {
+    padding: 20px 12px;
+    border-radius: 12px;
+  }
+
+  .hero-title {
+    font-size: 20px;
+  }
+
+  .hero-subtitle {
+    font-size: 12px;
+  }
+
+  .hero-search {
+    padding: 3px;
+  }
+
+  .hero-search-input {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  .hero-search-button {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+
+  .section {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+  }
+
+  .mobile-menu-btn {
+    font-size: 24px;
+    padding: 6px;
+  }
+}
+
+/* Mobile menu button - hidden on desktop */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 8px;
+  color: #111827;
+  line-height: 1;
+  transition: color 0.2s ease;
+  z-index: 150;
+  position: relative;
+}
+
+.mobile-menu-btn:hover {
+  color: #16a34a;
+}
+
+.mobile-menu-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile menu overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw; /* ✅ Full viewport width */
+  height: 100vh; /* ✅ Full viewport height */
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999; /* ✅ High z-index but below menu */
+  animation: fadeIn 0.2s ease;
+  overflow: hidden;
+}
+
+.mobile-menu {
+  position: fixed; /* ✅ Fixed positioning */
+  top: 0;
+  left: 0;
+  width: 75vw;
+  max-width: 320px;
+  height: 100vh;
+  background: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: slideIn 0.3s ease;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  z-index: 1000; /* ✅ Higher than overlay */
+}
+
+/* Close button in mobile menu */
+.mobile-menu-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 4px;
+  line-height: 1;
+  z-index: 1001; /* ✅ Highest z-index */
+}
+
+.mobile-menu-close:hover {
+  color: #111827;
+}
+
+.mobile-menu-close:active {
+  transform: scale(0.9);
+}
+
+/* Mobile menu header */
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  padding-right: 40px;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.mobile-menu-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mobile-menu-brand {
+  font-size: 15px; 
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile menu sections */
+.mobile-menu-section {
+  padding: 14px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mobile-menu-section:last-child {
+  border-bottom: none;
+}
+
+.mobile-menu-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+/* Mobile menu links */
+.mobile-menu a,
+.mobile-menu button {
+  display: block;
+  color: #111827;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 0;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-menu a:hover,
+.mobile-menu button:hover {
+  color: #16a34a;
+}
+
+/* Mobile menu auth buttons */
+.mobile-menu-auth {
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-menu-auth .btn {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  padding: 10px 16px; 
+  font-size: 13px; 
+  box-sizing: border-box; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* Show mobile menu button on mobile */
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  /* ✅ Ensure menu fits on very small screens */
+  .mobile-menu {
+    width: 80vw;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-menu {
+    width: 85vw;
+    max-width: 280px;
+    padding: 16px; /* ✅ Even smaller padding on tiny screens */
+  }
+  
+  .mobile-menu-header {
+    gap: 8px;
+  }
+  
+  .mobile-menu-logo {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .mobile-menu-brand {
+    font-size: 14px;
+  }
+  
+  .mobile-menu a,
+  .mobile-menu button {
+    font-size: 13px;
+    padding: 9px 0;
+  }
+  
+  .mobile-menu-auth .btn {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+}

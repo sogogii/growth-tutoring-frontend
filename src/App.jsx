@@ -81,6 +81,9 @@ function App() {
   const [isSupportOpen, setIsSupportOpen] = useState(false)
   const supportRef = useRef(null)
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+   const [unreadMessages, setUnreadMessages] = useState(0)
+
   const handleLogout = (isIdle = false) => {
     localStorage.removeItem('currentUser')
     localStorage.removeItem('lastActivityAt')
@@ -242,6 +245,13 @@ function App() {
     <div className="app-root">
       {/* Top navigation bar */}
       <header className="app-header">
+        <button 
+          className="mobile-menu-btn"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
         <Link to="/" className="header-left header-left-link">
           <img
             src={logo}
@@ -353,9 +363,11 @@ function App() {
         </nav>
 
         <div className="header-right">
+          {/*
           <Link to="/coming-soon" className="btn btn-primary">
             Get Matched Today
           </Link>
+          */}
 
           {currentUser ? (
             <div className="header-user-section" ref={userMenuRef}>
@@ -537,6 +549,107 @@ function App() {
           )}
         </div>
       </header>
+
+      {/* MOBILE MENU OVERLAY */}
+      {isMobileMenuOpen && (
+        <div 
+          className="mobile-menu-overlay" 
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <nav 
+            className="mobile-menu" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button 
+              className="mobile-menu-close"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+
+            {/* Menu Header */}
+            <div className="mobile-menu-header">
+              <img src={logo} alt="Growth Tutoring" className="mobile-menu-logo" />
+              <span className="mobile-menu-brand">Growth Tutoring</span>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="mobile-menu-section">
+              <div className="mobile-menu-section-title">Navigation</div>
+              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>
+                About Us
+              </Link>
+              <Link to="/tutors" onClick={() => setIsMobileMenuOpen(false)}>
+                Our Tutors
+              </Link>
+              <Link to="/subjects" onClick={() => setIsMobileMenuOpen(false)}>
+                Subjects
+              </Link>
+            </div>
+
+            {/* How It Works */}
+            <div className="mobile-menu-section">
+              <div className="mobile-menu-section-title">How It Works</div>
+              <Link to="/how-it-works/students" onClick={() => setIsMobileMenuOpen(false)}>
+                For Students & Parents
+              </Link>
+              <Link to="/how-it-works/tutors" onClick={() => setIsMobileMenuOpen(false)}>
+                For Tutors
+              </Link>
+              <Link to="/how-it-works/cip" onClick={() => setIsMobileMenuOpen(false)}>
+                For CIP
+              </Link>
+            </div>
+
+            {/* Support */}
+            <div className="mobile-menu-section">
+              <div className="mobile-menu-section-title">Support</div>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                Contact Us
+              </Link>
+              <Link to="/faq" onClick={() => setIsMobileMenuOpen(false)}>
+                FAQ
+              </Link>
+            </div>
+
+            {/* User Menu (if logged in) */}
+            {currentUser && (
+              <div className="mobile-menu-section">
+                <div className="mobile-menu-section-title">My Account</div>
+                <Link to="/my-profile" onClick={() => setIsMobileMenuOpen(false)}>
+                  My Profile
+                </Link>
+                <Link to="/messages" onClick={() => setIsMobileMenuOpen(false)}>
+                  Messages {unreadMessages > 0 && `(${unreadMessages})`}
+                </Link>
+                {currentUser.role === 'TUTOR' && (
+                  <>
+                    <Link to="/my-students" onClick={() => setIsMobileMenuOpen(false)}>
+                      My Students
+                    </Link>
+                    <Link to="/earnings" onClick={() => setIsMobileMenuOpen(false)}>
+                      Earnings
+                    </Link>
+                  </>
+                )}
+                {currentUser.role === 'STUDENT' && (
+                  <Link to="/my-tutors" onClick={() => setIsMobileMenuOpen(false)}>
+                    My Tutors
+                  </Link>
+                )}
+                <button onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleLogout();
+                }}>
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
 
       {/* Page content */}
       <main className="app-main">
