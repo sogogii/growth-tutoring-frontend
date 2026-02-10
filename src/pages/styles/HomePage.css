@@ -912,3 +912,404 @@
   margin: 0;
   line-height: 1.5;
 }
+
+/* ==========================================
+   MOBILE RESPONSIVE STYLES
+   ========================================== */
+
+/* Tablets and below (768px) */
+@media (max-width: 768px) {
+  
+  /* ✅ FIX: Container for homepage */
+  .home {
+    gap: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ===== HERO BANNER (Full-width image section) ===== */
+  .hero-banner {
+    min-height: 60vh;
+    margin-top: -24px;
+    width: 100vw; /* Full width */
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    position: relative;
+    overflow: hidden; /* ✅ Prevent content overflow */
+    
+  }
+
+  .hero-banner-content {
+    padding: 0 20px;
+    max-width: 100%; /* ✅ Constrain content */
+    box-sizing: border-box;
+  }
+
+  .hero-banner-company {
+    font-size: 14px;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-banner-text {
+    font-size: 36px;
+    line-height: 1.2;
+    word-wrap: break-word; /* ✅ Prevent text overflow */
+    overflow-wrap: break-word;
+  }
+
+  /* ===== HERO SECTION (Yellow box) ===== */
+  .hero {
+    padding: 28px 20px;
+    margin-top: 12px;
+    border-radius: 12px;
+    max-width: 100%; /* ✅ Prevent overflow */
+    box-sizing: border-box;
+  }
+
+  .hero-kicker {
+    font-size: 12px;
+  }
+
+  .hero-title {
+    font-size: 24px;
+    word-wrap: break-word;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+  }
+
+  .hero-search {
+    flex-wrap: wrap;
+    width: 100%; /* ✅ Full width within container */
+    box-sizing: border-box;
+  }
+
+  .hero-search-input {
+    font-size: 13px;
+    padding: 9px 12px;
+    width: 100%; /* ✅ Full width */
+  }
+
+  .hero-search-button {
+    width: 100%;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .hero-cta-buttons {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .hero-cta-buttons .btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* ===== HOW IT WORKS SECTION ===== */
+  .section-how-it-works {
+    min-width: auto; /* ✅ Remove fixed width */
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    position: relative;
+    padding: 32px 16px;
+    box-sizing: border-box;
+  }
+
+  .how-works-title {
+    font-size: 24px;
+  }
+
+  .section-text {
+    font-size: 13px;
+    padding: 0 8px; /* ✅ Extra padding */
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 24px;
+    padding: 0 8px; /* ✅ Add padding */
+  }
+
+  .step-card {
+    padding: 0; /* ✅ Remove padding, let children handle it */
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .step-card-image {
+    height: 180px;
+    width: 100%;
+  }
+
+  .step-card-text {
+    padding: 20px;
+  }
+
+  .step-number-badge {
+    font-size: 11px;
+    padding: 5px 12px;
+  }
+
+  .step-item-title {
+    font-size: 16px;
+  }
+
+  .step-item-description {
+    font-size: 13px;
+  }
+
+  /* ===== TOP TUTORS SECTION ===== */
+  .section-top-tutors {
+    min-width: auto; /* ✅ Remove fixed width */
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    position: relative;
+    padding: 32px 16px;
+    box-sizing: border-box;
+  }
+
+  .top-tutors-title {
+    font-size: 24px;
+    padding: 0 8px;
+  }
+
+  .section-intro-text,
+  .section-text.center {
+    padding: 0 8px;
+  }
+
+  .top-tutors-carousel {
+    margin-top: 24px;
+    padding: 0 8px; /* ✅ Add side padding */
+  }
+
+  .top-tutor-card {
+    min-width: 260px;
+    max-width: 260px;
+    padding: 20px;
+  }
+
+  .top-tutor-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .top-tutor-name {
+    font-size: 16px;
+  }
+
+  /* ===== GENERIC SECTIONS ===== */
+  .section {
+    padding: 24px 20px;
+    border-radius: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .section-cta {
+    margin-top: 16px;
+    padding: 0 8px;
+  }
+
+   /* ===== GROWTH AI SECTION ===== */
+  .section-ai {
+    padding: 32px 20px;
+  }
+
+  /* Stack into single column on mobile */
+  .ai-content {
+    grid-template-columns: 1fr; /* ✅ Single column */
+    gap: 24px;
+  }
+
+  /* Reorder: Show chatbox first (more eye-catching) */
+  .ai-card {
+    order: 2; /* ✅ Show first */
+    padding: 24px 20px;
+  }
+
+  .ai-text-content {
+    order: 1; /* ✅ Show second */
+  }
+
+  .ai-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .ai-card h3 {
+    font-size: 18px;
+  }
+
+  .ai-card p {
+    font-size: 13px;
+  }
+
+  .ai-features-list {
+    gap: 8px;
+  }
+
+  .ai-features-list li {
+    font-size: 12px;
+  }
+
+  .ai-feature-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+  
+  /* ===== HERO BANNER ===== */
+  .hero-banner {
+    min-height: 50vh;
+    margin-top: -16px;
+  }
+
+  .hero-banner-content {
+    padding: 0 16px;
+  }
+
+  .hero-banner-company {
+    font-size: 12px;
+  }
+
+  .hero-banner-text {
+    font-size: 28px; /* ✅ Smaller text */
+    padding: 0 8px; /* ✅ Extra padding */
+  }
+
+  /* ===== HERO SECTION ===== */
+  .hero {
+    padding: 24px 16px;
+    border-radius: 10px;
+  }
+
+  .hero-title {
+    font-size: 20px;
+  }
+
+  .hero-subtitle {
+    font-size: 12px;
+  }
+
+  /* ===== HOW IT WORKS ===== */
+  .section-how-it-works {
+    padding: 24px 12px;
+  }
+
+  .how-works-title {
+    font-size: 20px;
+    padding: 0 4px;
+  }
+
+  .section-text {
+    font-size: 12px;
+    padding: 0 4px;
+  }
+
+  .steps-grid {
+    padding: 0 4px;
+    gap: 16px;
+  }
+
+  .step-card-image {
+    height: 160px;
+  }
+
+  .step-card-text {
+    padding: 16px;
+  }
+
+  .step-item-title {
+    font-size: 15px;
+  }
+
+  .step-item-description {
+    font-size: 12px;
+  }
+
+  /* ===== TOP TUTORS ===== */
+  .section-top-tutors {
+    padding: 24px 12px;
+  }
+
+  .top-tutors-title {
+    font-size: 20px;
+    padding: 0 4px;
+  }
+
+  .top-tutors-carousel {
+    padding: 0 4px;
+  }
+
+  .top-tutor-card {
+    min-width: 240px;
+    max-width: 240px;
+    padding: 16px;
+  }
+
+  .top-tutor-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* ===== GENERIC SECTIONS ===== */
+  .section {
+    padding: 20px 16px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .section-cta {
+    padding: 0 4px;
+  }
+
+  .section-ai {
+    padding: 24px 16px;
+  }
+
+  .ai-content {
+    gap: 20px;
+  }
+
+  .ai-card {
+    padding: 20px 16px;
+  }
+
+  .ai-icon {
+    font-size: 36px;
+  }
+
+  .ai-card h3 {
+    font-size: 16px;
+  }
+
+  .ai-card p {
+    font-size: 12px;
+  }
+
+  .ai-features-list li {
+    font-size: 11px;
+  }
+}

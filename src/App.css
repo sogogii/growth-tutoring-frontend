@@ -1102,6 +1102,20 @@
     order: 1;
     margin-right: auto;
   }
+
+  .app-root {
+    overflow-x: hidden;
+  }
+
+  .app-main {
+    padding: 24px 12px 48px;
+    overflow-x: hidden;
+  }
+
+  .home ~ .app-main,
+  .app-main:has(.home) {
+    padding-top: 0; /* Remove top padding only for homepage */
+  }
 }
 
 /* Mobile phones (480px and below) */
@@ -1206,6 +1220,22 @@
   .mobile-menu-btn {
     font-size: 24px;
     padding: 6px;
+  }
+
+  .app-root {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .app-main {
+    padding: 16px 8px 40px;
+    overflow-x: hidden;
+  }
+
+  .home ~ .app-main,
+  .app-main:has(.home) {
+    padding-top: 0;
   }
 }
 
