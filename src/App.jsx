@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useEffect, useState, useRef, useCallback } from 'react'  
 import { FaInstagram, FaYoutube, FaLinkedin, FaTiktok } from 'react-icons/fa'
 
@@ -15,6 +15,7 @@ import ForgotPasswordPage from './pages/login/ForgotPasswordPage'
 import MyProfilePage from './pages/MyProfilePage'
 import SchedulePage from './pages/SchedulePage'
 import CheckoutPage from './pages/CheckoutPage'
+import MyPaymentsPage from './pages/MyPaymentsPage'
 import BookingSuccessPage from './pages/BookingSuccessPage'
 import StudentSessionsPage from './pages/StudentSessionsPage'
 import StudentSessionsDetailPage from './pages/StudentSessionsDetailPage'
@@ -500,6 +501,15 @@ function App() {
                       <button
                         type="button"
                         className="user-menu-link"
+                        onClick={() => goTo('/my-payments')}
+                      >
+                        My payments
+                      </button>
+                    )}
+                    {currentUser.role === 'STUDENT' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
                         onClick={() => goTo('/my-sessions')}
                       >
                         My sessions
@@ -743,6 +753,8 @@ function App() {
             path="/my-reviews"
             element={<MyReviewsPage currentUser={currentUser} />}
           />
+
+          <Route path="/my-payments" element={<MyPaymentsPage />} />
 
           <Route path="/how-it-works/students" element={<HowItWorksStudents />} />
           <Route path="/how-it-works/tutors" element={<HowItWorksTutors />} />
