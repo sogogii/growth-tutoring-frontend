@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './styles/MyReviewsPage.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-function MyReviewsPage({ currentUser }) {
-  const navigate = useNavigate()
-  
+function MyReviewsPage() {
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -14,20 +12,25 @@ function MyReviewsPage({ currentUser }) {
   const [editRating, setEditRating] = useState('')
   const [editComment, setEditComment] = useState('')
   const [saving, setSaving] = useState(false)
+  const navigate = useNavigate()
+
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
+  const userId = currentUser.userId
 
   useEffect(() => {
-    if (currentUser && currentUser.userId) {
+    if (userId) {
       fetchMyReviews()
     } else {
       setLoading(false)
       setError('Please log in to view your reviews')
     }
-  }, [currentUser])
+  }, [userId])
 
   const fetchMyReviews = async () => {
     try {
+      setLoading(true)
       const response = await fetch(
-        `${API_BASE}/api/students/user/${currentUser.userId}/my-reviews`
+        `${API_BASE}/api/students/user/${userId}/my-reviews`
       )
       
       if (!response.ok) {
@@ -70,7 +73,7 @@ function MyReviewsPage({ currentUser }) {
     setSaving(true)
     try {
       const response = await fetch(
-        `${API_BASE}/api/students/user/${currentUser.userId}/reviews/${reviewId}`,
+        `${API_BASE}/api/students/user/${userId}/reviews/${reviewId}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -103,7 +106,7 @@ function MyReviewsPage({ currentUser }) {
 
     try {
       const response = await fetch(
-        `${API_BASE}/api/students/user/${currentUser.userId}/reviews/${reviewId}`,
+        `${API_BASE}/api/students/user/${userId}/reviews/${reviewId}`,
         {
           method: 'DELETE'
         }
@@ -130,42 +133,46 @@ function MyReviewsPage({ currentUser }) {
   const renderStars = (rating) => {
     const stars = []
     const numRating = Number(rating)
-    const fullStars = Math.floor(numRating)
-    const hasHalfStar = numRating % 1 >= 0.5
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className="star filled">★</span>)
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} className={i <= numRating ? 'star filled' : 'star'}>
+          ★
+        </span>
+      )
     }
-    if (hasHalfStar) {
-      stars.push(<span key="half" className="star half">★</span>)
-    }
-    for (let i = stars.length; i < 5; i++) {
-      stars.push(<span key={`empty-${i}`} className="star empty">☆</span>)
-    }
-
     return stars
+  }
+
+  const calculateAverageRating = () => {
+    if (reviews.length === 0) return 0
+    const sum = reviews.reduce((acc, review) => acc + Number(review.rating), 0)
+    return (sum / reviews.length).toFixed(1)
   }
 
   if (loading) {
     return (
       <div className="my-reviews-page">
-        <div className="loading">
-          <div className="loading-spinner"></div>
-          <p>Loading your reviews...</p>
+        <div className="reviews-container">
+          <h1 className="page-title">My Reviews</h1>
+          <div className="loading-message">
+            <div className="loading-spinner"></div>
+            <p>Loading your reviews...</p>
+          </div>
         </div>
       </div>
     )
   }
 
-  if (error) {
+  if (error && !reviews.length) {
     return (
       <div className="my-reviews-page">
-        <div className="error-container">
-          <h2>Unable to Load Reviews</h2>
-          <p className="error-message">{error}</p>
-          <div style={{ marginTop: '20px' }}>
+        <div className="reviews-container">
+          <h1 className="page-title">My Reviews</h1>
+          <div className="error-message">
+            <h2>Unable to Load Reviews</h2>
+            <p>{error}</p>
             <button 
-              className="btn btn-primary"
+              className="retry-btn"
               onClick={() => {
                 setLoading(true)
                 setError(null)
@@ -182,169 +189,159 @@ function MyReviewsPage({ currentUser }) {
 
   return (
     <div className="my-reviews-page">
-      <div className="page-header">
-        <h1>My Reviews</h1>
-        <p className="page-subtitle">
-          Reviews you've written for your tutors
-        </p>
-      </div>
+      <div className="reviews-container">
+        <h1 className="page-title">My Reviews</h1>
+        <p className="page-subtitle">Reviews you've written for your tutors</p>
 
-      {reviews.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon"></div>
-          <h2>No reviews yet</h2>
-          <p>You haven't written any reviews for your tutors yet.</p>
-          <button 
-            className="btn btn-primary"
-            onClick={() => navigate('/my-tutors')}
-          >
-            View My Tutors
-          </button>
-        </div>
-      ) : (
-        <div className="reviews-container">
-          {/* Summary Statistics */}
-          <div className="reviews-summary">
-            <div className="summary-stat">
-              <span className="stat-number">{reviews.length}</span>
-              <span className="stat-label">Total Reviews</span>
-            </div>
-            <div className="summary-stat">
-              <span className="stat-number">
-                {(reviews.reduce((sum, r) => sum + Number(r.rating), 0) / reviews.length).toFixed(1)}
-              </span>
-              <span className="stat-label">Average Rating</span>
-            </div>
+        {/* Stats Summary */}
+        <div className="reviews-stats">
+          <div className="stat-item">
+            <div className="stat-number">{reviews.length}</div>
+            <div className="stat-label">Total Reviews</div>
           </div>
+          <div className="stat-divider"></div>
+          <div className="stat-item">
+            <div className="stat-number">{calculateAverageRating()}</div>
+            <div className="stat-label">Average Rating</div>
+          </div>
+        </div>
 
-          {/* Reviews Grid */}
-          <div className="reviews-grid">
-            {reviews.map((review) => (
-              <div key={review.reviewId} className="review-card">
-                {/* Tutor Info Header */}
-                <div 
-                  className="tutor-info-header"
-                  onClick={() => handleViewTutor(review.tutorUserId)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="tutor-avatar">
-                    {review.tutorFirstName?.charAt(0) || '?'}
-                    {review.tutorLastName?.charAt(0) || '?'}
-                  </div>
-                  <div className="tutor-details">
-                    <h3 className="tutor-name">
-                      {review.tutorFirstName} {review.tutorLastName}
-                    </h3>
-                    <p className="tutor-subject">{review.tutorSubjectLabel}</p>
-                    {review.tutorHeadline && (
-                      <p className="tutor-headline">{review.tutorHeadline}</p>
-                    )}
-                  </div>
-                  <button 
-                    className="btn-view-profile"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleViewTutor(review.tutorUserId)
-                    }}
-                  >
-                    View Profile →
-                  </button>
-                </div>
+        {/* Reviews Section */}
+        <div className="reviews-section">
+          <h2 className="section-title">
+            Your Reviews ({reviews.length})
+          </h2>
+          <div className="section-divider"></div>
 
-                {/* Review Content */}
-                {editingReview === review.reviewId ? (
-                  // Edit Mode
-                  <div className="review-edit-form">
-                    <div className="form-group">
-                      <label>Rating</label>
-                      <select
-                        value={editRating}
-                        onChange={(e) => setEditRating(e.target.value)}
-                      >
-                        <option value="">Select rating</option>
-                        {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map(val => (
-                          <option key={val} value={val}>
-                            {val} / 5.0
-                          </option>
-                        ))}
-                      </select>
+          {reviews.length === 0 ? (
+            <div className="empty-section">
+              <p>You haven't written any reviews yet.</p>
+            </div>
+          ) : (
+            <div className="reviews-list">
+              {reviews.map((review) => (
+                <div key={review.reviewId} className="review-card">
+                  {/* Tutor Info */}
+                  <div className="review-tutor-info">
+                    <div className="tutor-avatar">
+                      {review.tutorFirstName?.charAt(0).toUpperCase() || 'T'}
                     </div>
-
-                    <div className="form-group">
-                      <label>Comment</label>
-                      <textarea
-                        value={editComment}
-                        onChange={(e) => setEditComment(e.target.value)}
-                        rows={4}
-                        placeholder="Share your experience..."
-                      />
-                    </div>
-
-                    <div className="edit-actions">
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => handleSaveEdit(review.reviewId)}
-                        disabled={saving}
-                      >
-                        {saving ? 'Saving...' : 'Save Changes'}
-                      </button>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={handleCancelEdit}
-                        disabled={saving}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  // View Mode
-                  <div className="review-content">
-                    <div className="review-rating-row">
-                      <div className="stars-display">
-                        {renderStars(review.rating)}
+                    <div className="tutor-details">
+                      <div className="tutor-name">
+                        {review.tutorFirstName} {review.tutorLastName}
                       </div>
-                      <span className="rating-number">
-                        {Number(review.rating).toFixed(1)} / 5.0
-                      </span>
+                      <div className="tutor-subject">{review.tutorSubject}</div>
                     </div>
-
-                    {review.comment && (
-                      <p className="review-comment">"{review.comment}"</p>
-                    )}
-
-                    <div className="review-meta">
-                      <span className="review-date">
-                        Reviewed on {formatDate(review.createdAt)}
-                      </span>
-                      {review.updatedAt && review.updatedAt !== review.createdAt && (
-                        <span className="review-edited">
-                          (Edited {formatDate(review.updatedAt)})
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="review-actions">
-                      <button
-                        className="btn-action btn-edit"
-                        onClick={() => handleEditClick(review)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn-action btn-delete"
-                        onClick={() => handleDeleteReview(review.reviewId)}
-                      >
-                        Delete
-                      </button>
-                    </div>
+                    <button
+                      className="view-profile-btn"
+                      onClick={() => handleViewTutor(review.tutorUserId)}
+                    >
+                      View Profile →
+                    </button>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+
+                  {editingReview === review.reviewId ? (
+                    // Edit Mode
+                    <div className="review-edit-mode">
+                      <div className="edit-rating-section">
+                        <label>Rating:</label>
+                        <select 
+                          value={editRating} 
+                          onChange={(e) => setEditRating(e.target.value)}
+                          className="rating-select"
+                        >
+                          <option value="">Select rating</option>
+                          <option value="1">1 Star</option>
+                          <option value="2">2 Stars</option>
+                          <option value="3">3 Stars</option>
+                          <option value="4">4 Stars</option>
+                          <option value="5">5 Stars</option>
+                        </select>
+                      </div>
+
+                      <div className="edit-comment-section">
+                        <label>Comment:</label>
+                        <textarea
+                          value={editComment}
+                          onChange={(e) => setEditComment(e.target.value)}
+                          placeholder="Share your experience with this tutor..."
+                          rows="4"
+                          className="comment-textarea"
+                        />
+                      </div>
+
+                      <div className="edit-actions">
+                        <button
+                          className="save-edit-btn"
+                          onClick={() => handleSaveEdit(review.reviewId)}
+                          disabled={saving}
+                        >
+                          {saving ? 'Saving...' : 'Save Changes'}
+                        </button>
+                        <button
+                          className="cancel-edit-btn"
+                          onClick={handleCancelEdit}
+                          disabled={saving}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    // View Mode
+                    <>
+                      {/* Rating */}
+                      <div className="review-rating">
+                        <div className="stars-display">
+                          {renderStars(review.rating)}
+                        </div>
+                        <span className="rating-number">
+                          {Number(review.rating).toFixed(1)} / 5.0
+                        </span>
+                      </div>
+
+                      {/* Comment */}
+                      {review.comment && (
+                        <div className="review-comment">
+                          "{review.comment}"
+                        </div>
+                      )}
+
+                      {/* Date */}
+                      <div className="review-meta">
+                        <span className="review-date">
+                          Reviewed on {formatDate(review.createdAt)}
+                        </span>
+                        {review.updatedAt && review.updatedAt !== review.createdAt && (
+                          <span className="review-edited">
+                            (Edited {formatDate(review.updatedAt)})
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="review-actions">
+                        <button
+                          className="action-btn edit-btn"
+                          onClick={() => handleEditClick(review)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="action-btn delete-btn"
+                          onClick={() => handleDeleteReview(review.reviewId)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
