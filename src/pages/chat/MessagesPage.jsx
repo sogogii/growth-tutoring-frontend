@@ -235,6 +235,21 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
     markRead()
   }, [conversationId, currentUser, messages.length, refreshUnreadCount])
 
+  useEffect(() => {
+    if (conversationId && conversations.length > 0) {
+      const conv = conversations.find(c => c.id === parseInt(conversationId))
+      if (conv) {
+        setActiveConversation({
+          id: conv.id,
+          otherName: conv.otherName,
+          otherUserId: conv.otherUserId,
+          otherProfileImageUrl: conv.otherProfileImageUrl,
+          otherUserDeactivated: conv.otherUserDeactivated || false  // ← ADD THIS
+        })
+      }
+    }
+  }, [conversationId, conversations])
+
   const sendMessage = async () => {
     if (!text.trim() || sending || !conversationId) return
 
@@ -320,7 +335,9 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
             </div>
           )}
 
-          {conversations.map((conv) => {
+          {conversations
+          .filter(conv => conv.lastMessageCreatedAt != null) 
+          .map((conv) => {
             const hasMessages = !!conv.lastMessageCreatedAt
             const lastText = hasMessages ? conv.lastMessageContent || '' : 'No messages yet'
             const timeLabel = hasMessages ? formatTime(conv.lastMessageCreatedAt) : ''
@@ -433,17 +450,27 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
                 const showDateDivider = dateKey && dateKey !== lastDateKey
                 if (dateKey) lastDateKey = dateKey
 
+                const isOtherUserDeactivated = activeConversation?.otherUserDeactivated || false
+                
                 const displayName = isMine
                   ? 'You'
-                  : `${msg.senderFirstName || ''} ${msg.senderLastName || ''}`.trim() || 'User'
+                  : isOtherUserDeactivated 
+                    ? 'Deactivated User'  
+                    : `${msg.senderFirstName || ''} ${msg.senderLastName || ''}`.trim() || 'User'
                 
                 const initials = isMine
                   ? getInitials(`${currentUser.firstName} ${currentUser.lastName}`)
-                  : getInitials(displayName)
+                  : isOtherUserDeactivated
+                    ? 'DU' 
+                    : getInitials(displayName)
 
                 const avatarUrl = isMine
                   ? currentUser.profileImageUrl
-                  : msg.senderAvatarUrl
+                  : isOtherUserDeactivated
+                    ? null 
+                    : msg.senderAvatarUrl
+
+                const canClickProfile = !isMine && !isOtherUserDeactivated && activeConversation?.otherUserId && currentUser?.role === 'STUDENT'
 
                 return (
                   <div key={msg.id}>
@@ -458,15 +485,12 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
                         <div 
                           className="message-avatar"
                           onClick={() => {
-                            // Only allow navigation to tutor profiles
-                            if (activeConversation?.otherUserId && currentUser?.role === 'STUDENT') {
+                            if (canClickProfile) {
                               navigate(`/tutors/${activeConversation.otherUserId}`)
                             }
                           }}
                           style={{ 
-                            cursor: (activeConversation?.otherUserId && currentUser?.role === 'STUDENT') 
-                              ? 'pointer' 
-                              : 'default' 
+                            cursor: canClickProfile ? 'pointer' : 'default' 
                           }}
                         >
                           {avatarUrl ? (
@@ -482,15 +506,12 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
                           <div 
                             className="message-sender-name"
                             onClick={() => {
-                              // Only allow navigation to tutor profiles
-                              if (activeConversation?.otherUserId && currentUser?.role === 'STUDENT') {
+                              if (canClickProfile) {
                                 navigate(`/tutors/${activeConversation.otherUserId}`)
                               }
                             }}
                             style={{ 
-                              cursor: (activeConversation?.otherUserId && currentUser?.role === 'STUDENT') 
-                                ? 'pointer' 
-                                : 'default' 
+                              cursor: canClickProfile ? 'pointer' : 'default' 
                             }}
                           >
                             {displayName}
@@ -521,26 +542,34 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
 
             {/* Message Input */}
             <form onSubmit={handleSend} className="message-input-area">
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                rows={1}
-                placeholder="Type a message..."
-                className="message-input"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    sendMessage()
-                  }
-                }}
-              />
-              <button
-                type="submit"
-                disabled={sending || !text.trim()}
-                className="send-button"
-              >
-                {sending ? '...' : '➤'}
-              </button>
+              {activeConversation?.otherUserDeactivated ? (
+                <div className="message-input-disabled">
+                  <p>You cannot send messages to this user.</p>
+                </div>
+              ) : (
+                <>
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    rows={1}
+                    placeholder="Type a message..."
+                    className="message-input"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        sendMessage()
+                      }
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={sending || !text.trim()}
+                    className="send-button"
+                  >
+                    {sending ? '...' : '➤'}
+                  </button>
+                </>
+              )}
             </form>
           </>
         )}
