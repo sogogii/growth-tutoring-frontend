@@ -32,7 +32,7 @@ import FAQPage from './pages/main/FAQPage'
 import ClientTermsPage from './pages/main/ClientTermsPage'
 import TutorTermsPage from './pages/main/TutorTermsPage'
 import PrivacyPolicyPage from './pages/main/PrivacyPolicyPage'
-import MessagesPage from './pages/chat/MessagesPage'  
+import InboxPage from './pages/chat/InboxPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
 
 // relationship pages
@@ -70,6 +70,7 @@ function App() {
   })
 
   const [pendingStudentCount, setPendingStudentCount] = useState(0)
+  const [pendingSessionCount, setPendingSessionCount] = useState(0)
   const [messageCount, setMessageCount] = useState(0)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
@@ -209,6 +210,32 @@ function App() {
       console.error('Error loading unread count', err)
       setMessageCount(0)
     }
+  }, [currentUser])
+
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== 'TUTOR') {
+      setPendingSessionCount(0)
+      return
+    }
+
+    const loadPendingSessionCount = async () => {
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/session-requests/tutor/${currentUser.userId}/pending`
+        )
+        if (!res.ok) {
+          setPendingSessionCount(0)
+          return
+        }
+        const data = await res.json()
+        setPendingSessionCount(Array.isArray(data) ? data.length : 0)
+      } catch (err) {
+        console.error(err)
+        setPendingSessionCount(0)
+      }
+    }
+
+    loadPendingSessionCount()
   }, [currentUser])
 
   // still call it once when user/login changes
@@ -467,7 +494,14 @@ function App() {
                           className="user-menu-link"
                           onClick={() => goTo('/my-schedule')}
                         >
-                          My schedule
+                          <span className="user-link-badge">
+                            My schedule
+                            {pendingSessionCount > 0 && (
+                              <span className="notif-badge">
+                                {pendingSessionCount > 9 ? '9+' : pendingSessionCount}
+                              </span>
+                            )}
+                          </span>
                         </button>
                         <button
                           type="button"
@@ -769,11 +803,11 @@ function App() {
 
           <Route 
             path="/messages" 
-            element={<MessagesPage currentUser={currentUser} refreshUnreadCount={refreshUnreadCount} />} 
+            element={<InboxPage currentUser={currentUser} refreshUnreadCount={refreshUnreadCount} />} 
           />
           <Route 
             path="/messages/:conversationId" 
-            element={<MessagesPage currentUser={currentUser} refreshUnreadCount={refreshUnreadCount} />} 
+            element={<InboxPage currentUser={currentUser} refreshUnreadCount={refreshUnreadCount} />} 
           />
 
           <Route path="/checkout" element={<CheckoutPage />} />
