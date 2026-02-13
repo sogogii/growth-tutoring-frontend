@@ -544,6 +544,23 @@ body:has(.messages-page) {
   background: #9ca3af;
 }
 
+/* Disabled message input for deactivated users */
+.message-input-disabled {
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.message-input-disabled p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 /* Mobile Responsive */
 @media (max-width: 900px) {
   .messages-page {
