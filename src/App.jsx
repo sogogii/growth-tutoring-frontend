@@ -34,6 +34,7 @@ import TutorTermsPage from './pages/main/TutorTermsPage'
 import PrivacyPolicyPage from './pages/main/PrivacyPolicyPage'
 import InboxPage from './pages/chat/InboxPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
+import AdminFlaggedMessagesPage from './pages/admin/AdminFlaggedMessagesPage'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -71,6 +72,7 @@ function App() {
 
   const [pendingStudentCount, setPendingStudentCount] = useState(0)
   const [pendingSessionCount, setPendingSessionCount] = useState(0)
+  const [unreviewedCount, setUnreviewedCount] = useState(0)
   const [messageCount, setMessageCount] = useState(0)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
@@ -236,6 +238,32 @@ function App() {
     }
 
     loadPendingSessionCount()
+  }, [currentUser])
+
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== 'ADMIN') {
+      setUnreviewedCount(0)
+      return
+    }
+
+    const loadUnreviewedCount = async () => {
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/admin/flagged-messages/count?adminUserId=${currentUser.userId}`
+        )
+        if (!res.ok) {
+          setUnreviewedCount(0)
+          return
+        }
+        const data = await res.json()
+        setUnreviewedCount(data.unreviewed || 0)
+      } catch (err) {
+        console.error(err)
+        setUnreviewedCount(0)
+      }
+    }
+
+    loadUnreviewedCount()
   }, [currentUser])
 
   // still call it once when user/login changes
@@ -467,13 +495,25 @@ function App() {
                     <div className="user-menu-section-title">Account</div>
 
                     {currentUser?.role === 'ADMIN' && (
-                      <button
-                        type="button"
-                        className="user-menu-link"
-                        onClick={() => goTo('/admin')}
-                      >
-                        Admin
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/admin')}
+                        >
+                          Admin Dashboard
+                        </button>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/admin/flagged-messages')}
+                        >
+                          Flagged Messages
+                          {unreviewedCount > 0 && (
+                            <span className="notif-badge">{unreviewedCount}</span>
+                          )}
+                        </button>
+                      </>
                     )}
                     {currentUser.role === 'TUTOR' && (
                       <>
@@ -825,6 +865,7 @@ function App() {
               )
             }
           />
+          <Route path="/admin/flagged-messages" element={<AdminFlaggedMessagesPage />} />
         </Routes>
       </main>
 

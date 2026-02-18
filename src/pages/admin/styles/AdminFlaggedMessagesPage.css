@@ -1,0 +1,333 @@
+/* Scope ALL styles under the admin page */
+.admin-flagged-messages-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.admin-flagged-messages-page .admin-flagged-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.admin-flagged-messages-page .admin-flagged-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.admin-flagged-messages-page .admin-flagged-header p {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.admin-flagged-messages-page .admin-flagged-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.admin-flagged-messages-page .stat-card {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.admin-flagged-messages-page .stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.admin-flagged-messages-page .stat-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.admin-flagged-messages-page .admin-flagged-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.admin-flagged-messages-page .filter-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-flagged-messages-page .filter-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.admin-flagged-messages-page .filter-btn.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.admin-flagged-messages-page .loading,
+.admin-flagged-messages-page .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.admin-flagged-messages-page .flagged-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-flagged-messages-page .flagged-message-card {
+  background: white;
+  border: 2px solid #fef2f2;
+  border-left: 5px solid #ef4444;
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.admin-flagged-messages-page .flagged-message-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.admin-flagged-messages-page .flagged-message-card.reviewed {
+  border-left-color: #10b981;
+  border-color: #f0fdf4;
+  opacity: 0.7;
+}
+
+.admin-flagged-messages-page .flagged-message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.admin-flagged-messages-page .flagged-message-header strong {
+  font-size: 16px;
+  color: #111827;
+  margin-right: 12px;
+}
+
+.admin-flagged-messages-page .flagged-date {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.admin-flagged-messages-page .detected-types {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-flagged-messages-page .detected-type-badge {
+  background: #ef4444;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-flagged-messages-page .flagged-message-content {
+  margin-bottom: 16px;
+}
+
+.admin-flagged-messages-page .message-label {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.admin-flagged-messages-page .message-text {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #111827;
+}
+
+.admin-flagged-messages-page .flagged-message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.admin-flagged-messages-page .message-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.admin-flagged-messages-page .btn-review {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-flagged-messages-page .btn-review:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+.admin-flagged-messages-page .reviewed-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.admin-flagged-messages-page .reviewed-badge {
+  background: #10b981;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.admin-flagged-messages-page .action-taken {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.admin-flagged-messages-page .reviewed-date {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* Modal - needs special scoping */
+.admin-flagged-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.admin-flagged-modal-overlay .modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.admin-flagged-modal-overlay .modal-content h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.admin-flagged-modal-overlay .modal-section {
+  margin-bottom: 24px;
+}
+
+.admin-flagged-modal-overlay .modal-section label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.admin-flagged-modal-overlay .message-display {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.admin-flagged-modal-overlay .action-select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-flagged-modal-overlay .action-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.admin-flagged-modal-overlay .modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.admin-flagged-modal-overlay .btn-cancel,
+.admin-flagged-modal-overlay .btn-submit {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.admin-flagged-modal-overlay .btn-cancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.admin-flagged-modal-overlay .btn-cancel:hover {
+  background: #e5e7eb;
+}
+
+.admin-flagged-modal-overlay .btn-submit {
+  background: #3b82f6;
+  color: white;
+}
+
+.admin-flagged-modal-overlay .btn-submit:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.admin-flagged-modal-overlay .btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
