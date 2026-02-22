@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import './styles/AdminFlaggedMessagesPage.css'
+import ChatHistoryModal from '../../components/ChatHistoryModal'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE = RAW_API_BASE_URL.replace(/\/+$/, '')
 
-function AdminFlaggedMessagesPage() {
-  const navigate = useNavigate()
-  const [currentUser, setCurrentUser] = useState(null)
+function AdminFlaggedMessagesPage({ currentUser }) {
   const [loading, setLoading] = useState(true)
   const [flaggedMessages, setFlaggedMessages] = useState([])
   const [showReviewed, setShowReviewed] = useState(false)
@@ -14,19 +13,9 @@ function AdminFlaggedMessagesPage() {
   const [actionTaken, setActionTaken] = useState('')
   const [unreviewedCount, setUnreviewedCount] = useState(0)
 
-  useEffect(() => {
-    const stored = localStorage.getItem('currentUser')
-    if (stored) {
-      const user = JSON.parse(stored)
-      if (user.role !== 'ADMIN') {
-        navigate('/')
-        return
-      }
-      setCurrentUser(user)
-    } else {
-      navigate('/login')
-    }
-  }, [navigate])
+  // Chat History Modal State
+  const [showChatHistory, setShowChatHistory] = useState(false)
+  const [selectedConversationId, setSelectedConversationId] = useState(null)
 
   useEffect(() => {
     if (currentUser) {
@@ -36,32 +25,42 @@ function AdminFlaggedMessagesPage() {
   }, [currentUser, showReviewed])
 
   const loadFlaggedMessages = async () => {
+    if (!currentUser) return
+
     try {
       setLoading(true)
-      const res = await fetch(
-        `${API_BASE}/api/admin/flagged-messages?adminUserId=${currentUser.userId}&reviewedOnly=${showReviewed}`
-      )
-      if (!res.ok) throw new Error('Failed to load flagged messages')
+      const url = `${API_BASE}/api/admin/flagged-messages?adminUserId=${currentUser.userId}&reviewedOnly=${showReviewed}`
+      
+      const res = await fetch(url)
+      
+      if (!res.ok) {
+        throw new Error('Failed to load flagged messages')
+      }
+      
       const data = await res.json()
       setFlaggedMessages(data)
     } catch (err) {
-      console.error(err)
-      alert('Failed to load flagged messages')
+      console.error('Error loading flagged messages:', err)
+      alert('Failed to load flagged messages: ' + err.message)
     } finally {
       setLoading(false)
     }
   }
 
   const loadCount = async () => {
+    if (!currentUser) return
+
     try {
-      const res = await fetch(
-        `${API_BASE}/api/admin/flagged-messages/count?adminUserId=${currentUser.userId}`
-      )
-      if (!res.ok) throw new Error('Failed to load count')
+      const url = `${API_BASE}/api/admin/flagged-messages/count?adminUserId=${currentUser.userId}`
+      
+      const res = await fetch(url)
+      
+      if (!res.ok) return
+      
       const data = await res.json()
-      setUnreviewedCount(data.unreviewed)
+      setUnreviewedCount(data.unreviewed || 0)
     } catch (err) {
-      console.error(err)
+      console.error('Error loading count:', err)
     }
   }
 
@@ -72,14 +71,13 @@ function AdminFlaggedMessagesPage() {
     }
 
     try {
-      const res = await fetch(
-        `${API_BASE}/api/admin/flagged-messages/${messageId}/review?adminUserId=${currentUser.userId}`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ actionTaken })
-        }
-      )
+      const url = `${API_BASE}/api/admin/flagged-messages/${messageId}/review?adminUserId=${currentUser.userId}`
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actionTaken })
+      })
 
       if (!res.ok) throw new Error('Failed to review message')
 
@@ -89,9 +87,14 @@ function AdminFlaggedMessagesPage() {
       loadFlaggedMessages()
       loadCount()
     } catch (err) {
-      console.error(err)
-      alert('Failed to review message')
+      console.error('Error reviewing message:', err)
+      alert('Failed to review message: ' + err.message)
     }
+  }
+
+  const handleViewChatHistory = (conversationId) => {
+    setSelectedConversationId(conversationId)
+    setShowChatHistory(true)
   }
 
   const formatDate = (timestamp) => {
@@ -113,20 +116,23 @@ function AdminFlaggedMessagesPage() {
     ))
   }
 
-  if (!currentUser) return null
+  if (!currentUser) {
+    return <div className="admin-flagged-messages-page">Loading...</div>
+  }
 
   return (
     <div className="admin-flagged-messages-page">
-      <div className="admin-flagged-header">
-        <div>
-          <h1>Flagged Messages</h1>
-          <p>Monitor messages with potentially prohibited contact information</p>
-        </div>
-        <div className="admin-flagged-stats">
-          <div className="stat-card">
-            <div className="stat-number">{unreviewedCount}</div>
-            <div className="stat-label">Unreviewed</div>
-          </div>
+      {/* Page Header */}
+      <div className="page-header">
+        <h1>Flagged Messages</h1>
+        <p>Monitor messages with potentially prohibited contact information</p>
+      </div>
+
+      {/* Stats Section */}
+      <div className="stats-section">
+        <div className="stat-card">
+          <div className="stat-label">Unreviewed Messages</div>
+          <div className="stat-number">{unreviewedCount}</div>
         </div>
       </div>
 
@@ -179,26 +185,35 @@ function AdminFlaggedMessagesPage() {
                   <span>Message ID: {msg.messageId}</span>
                 </div>
 
-                {!msg.reviewed ? (
+                <div className="message-actions">
+                  {/* View Chat History Button */}
                   <button
-                    className="btn-review"
-                    onClick={() => setSelectedMessage(msg)}
+                    className="btn-view-history"
+                    onClick={() => handleViewChatHistory(msg.conversationId)}
                   >
-                    Review
+                    View Chat History
                   </button>
-                ) : (
-                  <div className="reviewed-info">
-                    <span className="reviewed-badge">✓ Reviewed</span>
-                    {msg.actionTaken && (
+
+                  {!msg.reviewed ? (
+                    <button
+                      className="btn-review"
+                      onClick={() => {
+                        setSelectedMessage(msg)
+                        setActionTaken('')
+                      }}
+                    >
+                      Review
+                    </button>
+                  ) : (
+                    <div className="reviewed-info">
+                      <span className="reviewed-badge">Reviewed</span>
                       <span className="action-taken">Action: {msg.actionTaken}</span>
-                    )}
-                    {msg.reviewedAt && (
                       <span className="reviewed-date">
                         {formatDate(msg.reviewedAt)}
                       </span>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -212,41 +227,35 @@ function AdminFlaggedMessagesPage() {
             <h2>Review Flagged Message</h2>
 
             <div className="modal-section">
-              <label>Detected:</label>
+              <label>Detected Issues:</label>
               <div className="detected-types">
                 {getDetectedTypesBadge(selectedMessage.detectedTypes)}
               </div>
             </div>
 
             <div className="modal-section">
-              <label>Message:</label>
+              <label>Message Content:</label>
               <div className="message-display">{selectedMessage.messageContent}</div>
             </div>
 
             <div className="modal-section">
               <label>Action Taken:</label>
               <select
+                className="action-select"
                 value={actionTaken}
                 onChange={(e) => setActionTaken(e.target.value)}
-                className="action-select"
               >
                 <option value="">-- Select Action --</option>
-                <option value="NONE">No Action Needed</option>
+                <option value="NO_ACTION">No Action Required</option>
                 <option value="WARNING_SENT">Warning Sent to User</option>
-                <option value="USER_CONTACTED">User Contacted</option>
                 <option value="USER_SUSPENDED">User Suspended</option>
-                <option value="FALSE_POSITIVE">False Positive</option>
+                <option value="MESSAGE_DELETED">Message Deleted</option>
+                <option value="UNDER_REVIEW">Under Further Review</option>
               </select>
             </div>
 
             <div className="modal-actions">
-              <button
-                className="btn-cancel"
-                onClick={() => {
-                  setSelectedMessage(null)
-                  setActionTaken('')
-                }}
-              >
+              <button className="btn-cancel" onClick={() => setSelectedMessage(null)}>
                 Cancel
               </button>
               <button
@@ -254,11 +263,23 @@ function AdminFlaggedMessagesPage() {
                 onClick={() => handleReview(selectedMessage.id)}
                 disabled={!actionTaken}
               >
-                Mark as Reviewed
+                Submit Review
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Chat History Modal */}
+      {showChatHistory && selectedConversationId && (
+        <ChatHistoryModal
+          conversationId={selectedConversationId}
+          currentUser={currentUser}
+          onClose={() => {
+            setShowChatHistory(false)
+            setSelectedConversationId(null)
+          }}
+        />
       )}
     </div>
   )
