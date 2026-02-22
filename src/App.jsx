@@ -865,7 +865,14 @@ function App() {
               )
             }
           />
-          <Route path="/admin/flagged-messages" element={<AdminFlaggedMessagesPage />} />
+          <Route 
+            path="/admin/flagged-messages" 
+            element={
+              currentUser && currentUser.role === 'ADMIN' ?
+                <AdminFlaggedMessagesPage currentUser={currentUser} />
+              : <Navigate to="/" replace />
+            }
+          />
         </Routes>
       </main>
 
