@@ -555,19 +555,24 @@
   gap: 8px;
 }
 
-.tutor-header {
+.tutor-card-main .tutor-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: nowrap;
   min-width: 0;
 }
 
-.tutor-name {
+.tutor-card-main .tutor-header .tutor-name {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: #111827;
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tutor-rating-row {
@@ -717,4 +722,370 @@
 
 .verification-badge:hover {
   transform: translateY(-1px);
+}
+
+/* ==========================================
+   MOBILE RESPONSIVE — TUTORS PAGE
+   Append these rules to the bottom of:
+   src/pages/main/styles/TutorsPage.css
+   ========================================== */
+
+/* ── Tablet & below (≤ 1024px) ─────────────────────────── */
+@media (max-width: 1024px) {
+
+  /* Sidebar gets a bit narrower */
+  .tutors-sidebar {
+    width: 220px;
+  }
+
+  /* Dropdown panels: switch from right-of-sidebar to below trigger */
+  .filter-dropdown-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    bottom: auto;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ── Mobile (≤ 768px) ───────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* ── Hero ── */
+  .tutors-hero {
+    padding: 48px 20px 36px;
+  }
+
+  .tutors-hero h1 {
+    font-size: 32px;
+  }
+
+  /* ── Page content area ── */
+  .tutors-content {
+    padding: 16px 12px 40px;
+    min-height: unset;
+  }
+
+  /* ── Layout: sidebar stacks above main ── */
+  .tutors-layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Sidebar: full width, not sticky ── */
+  .tutors-sidebar {
+    width: 100%;
+    flex-shrink: unset;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding-right: 0;
+    padding-bottom: 16px;
+    position: static;
+    top: auto;
+    max-height: none;
+    align-self: auto;
+  }
+
+  /* ── Sort chips: inline side by side ── */
+  .tutors-sort-chip {
+    display: inline-flex;
+    width: auto;
+    margin-right: 8px;
+    margin-bottom: 0;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  /* ── Filter dropdown panels: open downward, not sideways ── */
+  .filter-dropdown-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    bottom: auto;
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── Backdrop: enable on mobile ── */
+  .filter-backdrop {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 100;
+  }
+
+  .filter-backdrop.active {
+    display: block !important;
+  }
+
+  /* ── Empty wrapper: remove hardcoded min-width ── */
+  .tutors-empty-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* ── Search header ── */
+  .tutors-search-header h2 {
+    font-size: 20px;
+  }
+
+  /* ── Tutor card: keep original 3-column grid, just shrink sizes ── */
+  .tutor-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .tutor-profile-pic,
+  .tutor-profile-placeholder {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+  }
+
+  .tutor-name {
+    font-size: 15px;
+  }
+
+  .tutor-rate-amount {
+    font-size: 18px;
+  }
+
+  .tutor-rate-unit {
+    font-size: 12px;
+  }
+
+  .tutor-meta {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .tutor-summary {
+    font-size: 13px;
+  }
+
+  .tutor-learn-more {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    padding: 9px 14px;
+  }
+
+  /* ── Pagination ── */
+  .tutors-pagination {
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .page-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .tutors-hero h1 {
+    font-size: 26px;
+  }
+
+  .tutors-hero {
+    padding: 36px 16px 28px;
+  }
+
+  .tutors-content {
+    padding: 12px 10px 32px;
+  }
+
+  .tutors-sort-chip {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 6px;
+  }
+
+  .tutor-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .tutor-profile-pic,
+  .tutor-profile-placeholder {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+
+  .tutor-name {
+    font-size: 14px;
+  }
+
+  .tutor-rate-amount {
+    font-size: 16px;
+  }
+}
+
+/* ── Small phones (≤ 480px) ─────────────────────────────── */
+@media (max-width: 480px) {
+
+  .tutors-hero h1 {
+    font-size: 26px;
+  }
+
+  .tutors-hero {
+    padding: 36px 16px 28px;
+  }
+
+  .tutors-content {
+    padding: 12px 10px 32px;
+  }
+
+  /* Full-width sort chips */
+  .tutors-sort-chip {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .tutors-sidebar-section:first-of-type {
+    gap: 6px;
+  }
+
+  .tutor-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .tutor-profile-pic,
+  .tutor-profile-placeholder {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+  }
+
+  .tutor-name {
+    font-size: 15px;
+  }
+
+  .tutors-search-header h2 {
+    font-size: 18px;
+  }
+
+  .filter-trigger {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
+
+/* ============================================================
+   COLLAPSIBLE FILTERS — append to TutorsPage.css
+   (works on all screen sizes, most visible benefit on mobile)
+   ============================================================ */
+
+/* ── Sidebar header: two-side layout ── */
+.tutors-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tutors-sidebar-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutors-sidebar-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Active filter count badge */
+.filters-active-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: #f97316;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+/* Toggle chevron button */
+.filters-toggle-btn {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  color: #6b7280;
+  transition: background 0.15s, border-color 0.15s;
+  /* Always visible — desktop and mobile */
+}
+
+.filters-toggle-btn:hover {
+  background: #f9fafb;
+  border-color: #f97316;
+  color: #f97316;
+}
+
+/* Chevron rotation */
+.filters-toggle-icon {
+  font-size: 11px;
+  display: inline-block;
+  transition: transform 0.25s ease;
+  transform: rotate(-90deg); /* closed = pointing right */
+}
+
+.filters-toggle-icon.open {
+  transform: rotate(0deg); /* open = pointing down */
+}
+
+/* ── Sidebar body: animated collapse ── */
+.tutors-sidebar-body {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+
+.tutors-sidebar-body.open {
+  max-height: 1200px; /* large enough to fit all content */
+  opacity: 1;
+}
+
+.tutors-sidebar-body.closed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Mobile-only tweaks ── */
+@media (max-width: 768px) {
+  /* On mobile the toggle is especially useful — give it a bit more tap area */
+  .filters-toggle-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* When collapsed, shrink sidebar bottom padding */
+  .tutors-sidebar-body.closed {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
 }
