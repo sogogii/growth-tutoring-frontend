@@ -178,8 +178,19 @@ function HomePage() {
       {/* Full-width banner section */}
       <section className="hero-banner">
         <div className="hero-banner-content">
+          {/*
+          <img src="/src/assets/company-logo-removebg.png" alt="Growth Tutoring" className="hero-banner-logo" />
+          */}
           <p className="hero-banner-company">GROWTH TUTORING LLC</p>
           <h1 className="hero-banner-text">Tutor Matching Platform Built on Trust</h1>
+          <div className="hero-banner-actions">
+            <Link to="/tutors" className="hero-banner-btn-primary">
+              Get Matched Today
+            </Link>
+            <Link to="/how-it-works/students" className="hero-banner-btn-secondary">
+              Learn How It Works
+            </Link>
+          </div>
         </div>
       </section>
 

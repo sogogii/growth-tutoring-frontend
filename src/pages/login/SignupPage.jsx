@@ -159,7 +159,7 @@ function SignupPage({ fixedRole }) {
       const res = await fetch(`${API_BASE_URL}/api/auth/send-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email }),
+        body: JSON.stringify({ email: form.email, userUid: form.userUid }),
       })
 
       if (!res.ok) {
