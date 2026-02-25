@@ -36,8 +36,7 @@
   justify-content: space-between;
   gap: 24px;
   padding: 14px 32px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
+  background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -61,6 +60,7 @@
   object-fit: contain;
   flex-shrink: 0;
   transform: scale(1.4);
+  mix-blend-mode: multiply;
 } 
 
 .logo-text {
@@ -82,7 +82,7 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .nav-link {
@@ -118,7 +118,7 @@
   cursor: pointer;
   padding: 0;
   font-family: inherit; 
-  font-size: 14px;  
+  font-size: 16px;  
   font-weight: 400; 
   color: #4b5563;     
 }
