@@ -19,6 +19,8 @@ function PaymentForm({ onCreateSessionRequest, amount }) {
   const [useNewCard, setUseNewCard] = useState(false)
   const [loadingSavedMethods, setLoadingSavedMethods] = useState(true)
 
+  const [saveCard, setSaveCard] = useState(false)
+
   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
   const userId = currentUser.userId
 
@@ -108,6 +110,7 @@ function PaymentForm({ onCreateSessionRequest, amount }) {
         sessionData.clientSecret,
         {
           payment_method: paymentMethodId,
+          ...(saveCard && { setup_future_usage: 'off_session' }),
         }
       )
 
@@ -131,6 +134,22 @@ function PaymentForm({ onCreateSessionRequest, amount }) {
       if (!confirmRes.ok) {
         const errorText = await confirmRes.text()
         throw new Error(`Failed to confirm booking: ${errorText}`)
+      }
+
+      if (saveCard && useNewCard) {
+        try {
+          await fetch(`${API_BASE}/api/saved-payment-methods`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: userId,
+              paymentMethodId: paymentMethodId,
+              setAsDefault: savedMethods.length === 0
+            })
+          })
+        } catch (err) {
+          console.warn('Card save failed (non-critical):', err)
+        }
       }
 
       // Success! Navigate to success page
@@ -249,12 +268,15 @@ function PaymentForm({ onCreateSessionRequest, amount }) {
         {useNewCard && (
           <div className="card-input-wrapper">
             <CardElement options={CARD_ELEMENT_OPTIONS} />
-            
-            {savedMethods.length === 0 && (
-              <p className="save-card-notice">
-                💡 Your card will be saved for future use
-              </p>
-            )}
+
+            <label className="save-card-checkbox">
+              <input
+                type="checkbox"
+                checked={saveCard}
+                onChange={(e) => setSaveCard(e.target.checked)}
+              />
+              <span>Save card for future use</span>
+            </label>
           </div>
         )}
       </div>
