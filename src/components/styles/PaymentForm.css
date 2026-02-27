@@ -175,6 +175,23 @@
   box-shadow: 0 0 0 1px #e67e50;
 }
 
+.save-card-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.save-card-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #f97316;
+  cursor: pointer;
+}
+
 .save-card-notice {
   margin-top: 15px;
   font-size: 0.9rem;
