@@ -1,7 +1,7 @@
 /* ========= Shared auth layout (Login + Signup) ========= */
 
 .auth-page {
-  min-height: auto;
+  min-height: calc(100vh - 88px); 
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -12,6 +12,8 @@
   width: 100vw;
   margin-left: -50vw;
   margin-right: -50vw;
+  margin-top: -32px;
+  margin-bottom: -64px;
   left: 50%;
   right: 50%;
   box-sizing: border-box;
@@ -46,7 +48,7 @@
   position: relative;
   z-index: 1;
   margin-bottom: 40px;
-  margin-top: -40px;
+
 }
 
 @media (max-width: 860px) {
@@ -460,11 +462,11 @@
    ======================================== */
 
 .signup-choice-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 88px); 
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 80px 20px 0px;  /* Changed bottom padding to 0 */
+  padding: 60px 20px 0px;  /* Changed bottom padding to 0 */
   background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
   position: relative;
   overflow: hidden;
@@ -474,6 +476,7 @@
   left: 50%;
   right: 50%;
   margin-top: -32px;
+  margin-bottom: -64px;
   box-sizing: border-box;
 }
 
