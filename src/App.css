@@ -918,7 +918,7 @@
   
   /* ===== HEADER ===== */
   .app-header {
-    padding: 10px 12px;
+    padding: 16px 16px;
     gap: 0; 
     display: flex;
     justify-content: space-between;
@@ -943,13 +943,13 @@
 
   /* Make logo smaller */
   .logo-image {
-    width: 45px;
-    height: 45px;
+    width: 62px;
+    height: 62px;
     transform: scale(1.1);
   }
 
   .logo-name {
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .header-nav {
@@ -1123,17 +1123,17 @@
   
   /* ===== HEADER ===== */
   .app-header {
-    padding: 8px 10px;
+    padding: 14px 12px;
   }
 
   .logo-image {
-    width: 40px;
-    height: 40px;
+    width: 56px;
+    height: 56px;
     transform: scale(1);
   }
 
   .logo-name {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   /* Even smaller buttons on tiny screens */

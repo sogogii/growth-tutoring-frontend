@@ -980,7 +980,6 @@
 /* Tablets and below (768px) */
 @media (max-width: 768px) {
   
-  /* ✅ FIX: Container for homepage */
   .home {
     gap: 40px !important;
     margin: 0 !important;
@@ -989,7 +988,8 @@
 
   /* ===== HERO BANNER (Full-width image section) ===== */
   .hero-banner {
-    min-height: 60vh;
+    min-height: calc(100vh - 56px); 
+    height: calc(100vh - 56px);    
     margin-top: -24px;
     width: 100vw; /* Full width */
     left: 50%;
@@ -997,13 +997,13 @@
     margin-left: -50vw;
     margin-right: -50vw;
     position: relative;
-    overflow: hidden; /* ✅ Prevent content overflow */
+    overflow: hidden; 
     
   }
 
   .hero-banner-content {
     padding: 0 20px;
-    max-width: 100%; /* ✅ Constrain content */
+    max-width: 100%;
     box-sizing: border-box;
   }
 
@@ -1240,7 +1240,8 @@
   
   /* ===== HERO BANNER ===== */
   .hero-banner {
-    min-height: 50vh;
+    min-height: calc(100vh - 56px);  
+    height: calc(100vh - 56px); 
     margin-top: -16px;
   }
 
