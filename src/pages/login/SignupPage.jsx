@@ -93,6 +93,7 @@ function SignupPage({ fixedRole }) {
   const [showTermsModal, setShowTermsModal] = useState(false)
   const [showPrivacyModal, setShowPrivacyModal] = useState(false)
   const [education, setEducation] = useState('')
+  const [marketingOptIn, setMarketingOptIn] = useState(false)
 
   const roleToSend = fixedRole || 'TUTOR'
   const roleLabel = roleToSend === 'TUTOR' ? 'Tutor' : 'Student'
@@ -215,6 +216,7 @@ function SignupPage({ fixedRole }) {
           subjectLabel:
             roleToSend === 'TUTOR' ? form.subjects.join(', ') : null,
           education: roleToSend === 'TUTOR' ? form.education : null,
+          marketingOptIn,
         }),
       })
 
@@ -495,6 +497,21 @@ function SignupPage({ fixedRole }) {
                         Privacy Policy
                       </button>
                       <span style={{color: '#ef4444'}}>    *</span>
+                    </span>
+                  </label>
+                </div>
+
+                {/* Marketing Opt-In Checkbox */}
+                <div className="signup-terms-container">
+                  <label className="signup-terms-label">
+                    <input
+                      type="checkbox"
+                      checked={marketingOptIn}
+                      onChange={(e) => setMarketingOptIn(e.target.checked)}
+                      className="signup-terms-checkbox"
+                    />
+                    <span className="signup-terms-text">
+                      I'd like to receive updates about new features, tutors, and promotions (Optional)
                     </span>
                   </label>
                 </div>
