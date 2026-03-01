@@ -39,6 +39,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
+  const [marketingOptIn, setMarketingOptIn] = useState(false)
 
   // which fields are in "edit mode"
   const [editing, setEditing] = useState({
@@ -76,6 +77,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
           birthday: data.birthday || '',
           profileImageUrl: data.profileImageUrl || '',
         })
+        setMarketingOptIn(data.marketingOptIn ?? false)
 
         // 2) if tutor, load tutor profile
         if (currentUser.role === 'TUTOR') {
@@ -138,6 +140,20 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
   const handleTutorChange = (e) => {
     const { name, value } = e.target
     setTutorForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleMarketingOptInToggle = async (checked) => {
+    setMarketingOptIn(checked)
+    try {
+      await fetch(`${API_BASE}/api/users/${currentUser.userId}/marketing-opt-in`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ marketingOptIn: checked }),
+      })
+    } catch (err) {
+      console.error('Failed to update marketing preference:', err)
+      setMarketingOptIn(!checked) // revert on failure
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -716,6 +732,28 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                   })}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Email Preferences Section */}
+          <div className="my-profile-section readonly-section">
+            <div className="section-header">
+              <h2 className="section-title">Email Preferences</h2>
+              <span className="section-subtitle">Manage your communication settings</span>
+            </div>
+
+            <div className="form-field">
+              <label className="signup-terms-label" style={{ cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={marketingOptIn}
+                  onChange={(e) => handleMarketingOptInToggle(e.target.checked)}
+                  className="signup-terms-checkbox"
+                />
+                <span className="signup-terms-text">
+                  Receive updates about new features, tutors, and Growth Tutoring news.
+                </span>
+              </label>
             </div>
           </div>
 
