@@ -1,0 +1,293 @@
+/* ============================================
+   ADMIN PROMOTIONS PAGE
+   ============================================ */
+
+.promotions-page {
+  min-height: 100vh;
+  background: #f9fafb;
+  padding: 40px 24px;
+}
+
+.promotions-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.promotions-header {
+  margin-bottom: 32px;
+}
+
+.promotions-back-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 12px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.promotions-back-btn:hover {
+  color: #111827;
+}
+
+.promotions-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.promotions-subtitle {
+  color: #6b7280;
+  margin: 0;
+  font-size: 15px;
+}
+
+/* ============================================
+   CARD
+   ============================================ */
+
+.promotions-card {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+/* ============================================
+   PREVIEW RECIPIENTS
+   ============================================ */
+
+.promotions-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding: 16px;
+  background: #f0f9ff;
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.promotions-preview-btn {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #0ea5e9;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0ea5e9;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.promotions-preview-btn:hover:not(:disabled) {
+  background: #0ea5e9;
+  color: white;
+}
+
+.promotions-preview-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.promotions-preview-text {
+  color: #374151;
+  font-size: 14px;
+}
+
+/* ============================================
+   FORM FIELDS
+   ============================================ */
+
+.promotions-field {
+  margin-bottom: 20px;
+}
+
+.promotions-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.promotions-required {
+  color: #ef4444;
+}
+
+.promotions-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #111827;
+}
+
+.promotions-input:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.promotions-hint {
+  display: block;
+  color: #9ca3af;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ============================================
+   RICH TEXT EDITOR
+   ============================================ */
+
+.promotions-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+.toolbar-btn {
+  padding: 5px 10px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.toolbar-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.toolbar-btn:active {
+  background: #e5e7eb;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: #e5e7eb;
+  margin: 0 4px;
+}
+
+.promotions-editor {
+  min-height: 200px;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 0 0 8px 8px;
+  font-size: 14px;
+  color: #111827;
+  line-height: 1.6;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.promotions-editor:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+/* Placeholder text when editor is empty */
+.promotions-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.promotions-editor ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.promotions-editor a {
+  color: #f97316;
+  text-decoration: underline;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.promotions-error {
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.promotions-success {
+  padding: 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #16a34a;
+  margin-bottom: 16px;
+}
+
+.promotions-success-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.promotions-success-detail {
+  font-size: 14px;
+}
+
+.promotions-failed-count {
+  color: #dc2626;
+}
+
+/* ============================================
+   SEND BUTTON
+   ============================================ */
+
+.promotions-send-btn {
+  width: 100%;
+  padding: 14px;
+  background: #f97316;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.promotions-send-btn:hover:not(:disabled) {
+  background: #ea6c0a;
+}
+
+.promotions-send-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
