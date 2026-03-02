@@ -35,6 +35,7 @@ import PrivacyPolicyPage from './pages/main/PrivacyPolicyPage'
 import InboxPage from './pages/chat/InboxPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
 import AdminFlaggedMessagesPage from './pages/admin/AdminFlaggedMessagesPage'
+import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -513,6 +514,13 @@ function App() {
                             <span className="notif-badge">{unreviewedCount}</span>
                           )}
                         </button>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/admin/promotions')}
+                        >
+                          Promotion Emails
+                        </button>
                       </>
                     )}
                     {currentUser.role === 'TUTOR' && (
@@ -870,6 +878,14 @@ function App() {
             element={
               currentUser && currentUser.role === 'ADMIN' ?
                 <AdminFlaggedMessagesPage currentUser={currentUser} />
+              : <Navigate to="/" replace />
+            }
+          />
+          <Route
+            path="/admin/promotions"
+            element={
+              currentUser && currentUser.role === 'ADMIN' ?
+                <AdminPromotionsPage currentUser={currentUser} />
               : <Navigate to="/" replace />
             }
           />
