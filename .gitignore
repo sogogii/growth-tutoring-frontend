@@ -42,3 +42,6 @@ logs/
 *.iml
 
 schema.sql
+
+# text files
+.txt
