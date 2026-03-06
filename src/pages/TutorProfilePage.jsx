@@ -243,9 +243,11 @@ function TutorProfilePage({ currentUser }) {
   const handleDeleteReview = async (reviewId) => {
     if (!window.confirm('Are you sure you want to delete this review?')) return
 
+    console.log('Review ID:', reviewId);
+
     try {
       const res = await fetch(
-        `${API_BASE}/api/tutors/user/${tutor.userId}/reviews/${reviewId}`,
+        `${API_BASE}/api/tutors/user/${tutor.userId}/reviews/${reviewId}?studentUserId=${currentUser.userId}`,
         { method: 'DELETE' }
       )
 
@@ -357,24 +359,43 @@ function TutorProfilePage({ currentUser }) {
   return (
     <div key={review.id} className={`review-card ${isMyReview ? 'my-review' : ''}`}>
       <div className="review-card-top">
-        {/* Avatar with initial */}
         <div className="review-avatar">
           {initial}
         </div>
 
-        {/* Reviewer info and rating */}
         <div className="review-info">
           <div className="review-author">
-            {review.studentFirstName
-              ? `${review.studentFirstName} ${review.studentLastName || ''}`.trim()
-              : 'Student'}
+            <span>
+              {review.studentFirstName
+                ? `${review.studentFirstName} ${review.studentLastName || ''}`.trim()
+                : 'Student'}
+            </span>
             <span className="review-rating">
               <span className="stars">★</span>
               <span className="review-rating-number">
                 {Number(review.rating).toFixed(1)}
               </span>
             </span>
+
+            {isMyReview && (
+              <div className="review-menu-wrapper">
+                <button
+                  type="button"
+                  className="review-menu-button"
+                  onClick={() => setOpenMenuReviewId(isMenuOpen ? null : review.id)}
+                >
+                  ⋮
+                </button>
+                {isMenuOpen && (
+                  <div className="review-menu-dropdown">
+                    <button type="button" onClick={() => handleEditReview(review)}>Edit</button>
+                    <button type="button" onClick={() => handleDeleteReview(review.id)}>Delete</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+
           {review.createdAt && (
             <div className="review-date">
               {new Date(review.createdAt).toLocaleDateString('en-US', {
@@ -385,40 +406,8 @@ function TutorProfilePage({ currentUser }) {
             </div>
           )}
         </div>
-
-        {/* Menu (only for my review) */}
-        {isMyReview && (
-          <div className="review-menu-wrapper">
-            <button
-              type="button"
-              className="review-menu-button"
-              onClick={() =>
-                setOpenMenuReviewId(isMenuOpen ? null : review.id)
-              }
-            >
-              ⋮
-            </button>
-            {isMenuOpen && (
-              <div className="review-menu-dropdown">
-                <button
-                  type="button"
-                  onClick={() => handleEditReview(review)}
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteReview(review.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
-      {/* Comment */}
       {review.comment && (
         <p className="review-comment">{review.comment}</p>
       )}
@@ -630,7 +619,7 @@ function TutorProfilePage({ currentUser }) {
           )}
 
           {/* Reviews Section */}
-          {/*
+          
           <div className="tutor-profile-reviews">
             <div className="tutor-profile-section">
               <h2>Student Reviews</h2>
@@ -725,7 +714,7 @@ function TutorProfilePage({ currentUser }) {
                 )}
               </div>
             </div>
-          </div>*/}
+          </div>
         </div>
 
         {/* Footer */}

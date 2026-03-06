@@ -407,13 +407,10 @@
 }
 
 .review-author {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .review-rating {
@@ -469,7 +466,7 @@
   font-size: 20px;
   color: #9ca3af;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 0 10px; 
   border-radius: 8px;
   transition: all 0.2s ease;
   line-height: 1;
