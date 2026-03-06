@@ -44,4 +44,4 @@ logs/
 schema.sql
 
 # text files
-.txt
+*.txt
