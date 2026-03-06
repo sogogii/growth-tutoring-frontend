@@ -512,13 +512,15 @@ function TutorProfilePage({ currentUser }) {
                 <h1 className="tutor-profile-name">{tutor.name}</h1>
                 <VerificationBadge tier={tutor.verificationTier} />
               </div>
-
+              
+              {/*  HIDE REVIEW FOR NOW
               <div className="tutor-profile-rating-row">
                 <StarRating rating={tutor.rating} />
                 <span className="tutor-profile-rating-number">
                   {avgRatingDisplay} ({ratingCount})
                 </span>
               </div>
+              */}
 
               {/* Subject Tags */}
               <div className="tutor-profile-subjects">
@@ -628,6 +630,7 @@ function TutorProfilePage({ currentUser }) {
           )}
 
           {/* Reviews Section */}
+          {/*
           <div className="tutor-profile-reviews">
             <div className="tutor-profile-section">
               <h2>Student Reviews</h2>
@@ -639,7 +642,6 @@ function TutorProfilePage({ currentUser }) {
                 <div className="reviews-error">{reviewsError}</div>
               )}
 
-              {/* Review Form */}
               {isStudent && showReviewForm && (
                 <div className="review-form">
                   <div className="review-form-row">
@@ -683,7 +685,6 @@ function TutorProfilePage({ currentUser }) {
                 </div>
               )}
 
-              {/* Review button for students */}
               {isStudent && !hasMyReview && !showReviewForm && (
                 <button
                   type="button"
@@ -708,7 +709,6 @@ function TutorProfilePage({ currentUser }) {
                 </p>
               )}
 
-              {/* Display Reviews */}
               <div className="reviews-list">
                 {reviewsLoading ? (
                   <div className="reviews-hint">Loading reviews...</div>
@@ -725,7 +725,7 @@ function TutorProfilePage({ currentUser }) {
                 )}
               </div>
             </div>
-          </div>
+          </div>*/}
         </div>
 
         {/* Footer */}

@@ -138,6 +138,7 @@ function TopTutorsSection() {
               <div className="top-tutor-info">
                 <h3 className="top-tutor-name">{tutor.name}</h3>
                 
+                {/*
                 <div className="top-tutor-rating">
                   <span className="stars">★</span>
                   <span className="rating-number">
@@ -147,6 +148,7 @@ function TopTutorsSection() {
                     ({tutor.ratingCount} reviews)
                   </span>
                 </div>
+                */}
                 
                 {tutor.subjectLabel && (
                   <div className="top-tutor-subjects">

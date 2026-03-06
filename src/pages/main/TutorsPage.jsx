@@ -611,6 +611,7 @@ function TutorsPage({ currentUser }) {
                       <VerificationBadge tier={tutor.verificationTier} />
                     </div>
 
+                    {/* HIDE REVIEW 
                     <div className="tutor-rating-row">
                       <StarRating rating={tutor.rating} />
                       <div className="tutor-rating-count">
@@ -620,6 +621,7 @@ function TutorsPage({ currentUser }) {
                         </span>
                       </div>
                     </div>
+                    */}
 
                     <div className="tutor-meta">
                       {/*
