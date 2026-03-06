@@ -33,6 +33,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     teachingMethod: 'ONLINE',
     headline: '',
     bio: '',
+    yearsExperience: '',
   })
 
   const [loading, setLoading] = useState(true)
@@ -53,6 +54,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     teachingMethod: false,
     headline: false,
     bio: false,
+    yearsExperience: false,
   })
 
   useEffect(() => {
@@ -102,6 +104,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
               teachingMethod: tData.teachingMethod || 'ONLINE',
               headline: tData.headline || '',
               bio: tData.bio || '',
+              yearsExperience: tData.yearsExperience != null ? String(tData.yearsExperience) : '',
             })
           }
         }
@@ -216,6 +219,9 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
               teachingMethod: tutorForm.teachingMethod,
               headline: tutorForm.headline,
               bio: tutorForm.bio,
+              yearsExperience: tutorForm.yearsExperience 
+                ? Number(tutorForm.yearsExperience) 
+                : null,
             }),
           }
         )
@@ -619,6 +625,39 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                         : tutorForm.teachingMethod === 'HYBRID'
                         ? 'Hybrid'
                         : 'Online'}
+                    </div>
+                  )}
+                </div>
+
+                {/* Years of Experience */}
+                <div className="form-field">
+                  <label className="field-label">
+                    EXPERIENCE
+                    <button
+                      type="button"
+                      className="edit-btn"
+                      onClick={() => toggleEdit('yearsExperience')}
+                    >
+                      {editing.yearsExperience ? '✓ Done' : '✏️ Edit'}
+                    </button>
+                  </label>
+                  {editing.yearsExperience ? (
+                    <input
+                      type="number"
+                      name="yearsExperience"
+                      value={tutorForm.yearsExperience}
+                      onChange={handleTutorChange}
+                      className="form-input"
+                      min="0"
+                      max="50"
+                      step="1"
+                      placeholder="e.g. 3"
+                    />
+                  ) : (
+                    <div className="field-value">
+                      {tutorForm.yearsExperience
+                        ? `${tutorForm.yearsExperience} year${Number(tutorForm.yearsExperience) !== 1 ? 's' : ''}`
+                        : <span className="text-muted">No experience set</span>}
                     </div>
                   )}
                 </div>

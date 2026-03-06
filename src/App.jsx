@@ -570,6 +570,7 @@ function App() {
                         My tutors
                       </button>
                     )}
+                    {/*
                     {currentUser.role === 'STUDENT' && (
                       <button
                         type="button"
@@ -579,6 +580,7 @@ function App() {
                         My reviews
                       </button>
                     )}
+                    */}
                     {currentUser.role === 'STUDENT' && (
                       <button
                         type="button"
@@ -831,10 +833,12 @@ function App() {
             element={<MyEarningsPage currentUser={currentUser} />} 
           />
 
+          {/*
           <Route
             path="/my-reviews"
             element={<MyReviewsPage currentUser={currentUser} />}
           />
+          */}
 
           <Route path="/my-payments" element={<MyPaymentsPage />} />
 
