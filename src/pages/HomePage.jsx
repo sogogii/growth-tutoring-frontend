@@ -180,11 +180,12 @@ function HomePage() {
       {/* Full-width banner section */}
       <section className="hero-banner">
         <div className="hero-banner-content">
-          {/*
-          <img src="/src/assets/company-logo-removebg.png" alt="Growth Tutoring" className="hero-banner-logo" />
-          */}
-          <p className="hero-banner-company">GROWTH TUTORING LLC</p>
-          <h1 className="hero-banner-text">Tutor Matching Platform Built on Trust</h1>
+          <div className="hero-badge">
+            <span className="hero-badge-dot"></span>
+            <span className="hero-badge-text">Growth Tutoring LLC</span>
+          </div>
+          <h1 className="hero-banner-text">Tutor Matching Platform Built on <em>Trust</em></h1>
+          
           <div className="hero-banner-actions">
             <Link to="/tutors" className="hero-banner-btn-primary">
               Get Matched Today
@@ -193,6 +194,26 @@ function HomePage() {
               Learn How It Works
             </Link>
           </div>
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="hero-stat-number">1 in 12</span>
+              <span className="hero-stat-label">Tutors Accepted</span>
+            </div>
+            <div className="hero-stat-divider"></div>
+            <div className="hero-stat">
+              <span className="hero-stat-number">100%</span>
+              <span className="hero-stat-label">Background Checked Tutors</span>
+            </div>
+            <div className="hero-stat-divider"></div>
+            <div className="hero-stat">
+              <span className="hero-stat-number">SPED</span>
+              <span className="hero-stat-label">Specialists Available</span>
+            </div>
+          </div>
+        </div>
+        <div className="hero-scroll">
+          <span className="hero-scroll-text">Scroll</span>
+          <div className="hero-scroll-arrow"></div>
         </div>
       </section>
 
