@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import './styles/HomePage.css'
 import { useState, useEffect, useRef } from 'react'
-import findTutorImage from '../assets/homepage-find-your-tutor.jpg'
-import bookSessionsImage from '../assets/homepage-book-sessions.jpg'
-import trackProgressImage from '../assets/homepage-track-progress.jpg'
+import findTutorImage from '../assets/homepage-find-your-tutor.png'
+import bookSessionsImage from '../assets/homepage-book-sessions.png'
+import trackProgressImage from '../assets/homepage-track-progress.png'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
@@ -117,55 +117,57 @@ function TopTutorsSection() {
         Meet our highest-rated tutors who consistently deliver exceptional results.
       </p>
 
-      <div className="top-tutors-carousel">
-        <div className="top-tutors-scroll" ref={scrollRef}>
-          {tutors.map((tutor) => (
-            <Link 
-              key={tutor.userId} 
-              to={`/tutors/${tutor.userId}`} 
-              className="top-tutor-card"
-            >
-              <div className="top-tutor-avatar">
-                {tutor.profileImageUrl ? (
-                  <img src={tutor.profileImageUrl} alt={tutor.name} />
-                ) : (
-                  <div className="top-tutor-avatar-placeholder">
-                    {tutor.name.charAt(0)}
-                  </div>
-                )}
-              </div>
-              
-              <div className="top-tutor-info">
-                <h3 className="top-tutor-name">{tutor.name}</h3>
-                
-                {/*
-                <div className="top-tutor-rating">
-                  <span className="stars">★</span>
-                  <span className="rating-number">
-                    {tutor.rating.toFixed(1)}
-                  </span>
-                  <span className="rating-count">
-                    ({tutor.ratingCount} reviews)
-                  </span>
+      <div className="top-tutors-cards-container">
+        <div className="top-tutors-carousel">
+          <div className="top-tutors-scroll" ref={scrollRef}>
+            {tutors.map((tutor) => (
+              <Link 
+                key={tutor.userId} 
+                to={`/tutors/${tutor.userId}`} 
+                className="top-tutor-card"
+              >
+                <div className="top-tutor-avatar">
+                  {tutor.profileImageUrl ? (
+                    <img src={tutor.profileImageUrl} alt={tutor.name} />
+                  ) : (
+                    <div className="top-tutor-avatar-placeholder">
+                      {tutor.name.charAt(0)}
+                    </div>
+                  )}
                 </div>
-                */}
                 
-                {tutor.subjectLabel && (
-                  <div className="top-tutor-subjects">
-                    {tutor.subjectLabel.split(',').slice(0, 3).map((s, i) => (
-                      <span key={i} className="top-tutor-subject-tag">
-                        {s.trim()}
-                      </span>
-                    ))}
+                <div className="top-tutor-info">
+                  <h3 className="top-tutor-name">{tutor.name}</h3>
+                  
+                  {/*
+                  <div className="top-tutor-rating">
+                    <span className="stars">★</span>
+                    <span className="rating-number">
+                      {tutor.rating.toFixed(1)}
+                    </span>
+                    <span className="rating-count">
+                      ({tutor.ratingCount} reviews)
+                    </span>
                   </div>
-                )}
-                
-                {tutor.headline && (
-                  <p className="top-tutor-bio">{tutor.headline}</p>
-                )}
-              </div>
-            </Link>
-          ))}
+                  */}
+                  
+                  {tutor.subjectLabel && (
+                    <div className="top-tutor-subjects">
+                      {tutor.subjectLabel.split(',').slice(0, 3).map((s, i) => (
+                        <span key={i} className="top-tutor-subject-tag">
+                          {s.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {tutor.headline && (
+                    <p className="top-tutor-bio">{tutor.headline}</p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -210,8 +212,8 @@ function HomePage() {
             </div>
             <div className="hero-stat-divider"></div>
             <div className="hero-stat">
-              <span className="hero-stat-number">SPED</span>
-              <span className="hero-stat-label">Specialists Available</span>
+              <span className="hero-stat-number">K-12</span>
+              <span className="hero-stat-label">Subjects Covered</span>
             </div>
           </div>
         </div>
@@ -258,9 +260,11 @@ function HomePage() {
       {/* Quick How It Works */}
       <section className="section section-how-it-works">
         <h2 className="how-works-title">How Growth Tutoring Works</h2>
+        {/*
         <p className="section-text center">
           Getting started is simple. We handle the matching, you focus on learning.
         </p>
+        */}
         
         <div className="steps-grid">
           <div className="step-card step-card-split">
@@ -384,7 +388,7 @@ function HomePage() {
               Ask questions about subjects, scheduling, or our tutoring process. 
               Get instant answers 24/7.
             </p>
-            <button className="btn btn-outline-sm">Try Now</button>
+            <button className="btn btn-outline-sm">Coming Soon</button>
           </div>
         </div>
       </section>
@@ -392,6 +396,7 @@ function HomePage() {
       {/* Final CTA */}
       <section className="section section-final-cta">
         <div className="final-cta-content">
+          <h2>Start Learning Today</h2>
           <p className="final-cta-subtitle">
             Join thousands of students achieving their academic goals with personalized tutoring.
           </p>

@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   gap: 40px;
-  padding-bottom: 32px;
+  padding-bottom: 0;
 }
 
 /* ==========================================
@@ -489,41 +489,69 @@
    HOW IT WORKS SECTION
    ========================================== */
 
-.section-how-it-works {
-  background: #ffffff;
-  padding: 40px 32px;
-  min-width: 1100px;
-  border: none !important;
+.section.section-how-it-works {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -40px;
+  padding: 60px 24px;
+  background: #ffffff !important;
   border-radius: 0;
-  margin-bottom: 40px;
+  border: none !important;
+  box-sizing: border-box;
+}
+
+.section-how-it-works .how-works-title,
+.section-how-it-works .section-text,
+.section-how-it-works .steps-grid,
+.section-how-it-works .section-cta {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .how-works-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 12px;
+  font-size: 36px;
+  font-weight: 700;
   color: #111827;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  margin: 40px 0 12px;
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.how-works-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  background: #f97316;
+  border-radius: 2px;
+  margin: 12px auto 0;
 }
 
 .steps-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  margin-top: 32px;
+  margin-top: 40px;
 }
 
 .step-card {
-  background: #fafafa;
+  background: #ffffff !important;
   border-radius: 12px;
-  padding: 32px 24px;
-  text-align: center;
   border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+  overflow: hidden;
 }
 
-
+.step-card:last-child {
+  border-right: none;
+}
 
 .step-card-split {
   padding: 0;
@@ -536,18 +564,24 @@
   overflow: hidden;
 }
 
+.step-card-image {
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
 .step-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.step-card-image-2 img {
-  object-position: center 35%; 
+  object-position: center center;
+  display: block;
 }
 
 .step-card-text {
-  padding: 24px;
+  padding: 28px 32px 40px;
+  text-align: left;
 }
 
 .step-number {
@@ -600,26 +634,99 @@
   margin: 0;
 }
 
+.section-how-it-works .section-cta {
+  text-align: center;
+  padding: 40px 48px 48px;
+  margin-bottom: 40px;
+}
+
+.section-how-it-works .section-cta a,
+.section-how-it-works .section-cta button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #374151;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.section-how-it-works .section-cta a:hover,
+.section-how-it-works .section-cta button:hover {
+  background: #374151;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px);
+}
+
 /* ==========================================
    TOP TUTORS CAROUSEL SECTION
    ========================================== */
 
-.section-top-tutors {
-  background: #ffffff;
-  padding: 40px 32px;
-  min-width: 1100px;
-  border: none !important;
+.section.section-top-tutors {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -40px;
+  padding: 60px 24px;
+  background: linear-gradient(135deg, #fff7ed 0%, #fef3e8 50%, #fde8c8 100%) !important;
   border-radius: 0;
-  margin-bottom: 48px;
+  border: none !important;
+  box-sizing: border-box;
+}
+
+.section-top-tutors .top-tutors-title,
+.section-top-tutors .section-text,
+.section-top-tutors .top-tutors-carousel,
+.section-top-tutors .section-cta {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .top-tutors-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 12px;
+  font-size: 36px;
+  font-weight: 700;
   color: #111827;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  margin: 0 0 12px;
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.top-tutors-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  background: #f97316;
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+.top-tutors-cards-container {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 24px rgba(180, 100, 30, 0.08);
 }
 
 .top-tutors-carousel {
@@ -766,6 +873,37 @@
   margin: 0;
 }
 
+.section-top-tutors .section-cta {
+  text-align: center;
+  padding: 40px 48px 48px;
+}
+
+.section-top-tutors .section-cta a,
+.section-top-tutors .section-cta button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #374151;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.section-top-tutors .section-cta a:hover,
+.section-top-tutors .section-cta button:hover {
+  background: #1f2937;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px);
+}
+
 /* ==========================================
    TESTIMONIALS SECTION
    ========================================== */
@@ -859,117 +997,218 @@
    GROWTH AI SECTION
    ========================================== */
 
-.section-ai {
-  background: #f9fafb;
-  margin-bottom: 40px;
+.section.section-ai {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-top: -40px;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 100px 24px;
+  background: #0f172a !important;
+  border-radius: 0;
+  border: none !important;
+  box-sizing: border-box;
 }
 
-.ai-content {
+.section-ai .ai-content {
+  max-width: 1100px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 28px;
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
 }
 
-.ai-text-content {
+.section-ai .ai-text-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-ai .section-title {
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+  text-align: left;
+}
+
+.section-ai .section-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  line-height: 1.75;
+  text-align: left;
+  margin: 0;
+  max-width: 100%;
+}
+
+.section-ai .ai-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.ai-features-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.ai-features-list li {
+.section-ai .ai-features-list li {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: #374151;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
 }
 
-.ai-feature-icon {
-  width: 20px;
-  height: 20px;
+.section-ai .ai-feature-icon {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: #9333ea;
+  background: #f97316;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .ai-card {
-  background: #fff7ed;
-  border-radius: 12px;
-  border: 1px solid #fed7aa;
-  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 48px 40px;
   text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.ai-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+.section-ai .ai-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  color: #f97316;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.ai-card h3 {
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 14px;
+  letter-spacing: -0.01em;
+}
+
+.ai-card p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0 0 28px;
+}
+
+.ai-card .btn {
+  display: inline-block;
+  background: #f97316;
+  color: #ffffff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+}
+
+.ai-card .btn:hover {
+  background: #ea6c0a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
 }
 
 /* ==========================================
    FINAL CTA SECTION
    ========================================== */
 
-.section-final-cta {
-  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
-  border: 1px solid #e5e7eb;
+.section.section-final-cta {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-top: -40px;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 100px 24px;
+  background: #ffffff !important;
+  border-radius: 0;
+  border: none !important;
+  box-shadow: none !important;
+  box-sizing: border-box;
   text-align: center;
-  padding: 56px 32px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .final-cta-content {
-  max-width: 800px;
+  max-width: 680px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.final-cta-content h2 {
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+  line-height: 1.2;
 }
 
 .final-cta-subtitle {
   font-size: 17px;
-  color: #4b5563;
+  color: #6b7280;
   line-height: 1.7;
-  margin: 0 0 36px 0;
-  font-weight: 400;
+  margin: 0 0 40px;
+  max-width: 500px;
 }
 
 .final-cta-buttons {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 48px;
 }
 
 .cta-button {
-  padding: 14px 36px;
-  border-radius: 8px;
+  padding: 14px 32px;
+  border-radius: 999px;
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
   display: inline-block;
   cursor: pointer;
-  border: 2px solid;
+  border: 2px solid transparent;
+  letter-spacing: 0.01em;
 }
 
 .cta-button-primary {
   background: #16a34a;
   color: #ffffff;
   border-color: #16a34a;
+  border-radius: 999px;
   box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
 }
 
@@ -981,40 +1220,36 @@
 }
 
 .cta-button-secondary {
-  background: #ffffff;
+  background: transparent;
   color: #374151;
   border-color: #d1d5db;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .cta-button-secondary:hover {
   background: #f9fafb;
   border-color: #9ca3af;
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .final-cta-divider {
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(to right, transparent, #d1d5db, transparent);
+  width: 48px;
+  height: 3px;
+  background: #e5e7eb;
+  border-radius: 2px;
   margin: 0 auto 36px;
 }
 
 .final-cta-quote {
   font-size: 16px;
-  color: #6b7280;
+  color: #9ca3af;
   line-height: 1.8;
   font-style: italic;
-  margin: 0 0 12px 0;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 0 10px;
 }
 
 .final-cta-author {
   font-size: 14px;
-  color: #9ca3af;
+  color: #b0b8c4;
   font-style: italic;
   margin: 0;
 }
