@@ -152,7 +152,11 @@ function TopTutorsSection() {
                 
                 {tutor.subjectLabel && (
                   <div className="top-tutor-subjects">
-                    {tutor.subjectLabel}
+                    {tutor.subjectLabel.split(',').slice(0, 3).map((s, i) => (
+                      <span key={i} className="top-tutor-subject-tag">
+                        {s.trim()}
+                      </span>
+                    ))}
                   </div>
                 )}
                 
