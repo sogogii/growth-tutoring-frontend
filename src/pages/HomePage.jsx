@@ -190,7 +190,11 @@ function HomePage() {
             <span className="hero-badge-dot"></span>
             <span className="hero-badge-text">Growth Tutoring LLC</span>
           </div>
-          <h1 className="hero-banner-text">Tutor Matching Platform Built on <em>Trust</em></h1>
+          <h1 className="hero-banner-text">Looking for More Than <em>Just a Tutor?</em></h1>
+
+          <p className="hero-banner-subtitle">
+            Vetted tutors, carefully matched to your child's learning needs and dedicated to helping them reach their full potential.
+          </p>
           
           <div className="hero-banner-actions">
             <Link to="/tutors" className="hero-banner-btn-primary">
