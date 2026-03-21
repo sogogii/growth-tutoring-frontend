@@ -5,6 +5,7 @@ import EducationInput from '../../components/EducationInput'
 import ClientTermsModal from '../../components/ClientTermsModal'
 import TutorTermsModal from '../../components/TutorTermsModal'
 import PrivacyPolicyModal from '../../components/PrivacyPolicyModal'
+import CityAutocomplete from '../../components/CityAutocomplete'
 
 const SUBJECT_OPTIONS = [
   'K-12 Math',
@@ -94,6 +95,7 @@ function SignupPage({ fixedRole }) {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false)
   const [education, setEducation] = useState('')
   const [marketingOptIn, setMarketingOptIn] = useState(false)
+  const [locations, setLocations] = useState([]) // [{ label, latitude, longitude }]
 
   const roleToSend = fixedRole || 'TUTOR'
   const roleLabel = roleToSend === 'TUTOR' ? 'Tutor' : 'Student'
@@ -118,6 +120,22 @@ function SignupPage({ fixedRole }) {
           : [...prev.subjects, subject],
       }
     })
+  }
+
+  const addLocation = (loc) => {
+    const maxLocations = roleToSend === 'TUTOR' ? 5 : 1
+    if (locations.find(l => l.label === loc.label)) return // no duplicates
+    if (locations.length >= maxLocations) {
+      if (roleToSend === 'STUDENT') {
+        setLocations([loc]) // replace for students
+      }
+      return
+    }
+    setLocations(prev => [...prev, loc])
+  }
+
+  const removeLocation = (label) => {
+    setLocations(prev => prev.filter(l => l.label !== label))
   }
 
   // Step 1: Submit form and send verification email
@@ -150,6 +168,15 @@ function SignupPage({ fixedRole }) {
 
     if (!termsAccepted) {
       setError('You must accept the Terms of Service and Privacy Policy to continue.')
+      return
+    }
+
+    if (roleToSend === 'TUTOR' && locations.length === 0) {
+      setError('Please add at least one city.')
+      return
+    }
+    if (roleToSend === 'STUDENT' && locations.length === 0) {
+      setError('Please add your city.')
       return
     }
 
@@ -217,6 +244,11 @@ function SignupPage({ fixedRole }) {
             roleToSend === 'TUTOR' ? form.subjects.join(', ') : null,
           education: roleToSend === 'TUTOR' ? form.education : null,
           marketingOptIn,
+          locations: locations.map(l => ({
+            label: l.label,
+            latitude: l.latitude,
+            longitude: l.longitude,
+          })),
         }),
       })
 
@@ -392,6 +424,49 @@ function SignupPage({ fixedRole }) {
                   />
                   <div className="auth-helper">
                     This helps us verify age-appropriate tutoring.
+                  </div>
+                </div>
+
+                <div className="auth-field">
+                  <label>
+                    {roleToSend === 'TUTOR' ? 'Cities you serve' : 'Your city'}
+                    <span style={{ color: '#ef4444' }}> *</span>
+                  </label>
+
+                  {/* Selected cities */}
+                  {locations.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                      {locations.map(loc => (
+                        <div key={loc.label} style={{
+                          display: 'flex', alignItems: 'center', gap: '6px',
+                          background: '#f3f4f6', borderRadius: '999px',
+                          padding: '4px 12px', fontSize: '13px'
+                        }}>
+                          <span>{loc.label}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeLocation(loc.label)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: '14px', padding: 0 }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Show input only if under limit */}
+                  {locations.length < (roleToSend === 'TUTOR' ? 5 : 1) && (
+                    <CityAutocomplete
+                      onSelect={addLocation}
+                      placeholder={roleToSend === 'TUTOR' ? 'Add a city (up to 5)...' : 'Search your city...'}
+                    />
+                  )}
+
+                  <div className="auth-helper">
+                    {roleToSend === 'TUTOR'
+                      ? `${locations.length}/5 cities added`
+                      : 'Helps you find tutors near you'}
                   </div>
                 </div>
 

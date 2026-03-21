@@ -953,6 +953,24 @@
   height: 15px;
 }
 
+.signup-city-input {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  color: #111827;
+  background: #f9fafb;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.signup-city-input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.22);
+  background: #ffffff;
+}
+
 /* ==========================================
    MOBILE RESPONSIVE - AUTH PAGES
    ========================================== */

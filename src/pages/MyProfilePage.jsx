@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './styles/MyProfilePage.css'
 import ClickableAvatar from '../components/ClickableAvatar'
+import CityAutocomplete from '../components/CityAutocomplete'
 
 const DEFAULT_AVATAR =
   'https://ui-avatars.com/api/?name=User&background=E5E7EB&color=374151'
@@ -41,6 +42,8 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
   const [marketingOptIn, setMarketingOptIn] = useState(false)
+  const [locations, setLocations] = useState([])
+  const [editingLocations, setEditingLocations] = useState(false)
 
   // which fields are in "edit mode"
   const [editing, setEditing] = useState({
@@ -108,6 +111,12 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
             })
           }
         }
+
+        const locRes = await fetch(`${API_BASE}/api/users/${currentUser.userId}/locations`)
+        if (locRes.ok) {
+          const locData = await locRes.json()
+          setLocations(locData)
+        }
       } catch (err) {
         setError(err.message)
       } finally {
@@ -156,6 +165,42 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     } catch (err) {
       console.error('Failed to update marketing preference:', err)
       setMarketingOptIn(!checked) // revert on failure
+    }
+  }
+
+  const handleAddLocation = async (loc) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/users/${currentUser.userId}/locations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          label: loc.label,
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+        }),
+      })
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text)
+      }
+      const updated = await res.json()
+      setLocations(updated)
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const handleRemoveLocation = async (locationId) => {
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/users/${currentUser.userId}/locations/${locationId}`,
+        { method: 'DELETE' }
+      )
+      if (!res.ok) throw new Error('Failed to remove location')
+      const updated = await res.json()
+      setLocations(updated)
+    } catch (err) {
+      setError(err.message)
     }
   }
 
@@ -493,6 +538,62 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                       });
                     })()}
                   </div>
+                )}
+              </div>
+
+              {/* City / Location */}
+              <div className="form-field full-width">
+                <label className="field-label">
+                  {currentUser.role === 'TUTOR' ? 'Cities You Serve' : 'City'}
+                  <button
+                    type="button"
+                    className="edit-btn"
+                    onClick={() => setEditingLocations(prev => !prev)}
+                  >
+                    {editingLocations ? '✓ Done' : '✏️ Edit'}
+                  </button>
+                </label>
+
+                {locations.length > 0 ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                    {locations.map(loc => (
+                      <div key={loc.id} style={{
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        background: '#f3f4f6', borderRadius: '999px',
+                        padding: '6px 14px', fontSize: '14px', color: '#374151',
+                      }}>
+                        <span>{loc.locationLabel}</span>
+                        {editingLocations && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveLocation(loc.id)}
+                            style={{
+                              background: 'none', border: 'none', cursor: 'pointer',
+                              color: '#9ca3af', fontSize: '16px', padding: 0, lineHeight: 1,
+                            }}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="field-value">
+                    <span className="text-muted">No location set</span>
+                  </div>
+                )}
+
+                {editingLocations && locations.length < (currentUser.role === 'TUTOR' ? 5 : 1) && (
+                  <CityAutocomplete
+                    onSelect={handleAddLocation}
+                    placeholder={currentUser.role === 'TUTOR' ? 'Add a city...' : 'Search your city...'}
+                    className="form-input"
+                  />
+                )}
+
+                {editingLocations && currentUser.role === 'TUTOR' && (
+                  <small className="field-hint">{locations.length}/5 cities added</small>
                 )}
               </div>
             </div>
