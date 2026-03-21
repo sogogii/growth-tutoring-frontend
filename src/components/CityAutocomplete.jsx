@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-const GOOGLE_API_KEY = 'REMOVED'
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
 function loadGoogleMapsScript() {
   return new Promise((resolve) => {
