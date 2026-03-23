@@ -183,9 +183,8 @@ function TutorsPage({ currentUser }) {
     }
   }
 
-  const handleNearMe = () => {
+  const handleNearMe = async () => {
     if (nearMeActive) {
-      // Toggle off
       setNearMeActive(false)
       setUserCoords(null)
       setNearMeCity(null)
@@ -193,13 +192,35 @@ function TutorsPage({ currentUser }) {
       return
     }
 
-    if (!navigator.geolocation) {
-      setNearMeError('Geolocation is not supported by your browser.')
-      return
-    }
-
     setNearMeLoading(true)
     setNearMeError(null)
+
+    // 1) If logged in, try their saved profile location first
+    if (currentUser?.userId) {
+      try {
+        const res = await fetch(`${API_BASE}/api/users/${currentUser.userId}/locations`)
+        if (res.ok) {
+          const locs = await res.json()
+          if (locs && locs.length > 0) {
+            const first = locs[0]
+            setUserCoords({ lat: Number(first.latitude), lng: Number(first.longitude) })
+            setNearMeCity(first.locationLabel)
+            setNearMeActive(true)
+            setNearMeLoading(false)
+            return
+          }
+        }
+      } catch {
+        // fall through to browser geolocation
+      }
+    }
+
+    // 2) Not logged in or no saved location — fall back to browser GPS
+    if (!navigator.geolocation) {
+      setNearMeError('Geolocation is not supported by your browser.')
+      setNearMeLoading(false)
+      return
+    }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -208,7 +229,6 @@ function TutorsPage({ currentUser }) {
         setNearMeActive(true)
         setNearMeLoading(false)
 
-        // Reverse geocode city name (free, no API key)
         try {
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
@@ -216,19 +236,12 @@ function TutorsPage({ currentUser }) {
           )
           if (res.ok) {
             const data = await res.json()
-            const city =
-              data.address?.city ||
-              data.address?.town ||
-              data.address?.village ||
-              data.address?.county ||
-              null
+            const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || null
             const state = data.address?.state || null
             if (city && state) setNearMeCity(`${city}, ${state}`)
             else if (city) setNearMeCity(city)
           }
-        } catch {
-          // City name is optional — don't block on failure
-        }
+        } catch { /* city name is optional */ }
       },
       (err) => {
         setNearMeLoading(false)
