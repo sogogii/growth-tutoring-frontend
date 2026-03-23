@@ -460,6 +460,7 @@ function SignupPage({ fixedRole }) {
                     <CityAutocomplete
                       onSelect={addLocation}
                       placeholder={roleToSend === 'TUTOR' ? 'Add a city (up to 5)...' : 'Search your city...'}
+                      className="signup-city-input"
                     />
                   )}
 

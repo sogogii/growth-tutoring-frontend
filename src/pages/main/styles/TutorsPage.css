@@ -467,6 +467,103 @@
   color: #111827;
 }
 
+/* ── Near Me Button ─────────────────────────────────────── */
+.tutors-search-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tutors-search-title-row h2 {
+  margin: 0;
+}
+
+.near-me-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.near-me-btn:hover:not(:disabled) {
+  border-color: #f97316;
+  color: #f97316;
+  background: #fff7ed;
+}
+
+.near-me-btn.active {
+  background: #f97316;
+  border-color: #f97316;
+  color: #ffffff;
+}
+
+.near-me-btn.active:hover {
+  background: #ea6c0a;
+  border-color: #ea6c0a;
+  color: #ffffff;
+}
+
+.near-me-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.near-me-error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #dc2626;
+}
+
+/* ── Near Me Active Badge ───────────────────────────────── */
+.tutors-results-count {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.near-me-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 8px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 999px;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.near-me-badge-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #c2410c;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 0 0 2px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.near-me-badge-clear:hover {
+  opacity: 1;
+}
+
 .tutors-search-row {
   display: flex;
   gap: 12px;
@@ -690,6 +787,16 @@
 .tutor-rate-unit {
   font-size: 14px;
   color: #6b7280;
+}
+
+.tutor-location {
+  font-size: 13px;
+  color: #374151;
+  margin-top: 4px;
+}
+
+.tutor-location strong {
+  font-weight: 700;
 }
 
 .tutor-chat-button {

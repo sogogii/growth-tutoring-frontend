@@ -58,6 +58,25 @@ function formatTeachingMethod(method) {
   }
 }
 
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371
+  const dLat = (lat2 - lat1) * (Math.PI / 180)
+  const dLon = (lon2 - lon1) * (Math.PI / 180)
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+function minDistanceToTutor(userLat, userLng, tutorLocations) {
+  if (!tutorLocations || tutorLocations.length === 0) return Infinity
+  return Math.min(
+    ...tutorLocations.map((loc) => haversineKm(userLat, userLng, loc.latitude, loc.longitude))
+  )
+}
+
 function TutorsPage({ currentUser }) {
   const location = useLocation()
   const navigate = useNavigate()
@@ -78,6 +97,13 @@ function TutorsPage({ currentUser }) {
   const [showMethodPanel, setShowMethodPanel] = useState(false)
   const [showSubjectsPanel, setShowSubjectsPanel] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(true)
+
+  // Near Me state
+  const [nearMeActive, setNearMeActive] = useState(false)
+  const [nearMeLoading, setNearMeLoading] = useState(false)
+  const [nearMeError, setNearMeError] = useState(null)
+  const [userCoords, setUserCoords] = useState(null)   // { lat, lng }
+  const [nearMeCity, setNearMeCity] = useState(null)   // display string
   
   // Subject filter - initialize from navigation state if present
   const [selectedSubjects, setSelectedSubjects] = useState(() => {
@@ -157,6 +183,65 @@ function TutorsPage({ currentUser }) {
     }
   }
 
+  const handleNearMe = () => {
+    if (nearMeActive) {
+      // Toggle off
+      setNearMeActive(false)
+      setUserCoords(null)
+      setNearMeCity(null)
+      setNearMeError(null)
+      return
+    }
+
+    if (!navigator.geolocation) {
+      setNearMeError('Geolocation is not supported by your browser.')
+      return
+    }
+
+    setNearMeLoading(true)
+    setNearMeError(null)
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude: lat, longitude: lng } = position.coords
+        setUserCoords({ lat, lng })
+        setNearMeActive(true)
+        setNearMeLoading(false)
+
+        // Reverse geocode city name (free, no API key)
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+            { headers: { 'Accept-Language': 'en' } }
+          )
+          if (res.ok) {
+            const data = await res.json()
+            const city =
+              data.address?.city ||
+              data.address?.town ||
+              data.address?.village ||
+              data.address?.county ||
+              null
+            const state = data.address?.state || null
+            if (city && state) setNearMeCity(`${city}, ${state}`)
+            else if (city) setNearMeCity(city)
+          }
+        } catch {
+          // City name is optional — don't block on failure
+        }
+      },
+      (err) => {
+        setNearMeLoading(false)
+        if (err.code === err.PERMISSION_DENIED) {
+          setNearMeError('Location access denied. Please allow location in your browser.')
+        } else {
+          setNearMeError('Unable to get your location. Please try again.')
+        }
+      },
+      { timeout: 8000 }
+    )
+  }
+
   useEffect(() => {
     const fetchTutors = async () => {
       try {
@@ -180,7 +265,8 @@ function TutorsPage({ currentUser }) {
           hourlyRate: t.hourlyRate,
           profileImageUrl: t.profileImageUrl || null,
           verificationTier: t.verificationTier || 'TIER_1',
-          education: t.education || ''
+          education: t.education || '',
+          locations: t.locations || [],
         }))
 
         setTutors(mapped)
@@ -201,7 +287,7 @@ function TutorsPage({ currentUser }) {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchQuery, sortOption, priceRange, selectedSubjects, selectedMethods])
+  }, [searchQuery, sortOption, priceRange, selectedSubjects, selectedMethods, nearMeActive])
 
   useEffect(() => {
     if (!tutorsContentRef.current) return
@@ -277,6 +363,18 @@ function TutorsPage({ currentUser }) {
 
   // Sort
   const sortedTutors = [...methodFiltered].sort((a, b) => {
+    if (nearMeActive && userCoords) {
+      const distA = minDistanceToTutor(userCoords.lat, userCoords.lng, a.locations)
+      const distB = minDistanceToTutor(userCoords.lat, userCoords.lng, b.locations)
+
+      // Both have no location — fall back to rating sort
+      if (distA === Infinity && distB === Infinity) return num(b.rating) - num(a.rating)
+      // Push no-location tutors to the bottom
+      if (distA === Infinity) return 1
+      if (distB === Infinity) return -1
+
+      return distA - distB
+    }
     switch (sortOption) {
       case 'ratingDesc':
         return num(b.rating) - num(a.rating)
@@ -548,7 +646,23 @@ function TutorsPage({ currentUser }) {
           <div className="tutors-main">
             {/* Search bar */}
             <header className="tutors-search-header">
-              <h2>Search For Tutors</h2>
+              <div className="tutors-search-title-row">
+                <h2>Search For Tutors</h2>
+                <button
+                  type="button"
+                  className={`near-me-btn ${nearMeActive ? 'active' : ''}`}
+                  onClick={handleNearMe}
+                  disabled={nearMeLoading}
+                  title={nearMeActive ? 'Clear near me filter' : 'Show tutors nearest to your location'}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill={nearMeActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {nearMeLoading ? 'Getting location...' : nearMeActive ? 'Near Me' : 'Near Me'}
+                </button>
+              </div>
+
               <div className="tutors-search-row">
                 <input
                   className="tutors-search-input"
@@ -558,12 +672,26 @@ function TutorsPage({ currentUser }) {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
+
+              {nearMeError && (
+                <p className="near-me-error">{nearMeError}</p>
+              )}
             </header>
 
             {/* Results count */}
             {!loading && !error && (
               <div className="tutors-results-count">
-                {sortedTutors.length} tutor{sortedTutors.length !== 1 ? 's' : ''} found
+                <span>{sortedTutors.length} tutor{sortedTutors.length !== 1 ? 's' : ''} found</span>
+                {nearMeActive && (
+                  <span className="near-me-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                      <circle cx="12" cy="10" r="3" fill="white"/>
+                    </svg>
+                    Sorted nearest to {nearMeCity || 'your location'}
+                    <button type="button" className="near-me-badge-clear" onClick={handleNearMe}>×</button>
+                  </span>
+                )}
               </div>
             )}
 
@@ -645,6 +773,13 @@ function TutorsPage({ currentUser }) {
                         <strong>Method:</strong> {formatTeachingMethod(tutor.teachingMethod)}
                       </span>
                     </div>
+
+                    {tutor.locations && tutor.locations.length > 0 && (
+                      <div className="tutor-location">
+                        <strong>Location:</strong>{' '}
+                        {tutor.locations.map((loc) => loc.label).join(' · ')}
+                      </div>
+                    )}
 
                     <p className="tutor-summary">
                       <strong>Summary:</strong> {tutor.summary}

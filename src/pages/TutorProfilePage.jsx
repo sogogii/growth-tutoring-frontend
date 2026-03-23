@@ -97,7 +97,8 @@ function TutorProfilePage({ currentUser }) {
         hourlyRate: data.hourlyRate,
         profileImageUrl: data.profileImageUrl || null,
         verificationTier: data.verificationTier || 'TIER_1',
-        weeklySchedule: data.weeklySchedule || null  // ADD THIS LINE
+        weeklySchedule: data.weeklySchedule || null,
+        locations: data.locations || [],
       })
     } catch (err) {
       console.error(err)
@@ -585,6 +586,12 @@ function TutorProfilePage({ currentUser }) {
                   <strong>Method:</strong>
                   <span>{tutor.teachingMethod}</span>
                 </li>
+                {tutor.locations && tutor.locations.length > 0 && (
+                  <li>
+                    <strong>Location:</strong>
+                    <span>{tutor.locations.map((loc) => loc.label).join(' · ')}</span>
+                  </li>
+                )}
               </ul>
             </div>
 
