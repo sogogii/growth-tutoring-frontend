@@ -1,26 +1,34 @@
 .verification-badge-wrapper {
   position: relative;
-  display: inline-block;
-}
-
-.verification-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  font-size: 10px;
-  font-weight: 700;
   cursor: help;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.verification-badge:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.verification-checks {
+  display: inline-flex;
+  align-items: center;
 }
 
+.verification-check-slot {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.verification-check-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18));
+}
+
+.verification-badge-wrapper:hover .verification-check-slot {
+  transform: translateY(-1px);
+}
+
+/* Tooltip */
 .verification-tooltip {
   position: absolute;
   bottom: 100%;
