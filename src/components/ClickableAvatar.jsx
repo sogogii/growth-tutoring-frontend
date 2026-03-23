@@ -12,7 +12,7 @@ function ClickableAvatar({ currentImage, onImageChange, userName = 'User', curre
   const fileInputRef = useRef(null)
 
   // ADD YOUR IMGBB API KEY HERE
-  const IMGBB_API_KEY = 'REMOVED'
+  const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
   const ACCEPTED_FORMATS = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
