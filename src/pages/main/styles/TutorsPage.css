@@ -832,6 +832,96 @@
   transform: translateY(-1px);
 }
 
+/* ── Availability / Schedule Filter ── */
+.sched-panel {
+  min-width: 240px;
+}
+
+.sched-row {
+  margin-bottom: 12px;
+}
+
+.sched-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.sched-optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.sched-day-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.sched-day-btn {
+  padding: 7px 4px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.sched-day-btn:hover {
+  border-color: #f97316;
+  color: #f97316;
+}
+
+.sched-day-btn.active {
+  background: #f97316;
+  border-color: #f97316;
+  color: white;
+}
+
+.sched-time-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.sched-time-select:focus {
+  border-color: #f97316;
+}
+
+.sched-time-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sched-time-range .sched-time-select {
+  flex: 1;
+}
+
+.sched-time-sep {
+  font-size: 14px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
 /* ==========================================
    MOBILE RESPONSIVE — TUTORS PAGE
    Append these rules to the bottom of:

@@ -20,6 +20,30 @@ const SUBJECT_OPTIONS = [
 
 const METHOD_OPTIONS = ['ONLINE', 'HYBRID', 'IN_PERSON']
 
+const DAY_OPTIONS = [
+  { value: 'sunday',    label: 'Sunday'    },
+  { value: 'monday',    label: 'Monday'    },
+  { value: 'tuesday',   label: 'Tuesday'   },
+  { value: 'wednesday', label: 'Wednesday' },
+  { value: 'thursday',  label: 'Thursday'  },
+  { value: 'friday',    label: 'Friday'    },
+  { value: 'saturday',  label: 'Saturday'  },
+]
+
+const TIME_OPTIONS = (() => {
+  const opts = []
+  for (let h = 6; h <= 22; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      if (h === 22 && m > 0) break
+      const time24 = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+      const period = h >= 12 ? 'PM' : 'AM'
+      const h12 = h % 12 || 12
+      opts.push({ value: time24, label: `${h12}:${String(m).padStart(2, '0')} ${period}` })
+    }
+  }
+  return opts
+})()
+
 function StarRating({ rating }) {
   const r = rating ?? 0
   return (
@@ -104,6 +128,11 @@ function TutorsPage({ currentUser }) {
   const [nearMeError, setNearMeError] = useState(null)
   const [userCoords, setUserCoords] = useState(null)   // { lat, lng }
   const [nearMeCity, setNearMeCity] = useState(null)   // display string
+
+  const [scheduleDay, setScheduleDay]       = useState('')
+  const [scheduleTimeStart, setScheduleTimeStart] = useState('')
+  const [scheduleTimeEnd, setScheduleTimeEnd]     = useState('')
+  const [showSchedulePanel, setShowSchedulePanel] = useState(false)
   
   // Subject filter - initialize from navigation state if present
   const [selectedSubjects, setSelectedSubjects] = useState(() => {
@@ -177,6 +206,9 @@ function TutorsPage({ currentUser }) {
     setPriceRange([0, 150])
     setSelectedSubjects([])
     setSelectedMethods([])
+    setScheduleDay('')
+    setScheduleTimeStart('')
+    setScheduleTimeEnd('')
     setSearchQuery('')
     if (['online', 'hybrid', 'inPerson'].includes(sortOption)) {
       setSortOption('ratingDesc')
@@ -276,6 +308,7 @@ function TutorsPage({ currentUser }) {
           teachingMethod: t.teachingMethod,
           summary: t.headline || '',
           hourlyRate: t.hourlyRate,
+          weeklySchedule: t.weeklySchedule || {},
           profileImageUrl: t.profileImageUrl || null,
           verificationTier: t.verificationTier || 'TIER_1',
           education: t.education || '',
@@ -320,10 +353,12 @@ function TutorsPage({ currentUser }) {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.tutors-sidebar-section') && 
-          !e.target.closest('.filter-dropdown-panel')) {
+          !e.target.closest('.filter-dropdown-panel') &&
+          !e.target.closest('.sched-panel')) {
         setShowPricePanel(false)
         setShowMethodPanel(false)
         setShowSubjectsPanel(false)
+        setShowSchedulePanel(false)
       }
     }
     
@@ -374,8 +409,23 @@ function TutorsPage({ currentUser }) {
       })
     : subjectFiltered
 
+  // Filter by schedule availability
+  const scheduleFiltered = scheduleDay
+    ? methodFiltered.filter((t) => {
+        const slots = t.weeklySchedule?.[scheduleDay] || []
+        if (slots.length === 0) return false
+        if (!scheduleTimeStart && !scheduleTimeEnd) return true
+        // tutor must have a slot that overlaps the requested range
+        return slots.some(slot => {
+          const start = scheduleTimeStart || '00:00'
+          const end   = scheduleTimeEnd   || '23:59'
+          return slot.start < end && slot.end > start
+        })
+      })
+    : methodFiltered
+
   // Sort
-  const sortedTutors = [...methodFiltered].sort((a, b) => {
+  const sortedTutors = [...scheduleFiltered].sort((a, b) => {
     if (nearMeActive && userCoords) {
       const distA = minDistanceToTutor(userCoords.lat, userCoords.lng, a.locations)
       const distB = minDistanceToTutor(userCoords.lat, userCoords.lng, b.locations)
@@ -407,6 +457,7 @@ function TutorsPage({ currentUser }) {
   const activeFiltersCount = 
     (priceRange[0] > 0 || priceRange[1] < 150 ? 1 : 0) +
     selectedSubjects.length +
+    (scheduleDay ? 1 : 0) +
     selectedMethods.length
 
   return (
@@ -473,6 +524,97 @@ function TutorsPage({ currentUser }) {
                 >
                   Most experience
                 </button>
+              </div>
+
+              {/* Availability */}
+              <div className="tutors-sidebar-section">
+                <h3>Availability</h3>
+
+                <button
+                  type="button"
+                  className={`filter-trigger ${showSchedulePanel ? 'active' : ''}`}
+                  onClick={() => setShowSchedulePanel(!showSchedulePanel)}
+                >
+                  <span>
+                    {scheduleDay
+                      ? (scheduleTimeStart || scheduleTimeEnd)
+                        ? `${DAY_OPTIONS.find(d => d.value === scheduleDay)?.label}, ${TIME_OPTIONS.find(t => t.value === scheduleTimeStart)?.label ?? 'Any'} – ${TIME_OPTIONS.find(t => t.value === scheduleTimeEnd)?.label ?? 'Any'}`
+                        : `${DAY_OPTIONS.find(d => d.value === scheduleDay)?.label}s`
+                      : 'Any availability'}
+                  </span>
+                  <span>{showSchedulePanel ? '▲' : '▼'}</span>
+                </button>
+
+                {showSchedulePanel && (
+                  <div className="filter-dropdown-panel sched-panel">
+                    <div className="filter-panel-header">
+                      <span>Filter by availability</span>
+                      <button className="filter-panel-close" onClick={() => setShowSchedulePanel(false)}>×</button>
+                    </div>
+
+                    <div className="sched-row">
+                      <label className="sched-label">Day</label>
+                      <div className="sched-day-grid">
+                        {DAY_OPTIONS.map(d => (
+                          <button
+                            key={d.value}
+                            type="button"
+                            className={`sched-day-btn ${scheduleDay === d.value ? 'active' : ''}`}
+                            onClick={() => {
+                              setScheduleDay(prev => prev === d.value ? '' : d.value)
+                              setScheduleTime('')
+                            }}
+                          >
+                            {d.label.slice(0, 3)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {scheduleDay && (
+                      <div className="sched-row">
+                        <label className="sched-label">
+                          Time range <span className="sched-optional">(optional)</span>
+                        </label>
+                        <div className="sched-time-range">
+                          <select
+                            className="sched-time-select"
+                            value={scheduleTimeStart}
+                            onChange={e => {
+                              setScheduleTimeStart(e.target.value)
+                              if (scheduleTimeEnd && e.target.value >= scheduleTimeEnd) {
+                                setScheduleTimeEnd('')
+                              }
+                            }}
+                          >
+                            <option value="">From</option>
+                            {TIME_OPTIONS.map(t => (
+                              <option key={t.value} value={t.value}>{t.label}</option>
+                            ))}
+                          </select>
+                          <span className="sched-time-sep">–</span>
+                          <select
+                            className="sched-time-select"
+                            value={scheduleTimeEnd}
+                            onChange={e => setScheduleTimeEnd(e.target.value)}
+                          >
+                            <option value="">To</option>
+                            {TIME_OPTIONS.filter(t => !scheduleTimeStart || t.value > scheduleTimeStart).map(t => (
+                              <option key={t.value} value={t.value}>{t.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      className="filter-apply-button"
+                      onClick={() => setShowSchedulePanel(false)}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Price Range */}
@@ -644,13 +786,14 @@ function TutorsPage({ currentUser }) {
           </aside>
 
           {/* Backdrop for mobile */}
-          {(showPricePanel || showMethodPanel || showSubjectsPanel) && (
+          {(showPricePanel || showMethodPanel || showSubjectsPanel || showSchedulePanel) && (
             <div 
               className="filter-backdrop active"
               onClick={() => {
                 setShowPricePanel(false)
                 setShowMethodPanel(false)
                 setShowSubjectsPanel(false)
+                setShowSchedulePanel(false)
               }}
             />
           )}
