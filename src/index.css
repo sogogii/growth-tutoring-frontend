@@ -1,8 +1,8 @@
-html {
-  overflow-x: unset;
+html,
+body {
+  overflow-x: clip;
   scroll-behavior: smooth;
 }
-
 .app-root {
   overflow-x: clip; 
 }
