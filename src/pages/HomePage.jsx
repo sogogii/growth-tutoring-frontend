@@ -25,7 +25,8 @@ function TopTutorsSection() {
             rating: t.ratingAvg ?? 0,
             ratingCount: t.ratingCount ?? 0,
             subjectLabel: t.subjectLabel,
-            headline: t.headline || '',
+            yearsExperience: t.yearsExperience ?? null,
+            locations: t.locations || [],
             hourlyRate: t.hourlyRate,
             profileImageUrl: t.profileImageUrl || null
           }))
@@ -161,9 +162,19 @@ function TopTutorsSection() {
                     </div>
                   )}
                   
-                  {tutor.headline && (
-                    <p className="top-tutor-bio">{tutor.headline}</p>
-                  )}
+                  <div className="top-tutor-meta">
+                    {tutor.yearsExperience != null && (
+                      <span className="top-tutor-meta-item">
+                        <span className="top-tutor-meta-icon">🎓</span>
+                        {tutor.yearsExperience} yr{tutor.yearsExperience !== 1 ? 's' : ''} exp
+                      </span>
+                    )}
+                    {tutor.locations.length > 0 && (
+                      <span className="top-tutor-meta-item">
+                        {tutor.locations[0].label}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Link>
             ))}

@@ -766,6 +766,7 @@
   transition: all 0.2s ease;
   min-width: 300px;
   max-width: 300px;
+  min-height: 300px;
   flex-shrink: 0;
   scroll-snap-align: start;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -866,11 +867,26 @@
   white-space: nowrap;
 }
 
-.top-tutor-bio {
-  font-size: 14px;
-  color: #6b7280;
-  line-height: 1.5;
-  margin: 0;
+.top-tutor-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.top-tutor-meta-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.top-tutor-meta-icon {
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
 .section-top-tutors .section-cta {
@@ -1372,20 +1388,25 @@
     min-height: calc(100vh - 56px); 
     height: calc(100vh - 56px);    
     margin-top: -24px;
-    width: 100vw; /* Full width */
-    left: 50%;
+    width: calc(100% + 24px) !important;
+    left: 0;
     right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    margin-left: -12px;
+    margin-right: -12px;
     position: relative;
     overflow: hidden; 
-    
+    justify-content: center;
+    align-items: center;
   }
 
   .hero-banner-content {
     padding: 0 20px;
     max-width: 100%;
     box-sizing: border-box;
+    width: 100%;
+    margin: 0 auto;
+    align-items: center;
+    text-align: center;
   }
 
   .hero-banner-company {
@@ -1405,7 +1426,7 @@
     padding: 28px 20px;
     margin-top: 12px;
     border-radius: 12px;
-    max-width: 100%; /* ✅ Prevent overflow */
+    max-width: 100%;
     box-sizing: border-box;
   }
 
@@ -1424,14 +1445,14 @@
 
   .hero-search {
     flex-wrap: wrap;
-    width: 100%; /* ✅ Full width within container */
+    width: 100%;
     box-sizing: border-box;
   }
 
   .hero-search-input {
     font-size: 13px;
     padding: 9px 12px;
-    width: 100%; /* ✅ Full width */
+    width: 100%;
   }
 
   .hero-search-button {
@@ -1454,10 +1475,10 @@
   .section-how-it-works {
     min-width: auto;
     width: 100vw;
-    left: 50%;
+    left: 0;
     right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    margin-left: 0;
+    margin-right: 0;
     position: relative;
     padding: 32px 16px;
     box-sizing: border-box;
@@ -1637,6 +1658,10 @@
     min-height: calc(100vh - 56px);  
     height: calc(100vh - 56px); 
     margin-top: -16px;
+    width: calc(100% + 16px) !important;
+    margin-left: -8px;
+    margin-right: -8px;
+    left: 0;
   }
 
   .hero-banner-content {
