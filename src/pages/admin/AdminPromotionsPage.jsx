@@ -51,7 +51,8 @@ function AdminPromotionsPage({ currentUser }) {
     setPromoError(null)
     try {
       const res = await fetch(
-        `${API_BASE}/api/admin/promotions/recipients?adminUserId=${adminUserId}`
+        `${API_BASE}/api/admin/promotions/recipients`,
+        { credentials: 'include' }
       )
       const data = await res.json()
       setRecipientCount(data.count)
@@ -88,6 +89,7 @@ function AdminPromotionsPage({ currentUser }) {
           body: JSON.stringify({
             subject: promoSubject,
             headline: promoHeadline,
+            credentials: 'include',
             bodyHtml: `<p>${bodyHtml}</p>`,
           }),
         }

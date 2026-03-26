@@ -56,7 +56,7 @@ function AdminPage({ currentUser }) {
         setLoading(true)
 
         const usersRes = await fetch(
-          `${API_BASE}/api/admin/users?adminUserId=${adminUserId}`,
+          `${API_BASE}/api/admin/users`,
           { credentials: 'include' }
         )
 
@@ -368,7 +368,7 @@ function AdminPage({ currentUser }) {
   const updateStatus = async (userId, newStatus) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/admin/users/${userId}/status?adminUserId=${adminUserId}`,
+        `${API_BASE}/api/admin/users/${userId}/status`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -393,7 +393,7 @@ function AdminPage({ currentUser }) {
   const updateVerificationTier = async (userId, newTier) => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/admin/tutors/${userId}/verification-tier?adminUserId=${adminUserId}`,
+        `${API_BASE}/api/admin/tutors/${userId}/verification-tier`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },

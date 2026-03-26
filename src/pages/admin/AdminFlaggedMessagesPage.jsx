@@ -29,9 +29,10 @@ function AdminFlaggedMessagesPage({ currentUser }) {
 
     try {
       setLoading(true)
-      const url = `${API_BASE}/api/admin/flagged-messages?adminUserId=${currentUser.userId}&reviewedOnly=${showReviewed}`
-      
-      const res = await fetch(url)
+      const res = await fetch(
+        `${API_BASE}/api/admin/flagged-messages?reviewedOnly=${showReviewed}`,
+        { credentials: 'include' }
+      )
       
       if (!res.ok) {
         throw new Error('Failed to load flagged messages')
@@ -51,9 +52,10 @@ function AdminFlaggedMessagesPage({ currentUser }) {
     if (!currentUser) return
 
     try {
-      const url = `${API_BASE}/api/admin/flagged-messages/count?adminUserId=${currentUser.userId}`
-      
-      const res = await fetch(url)
+      const res = await fetch(
+        `${API_BASE}/api/admin/flagged-messages/count`,
+        { credentials: 'include' }
+      )
       
       if (!res.ok) return
       
@@ -71,13 +73,15 @@ function AdminFlaggedMessagesPage({ currentUser }) {
     }
 
     try {
-      const url = `${API_BASE}/api/admin/flagged-messages/${messageId}/review?adminUserId=${currentUser.userId}`
-      
-      const res = await fetch(url, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ actionTaken })
-      })
+      const res = await fetch(
+        `${API_BASE}/api/admin/flagged-messages/${messageId}/review`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ actionTaken })
+        }
+      )
 
       if (!res.ok) throw new Error('Failed to review message')
 
