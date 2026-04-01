@@ -294,8 +294,11 @@ function TutorProfilePage({ currentUser }) {
       setChatLoading(true)
 
       const res = await fetch(
-        `${API_BASE}/api/chat/conversation?initiatorUserId=${currentUser.userId}&tutorUserId=${tutor.userId}`,
-        { method: 'POST' }
+        `${API_BASE}/api/chat/conversation?tutorUserId=${tutor.userId}`,
+        {
+          method: 'POST',
+          credentials: 'include'
+        }
       )
 
       if (!res.ok) {
