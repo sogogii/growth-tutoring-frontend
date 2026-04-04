@@ -70,6 +70,7 @@ function App() {
     const saved = localStorage.getItem('currentUser')
     return saved ? JSON.parse(saved) : null
   })
+  const [sessionVerified, setSessionVerified] = useState(false)
 
   const [pendingStudentCount, setPendingStudentCount] = useState(0)
   const [pendingSessionCount, setPendingSessionCount] = useState(0)
@@ -103,6 +104,52 @@ function App() {
       )
     }
   }
+
+  // Verify server session on every app load
+  useEffect(() => {
+    const verifySession = async () => {
+      const saved = localStorage.getItem('currentUser')
+      if (!saved) {
+        // No local user — nothing to verify
+        setSessionVerified(true)
+        return
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/me`, {
+          credentials: 'include',
+        })
+
+        if (res.ok) {
+          // Session alive — refresh user data from server (role/name may have changed)
+          const data = await res.json()
+          const freshUser = {
+            userId: data.userId,
+            userUid: data.userUid,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            role: data.role,
+            profileImageUrl: data.profileImageUrl || null,
+          }
+          setCurrentUser(freshUser)
+          localStorage.setItem('currentUser', JSON.stringify(freshUser))
+        } else {
+          // Session expired or invalid — force logout
+          localStorage.removeItem('currentUser')
+          localStorage.removeItem('lastActivityAt')
+          setCurrentUser(null)
+        }
+      } catch {
+        // Network error — leave the user logged in optimistically,
+        // individual API calls will handle 401s
+      } finally {
+        setSessionVerified(true)
+      }
+    }
+
+    verifySession()
+  }, []) // runs once on mount
 
   // --- Idle timeout ---
   useEffect(() => {
