@@ -68,8 +68,10 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
       try {
         // 1) load user profile
         const res = await fetch(
-          `${API_BASE}/api/users/${currentUser.userId}`
+          `${API_BASE}/api/users/${currentUser.userId}`,
+          { credentials: 'include' }
         )
+
         if (!res.ok) {
           throw new Error('Failed to load profile')
         }
@@ -173,6 +175,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
       const res = await fetch(`${API_BASE}/api/users/${currentUser.userId}/locations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           label: loc.label,
           latitude: loc.latitude,
@@ -194,7 +197,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
     try {
       const res = await fetch(
         `${API_BASE}/api/users/${currentUser.userId}/locations/${locationId}`,
-        { method: 'DELETE' }
+        { method: 'DELETE', credentials: 'include' }
       )
       if (!res.ok) throw new Error('Failed to remove location')
       const updated = await res.json()

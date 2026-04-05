@@ -91,7 +91,7 @@ function MyTutorsPage({ currentUser }) {
 
       const res = await fetch(
         `${API_BASE}/api/student-tutor-links/${linkId}?studentUserId=${currentUser.userId}`,
-        { method: 'DELETE' }
+        { method: 'DELETE', credentials: 'include' }
       )
 
       if (!res.ok) {

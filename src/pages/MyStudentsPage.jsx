@@ -25,10 +25,12 @@ function MyStudentsPage({ currentUser }) {
         setError(null)
 
         const pendingRes = await fetch(
-          `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
+          `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`,
+          { credentials: 'include' }
         )
         const matchedRes = await fetch(
-          `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
+          `${API_BASE}/api/tutors/user/${currentUser.userId}/students`,
+          { credentials: 'include' }
         )
 
         if (!pendingRes.ok || !matchedRes.ok) {
@@ -63,6 +65,7 @@ function MyStudentsPage({ currentUser }) {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ decision }),
         }
       )
@@ -75,10 +78,12 @@ function MyStudentsPage({ currentUser }) {
 
       // refresh lists
       const pendingRes = await fetch(
-        `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`
+        `${API_BASE}/api/tutors/user/${currentUser.userId}/student-requests`,
+        { credentials: 'include' }
       )
       const matchedRes = await fetch(
-        `${API_BASE}/api/tutors/user/${currentUser.userId}/students`
+        `${API_BASE}/api/tutors/user/${currentUser.userId}/students`,
+        { credentials: 'include' }
       )
 
       setPendingStudents(await pendingRes.json())
@@ -98,7 +103,7 @@ function MyStudentsPage({ currentUser }) {
 
       const res = await fetch(
         `${API_BASE}/api/chat/conversation?studentUserId=${student.userId}&tutorUserId=${currentUser.userId}`,
-        { method: 'POST' }
+        { method: 'POST', credentials: 'include' }
       )
 
       if (!res.ok) {
