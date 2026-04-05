@@ -230,6 +230,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify(form),
         }
       )
@@ -256,6 +257,7 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
           {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({
               subjectLabel: tutorForm.subjects.join(', '),
               hourlyRate: tutorForm.hourlyRate
