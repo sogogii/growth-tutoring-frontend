@@ -21,7 +21,10 @@ function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
     setError(null)
 
     try {
-      const res = await fetch(`${API_BASE}/api/session-requests/tutor/${tutorUserId}`)
+      const res = await fetch(
+        `${API_BASE}/api/session-requests/tutor/${tutorUserId}`,
+        { credentials: 'include' }
+      )
       
       if (!res.ok) {
         throw new Error('Failed to load session requests')
@@ -45,7 +48,7 @@ function SessionRequestsList({ tutorUserId, onRequestUpdate }) {
     const endpoint = decision === 'ACCEPT' ? 'accept' : 'decline'
     const res = await fetch(
       `${API_BASE}/api/session-requests/${requestId}/${endpoint}`,
-      { method: 'POST' }
+      { method: 'POST', credentials: 'include' } 
     )
 
     if (!res.ok) {

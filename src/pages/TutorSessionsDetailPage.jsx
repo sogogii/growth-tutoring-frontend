@@ -27,7 +27,8 @@ function TutorSessionsDetailPage({ currentUser }) {
 
     try {
       const res = await fetch(
-        `${API_BASE}/api/session-requests/tutor/${currentUser.userId}`
+        `${API_BASE}/api/session-requests/tutor/${currentUser.userId}`,
+        { credentials: 'include' } 
       )
 
       if (!res.ok) {
@@ -67,7 +68,7 @@ function TutorSessionsDetailPage({ currentUser }) {
       const endpoint = decision === 'ACCEPT' ? 'accept' : 'decline'
       const res = await fetch(
         `${API_BASE}/api/session-requests/${requestId}/${endpoint}`,
-        { method: 'POST' }
+        { method: 'POST', credentials: 'include' } 
       )
 
       if (!res.ok) {

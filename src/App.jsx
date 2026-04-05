@@ -271,7 +271,8 @@ function App() {
     const loadPendingSessionCount = async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/session-requests/tutor/${currentUser.userId}/pending`
+          `${API_BASE}/api/session-requests/tutor/${currentUser.userId}/pending`,
+          { credentials: 'include' }
         )
         if (!res.ok) {
           setPendingSessionCount(0)

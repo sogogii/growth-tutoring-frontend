@@ -47,7 +47,8 @@ function SchedulePage({ currentUser }) {
   const loadPendingCount = async () => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/session-requests/tutor/${currentUser.userId}/pending`
+        `${API_BASE}/api/session-requests/tutor/${currentUser.userId}/pending`,
+        { credentials: 'include' }
       )
       if (res.ok) {
         const data = await res.json()
