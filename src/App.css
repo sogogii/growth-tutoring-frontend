@@ -1116,6 +1116,11 @@
   .app-main:has(.home) {
     padding-top: 0; /* Remove top padding only for homepage */
   }
+
+    .app-main:has(.home) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }
 
 /* Mobile phones (480px and below) */
