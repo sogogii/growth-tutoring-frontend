@@ -1576,7 +1576,8 @@
     grid-template-columns: unset !important;
     gap: 14px !important;
     margin-top: 0 !important;
-    padding: 4px 20px 16px !important;
+    padding: 4px calc((100% - 78vw) / 2) 16px !important;
+    scroll-padding-left: calc((100% - 78vw) / 2) !important;
     overflow-x: auto !important;
     overflow-y: visible !important;
     scroll-snap-type: x mandatory !important;
@@ -1717,7 +1718,8 @@
   .top-tutors-scroll {
     display: flex !important;
     gap: 14px !important;
-    padding: 4px 20px 16px !important;
+    padding: 4px calc((100% - 72vw) / 2) 16px !important;
+    scroll-padding-left: calc((100% - 72vw) / 2) !important;
     overflow-x: auto !important;
     overflow-y: visible !important;
     scroll-snap-type: x mandatory !important;
