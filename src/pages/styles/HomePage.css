@@ -1,3 +1,11 @@
+/* TOP LEVEL — not inside any @media */
+@property --x1 { syntax: '<percentage>'; inherits: false; initial-value: 80%; }
+@property --y1 { syntax: '<percentage>'; inherits: false; initial-value: 15%; }
+@property --x2 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
+@property --y2 { syntax: '<percentage>'; inherits: false; initial-value: 75%; }
+@property --x3 { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
+@property --y3 { syntax: '<percentage>'; inherits: false; initial-value: 45%; }
+
 /* ==========================================
    HOME PAGE STYLES - COMPLETE WITH MOBILE OPTIMIZATION
    Based on HomePage.jsx structure
@@ -1396,6 +1404,53 @@
     overflow-x: clip !important;
   }
 
+  .hero-banner {
+    background-image: none !important;
+    background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #111827 100%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    --x1: 80%; --y1: 15%;
+    --x2: 10%; --y2: 75%;
+    --x3: 50%; --y3: 45%;
+    
+  }
+
+  .hero-banner::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    background:
+      radial-gradient(ellipse at var(--x1) var(--y1), rgba(249, 115, 22, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse at var(--x2) var(--y2), rgba(249, 115, 22, 0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at var(--x3) var(--y3), rgba(22, 163, 74, 0.18) 0%, transparent 50%),
+      radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px) !important;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px !important;
+  }
+
+  @keyframes heroGlow {
+    0%   { --x1: 90%; --y1: 10%; }
+    25%  { --x1: 10%; --y1: 30%; }
+    50%  { --x1: 50%; --y1: 90%; }
+    75%  { --x1: 20%; --y1: 50%; }
+    100% { --x1: 90%; --y1: 10%; }
+  }
+
+  .hero-banner-content {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .hero-scroll {
+    position: absolute !important;
+    z-index: 2 !important;
+    bottom: 20px !important;
+  }
+
   /* ── Full-bleed: since .app-main padding is 0 on homepage,
         width: 100% fills the viewport exactly. No math needed. ── */
   .hero-banner,
@@ -1533,7 +1588,7 @@
 
   .hero-scroll {
     display: flex !important;
-    bottom: 20px !important;
+    bottom: 80px !important;
   }
 
 
