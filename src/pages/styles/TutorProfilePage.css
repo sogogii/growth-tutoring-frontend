@@ -692,80 +692,6 @@
   gap: 10px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .tutor-profile-page {
-    padding: 20px 12px 40px;
-  }
-
-  .tutor-profile-header {
-    padding: 32px 24px 24px;
-  }
-
-  .tutor-profile-header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .tutor-profile-photo {
-    width: 120px;
-    height: 120px;
-  }
-
-  .tutor-profile-name {
-    font-size: 28px;
-  }
-
-  .tutor-profile-name-row {
-    justify-content: center;
-  }
-
-  .tutor-profile-subjects {
-    justify-content: center;
-  }
-
-  .tutor-profile-actions {
-    width: 100%;
-    align-items: stretch;
-  }
-
-  .tutor-profile-rate {
-    margin: 0 auto;
-  }
-
-  .tutor-profile-content {
-    padding: 24px;
-  }
-
-  .tutor-profile-section-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-
-  .tutor-profile-footer {
-    padding: 0 24px 24px;
-  }
-}
-
-/* Loading State */
-.tutor-profile-loading {
-  text-align: center;
-  padding: 60px 20px;
-  color: #6b7280;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .tutor-profile-card {
   animation: fadeIn 0.4s ease;
 }
@@ -815,15 +741,217 @@
   opacity: 0.95;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .btn-book-now {
-    width: 100%;
-    padding: 12px 24px;
-    font-size: 1rem;
+/* =============================================================
+   TUTOR PROFILE PAGE — MOBILE RESPONSIVE
+   
+   HOW TO APPLY:
+   Paste this at the very bottom of TutorProfilePage.css
+   ============================================================= */
+
+@media (max-width: 768px) {
+
+  /* ── Page wrapper ── */
+  .tutor-profile-page {
+    padding: 0 0 40px !important;
+    max-width: 100% !important;
   }
-  
-  .book-now-container {
-    padding: 20px;
+
+  .tutor-profile-card {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
+
+  /* ── Header — stack vertically, center ── */
+  .tutor-profile-header {
+    padding: 32px 20px 28px !important;
+  }
+
+  .tutor-profile-header-content {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 20px !important;
+    text-align: center !important;
+  }
+
+  /* Photo */
+  .tutor-profile-photo {
+    width: 110px !important;
+    height: 110px !important;
+    border-radius: 20px !important;
+  }
+
+  .tutor-profile-photo.placeholder {
+    width: 110px !important;
+    height: 110px !important;
+    font-size: 36px !important;
+  }
+
+  /* Info block — centered */
+  .tutor-profile-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .tutor-profile-name-row {
+    justify-content: center !important;
+    margin-bottom: 10px !important;
+  }
+
+  .tutor-profile-name {
+    font-size: 26px !important;
+    text-align: center !important;
+  }
+
+  .tutor-profile-subjects {
+    justify-content: center !important;
+    gap: 6px !important;
+  }
+
+  .tutor-profile-subject-tag {
+    font-size: 12px !important;
+    padding: 5px 12px !important;
+  }
+
+  /* Actions — center, full width buttons */
+  .tutor-profile-actions {
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .tutor-profile-rate {
+    width: 100% !important;
+    max-width: 160px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 999px !important;
+    padding: 8px 24px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .tutor-profile-rate .amount {
+    font-size: 20px !important;
+    display: inline !important;
+  }
+
+  .tutor-profile-rate .unit {
+    font-size: 14px !important;
+    display: inline !important;
+  }
+
+  .tutor-profile-cta {
+    width: 100% !important;
+    max-width: 320px !important;
+    padding: 13px 24px !important;
+    font-size: 15px !important;
+    text-align: center !important;
+  }
+
+  .tutor-profile-secondary-cta {
+    width: 100% !important;
+    max-width: 320px !important;
+    padding: 11px 24px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+  }
+
+  /* ── Content section ── */
+  .tutor-profile-content {
+    padding: 24px 16px !important;
+  }
+
+  /* Single column grid */
+  .tutor-profile-section-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .tutor-profile-section h2 {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Overview list */
+  .tutor-profile-list li {
+    font-size: 14px !important;
+    padding: 10px 0 !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .tutor-profile-list strong {
+    min-width: 90px !important;
+  }
+
+  /* Bio */
+  .tutor-profile-bio {
+    font-size: 14px !important;
+    padding: 16px !important;
+    line-height: 1.7 !important;
+  }
+
+  /* ── Reviews ── */
+  .tutor-profile-reviews {
+    margin-top: 24px !important;
+  }
+
+  .review-form {
+    padding: 16px !important;
+  }
+
+  .review-form-row select,
+  .review-form-row textarea {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+  }
+
+  .review-submit {
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+
+  .review-card {
+    padding: 16px !important;
+  }
+
+  .reviews-list {
+    gap: 14px !important;
+  }
+
+}
+
+/* ── Small phones (≤ 480px) ── */
+@media (max-width: 480px) {
+
+  .tutor-profile-header {
+    padding: 24px 16px 20px !important;
+  }
+
+  .tutor-profile-name {
+    font-size: 22px !important;
+  }
+
+  .tutor-profile-photo {
+    width: 96px !important;
+    height: 96px !important;
+  }
+
+  .tutor-profile-content {
+    padding: 20px 12px !important;
+  }
+
+  .tutor-profile-cta,
+  .tutor-profile-secondary-cta {
+    max-width: 100% !important;
+  }
+
 }

@@ -30,6 +30,8 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
 
   const [bookedSlots, setBookedSlots] = useState([])
 
+  const [timeGridExpanded, setTimeGridExpanded] = useState(true)
+
   const calculateAvailableTimes = (date) => {
     const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()]
     const daySchedule = tutorSchedule?.[dayName]
@@ -480,67 +482,84 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
                 Step 2: Select Time - {selectedDate.toLocaleDateString('en-US', { 
                   weekday: 'long', month: 'long', day: 'numeric' 
                 })}
+                <button
+                  type="button"
+                  className="time-toggle-btn"
+                  onClick={() => setTimeGridExpanded(prev => !prev)}
+                >
+                  {timeGridExpanded ? '▲' : '▼'}
+                </button>
               </h3>
 
-              {availableTimes.length === 0 ? (
-                <p className="no-times">No available times on this date</p>
-              ) : (
-                <>
-                  {/* Render each availability window separately */}
-                  {timeWindows.map((window, windowIndex) => (
-                    <div key={windowIndex} className="time-window">
-                      {/* Window header showing time range */}
-                      <div className="time-window-header">
-                        Available: {window[0].time12} - {window[window.length - 1].time12}
+              {/* Always show selected time summary */}
+              {selectedStartTime && (
+                <div className="selected-time-summary">
+                  Selected: <strong>{selectedStartTime.time12}</strong>
+                  {selectedEndTime && <> → <strong>{selectedEndTime.time12}</strong></>}
+                </div>
+              )}
+
+              {timeGridExpanded && (
+                availableTimes.length === 0 ? (
+                  <p className="no-times">No available times on this date</p>
+                  ) : (
+                    <>
+                      {/* Render each availability window separately */}
+                      {timeWindows.map((window, windowIndex) => (
+                      <div key={windowIndex} className="time-window">
+                        {/* Window header showing time range */}
+                        <div className="time-window-header">
+                          Available: {window[0].time12} - {window[window.length - 1].time12}
+                        </div>
+                        
+                        {/* Time slots in this window */}
+                        <div className="time-grid">
+                          {window.map(time => {
+                            const isBooked = isTimeSlotBooked(time)
+                            const isPast = isTimePast(time)
+                            const isStartSelected = selectedStartTime?.time24 === time.time24
+                            const isEndSelected = selectedEndTime?.time24 === time.time24
+                            const isInRange = selectedStartTime && selectedEndTime &&
+                              time.hour * 60 + time.minute > selectedStartTime.hour * 60 + selectedStartTime.minute &&
+                              time.hour * 60 + time.minute < selectedEndTime.hour * 60 + selectedEndTime.minute
+
+                            return (
+                              <button
+                                key={time.time24}
+                                type="button"
+                                onClick={() => handleTimeClick(time)}
+                                disabled={isBooked || isPast}
+                                className={`time-slot ${
+                                  isBooked ? 'booked' : '' 
+                                } ${ isStartSelected ? 'start-selected' : ''
+                                } ${isEndSelected ? 'end-selected' : ''} ${
+                                  isInRange ? 'in-range' : ''
+                                }`}
+                              >
+                                {time.time12}
+                              </button>
+                            )
+                          })}
+                        </div>
                       </div>
-                      
-                      {/* Time slots in this window */}
-                      <div className="time-grid">
-                        {window.map(time => {
-                          const isBooked = isTimeSlotBooked(time)
-                          const isPast = isTimePast(time)
-                          const isStartSelected = selectedStartTime?.time24 === time.time24
-                          const isEndSelected = selectedEndTime?.time24 === time.time24
-                          const isInRange = selectedStartTime && selectedEndTime &&
-                            time.hour * 60 + time.minute > selectedStartTime.hour * 60 + selectedStartTime.minute &&
-                            time.hour * 60 + time.minute < selectedEndTime.hour * 60 + selectedEndTime.minute
+                    ))}
 
-                          return (
-                            <button
-                              key={time.time24}
-                              type="button"
-                              onClick={() => handleTimeClick(time)}
-                              disabled={isBooked || isPast}
-                              className={`time-slot ${
-                                isBooked ? 'booked' : '' 
-                              } ${ isStartSelected ? 'start-selected' : ''
-                              } ${isEndSelected ? 'end-selected' : ''} ${
-                                isInRange ? 'in-range' : ''
-                              }`}
-                            >
-                              {time.time12}
-                            </button>
-                          )
-                        })}
+                    {selectedStartTime && selectedEndTime && (
+                      <div className="selected-time-summary">
+                        <strong>Selected:</strong> {selectedStartTime.time12} - {selectedEndTime.time12}
+                        {' '}({Math.floor(((selectedEndTime.hour * 60 + selectedEndTime.minute) - 
+                          (selectedStartTime.hour * 60 + selectedStartTime.minute)) / 60)}h{' '}
+                        {((selectedEndTime.hour * 60 + selectedEndTime.minute) - 
+                          (selectedStartTime.hour * 60 + selectedStartTime.minute)) % 60}m)
                       </div>
-                    </div>
-                  ))}
+                    )}
 
-                  {selectedStartTime && selectedEndTime && (
-                    <div className="selected-time-summary">
-                      <strong>Selected:</strong> {selectedStartTime.time12} - {selectedEndTime.time12}
-                      {' '}({Math.floor(((selectedEndTime.hour * 60 + selectedEndTime.minute) - 
-                        (selectedStartTime.hour * 60 + selectedStartTime.minute)) / 60)}h{' '}
-                      {((selectedEndTime.hour * 60 + selectedEndTime.minute) - 
-                        (selectedStartTime.hour * 60 + selectedStartTime.minute)) % 60}m)
-                    </div>
-                  )}
-
-                  <p className="time-hint">
-                    Click to select start time, then click again to select end time.
-                    Minimum 30 minutes session.
-                  </p>
-                </>
+                    <p className="time-hint">
+                      Click to select start time, then click again to select end time.
+                      Minimum 30 minutes session.
+                    </p>
+                  </>
+                )
               )}
             </div>
           )}

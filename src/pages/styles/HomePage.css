@@ -1789,7 +1789,7 @@
     min-width: 72vw !important;
     max-width: 72vw !important;
     width: 72vw !important;
-    padding: 20px 16px !important;
+    padding: 20px 0px !important;
     min-height: unset !important;
     border-radius: 16px !important;
     flex-shrink: 0 !important;
