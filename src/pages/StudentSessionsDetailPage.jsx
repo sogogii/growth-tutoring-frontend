@@ -5,7 +5,7 @@ import CancellationModal from '../components/CancellationModal'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-function StudentSessionsDetailPage() {
+function StudentSessionsDetailPage({ currentUser }) {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -14,8 +14,6 @@ function StudentSessionsDetailPage() {
   const [sessionToCancel, setSessionToCancel] = useState(null)
   const navigate = useNavigate()
   const { category } = useParams() // pending, confirmed, past, cancelled
-
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null')
 
   useEffect(() => {
     if (!currentUser) {
@@ -32,7 +30,8 @@ function StudentSessionsDetailPage() {
   const loadSessions = async () => {
     try {
       const res = await fetch(
-        `${API_BASE}/api/session-requests/student/${currentUser.userId}`
+        `${API_BASE}/api/session-requests/student/${currentUser.userId}`,
+        { credentials: 'include' }
       )
       
       if (!res.ok) throw new Error('Failed to load sessions')
@@ -65,10 +64,10 @@ function StudentSessionsDetailPage() {
     setCancellingId(sessionId)
 
     try {
-      const res = await fetch(
-        `${API_BASE}/api/session-requests/${sessionId}/cancel`,
-        { method: 'POST' }
-      )
+      const res = await fetch(`${API_BASE}/api/session-requests/${sessionId}/cancel`, {
+        method: 'POST',
+        credentials: 'include'
+      })
 
       if (!res.ok) {
         const text = await res.text()

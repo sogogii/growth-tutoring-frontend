@@ -867,8 +867,8 @@ function App() {
             }
           />
 
-          <Route path="/my-sessions" element={<StudentSessionsPage />} />
-          <Route path="/my-sessions/:category" element={<StudentSessionsDetailPage />} />
+          <Route path="/my-sessions" element={<StudentSessionsPage currentUser={currentUser} />} />
+          <Route path="/my-sessions/:category" element={<StudentSessionsDetailPage currentUser={currentUser} />} />
 
           <Route path="/tutor/sessions" element={<TutorSessionsPage currentUser={currentUser} />} />
           <Route 

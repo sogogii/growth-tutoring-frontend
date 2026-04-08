@@ -114,7 +114,9 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
           }
         }
 
-        const locRes = await fetch(`${API_BASE}/api/users/${currentUser.userId}/locations`)
+        const locRes = await fetch(`${API_BASE}/api/users/${currentUser.userId}/locations`, {
+          credentials: 'include'
+        })
         if (locRes.ok) {
           const locData = await locRes.json()
           setLocations(locData)
