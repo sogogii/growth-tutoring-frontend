@@ -705,8 +705,20 @@
   }
   
   .how-tutor-showcase {
-    flex-direction: column;
-    align-items: center;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .how-tutor-sample-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .how-step-section {
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
   
   .how-chat-bubble {

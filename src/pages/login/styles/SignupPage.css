@@ -823,8 +823,10 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  
   .signup-choice-page {
-    padding: 32px 16px;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 
   .signup-choice-header {

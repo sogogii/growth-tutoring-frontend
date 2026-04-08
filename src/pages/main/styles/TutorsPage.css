@@ -954,11 +954,17 @@
 
   /* ── Hero ── */
   .tutors-hero {
-    padding: 48px 20px 36px;
+    width: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 48px 20px 36px !important;
+    box-sizing: border-box !important;
   }
 
   .tutors-hero h1 {
-    font-size: 32px;
+    font-size: 32px !important;
   }
 
   /* ── Page content area ── */
@@ -1089,14 +1095,6 @@
 }
 
 @media (max-width: 480px) {
-
-  .tutors-hero h1 {
-    font-size: 26px;
-  }
-
-  .tutors-hero {
-    padding: 36px 16px 28px;
-  }
 
   .tutors-content {
     padding: 12px 10px 32px;

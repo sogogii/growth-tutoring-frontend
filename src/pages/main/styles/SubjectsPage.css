@@ -260,34 +260,161 @@
   box-shadow: 0 6px 20px rgba(22, 163, 74, 0.3);
 }
 
-/* Responsive layout for subjects */
-
+/* ── Tablet (≤ 1024px) ── */
 @media (max-width: 1024px) {
   .subjects-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
 }
-
-@media (max-width: 640px) {
+ 
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+ 
+  /* Hero — full width, centered */
   .subjects-hero {
-    padding: 28px 16px;
+    width: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 48px 20px 36px !important;
+    box-sizing: border-box !important;
+    min-height: 200px !important;
   }
+ 
+  .subjects-hero-title {
+    font-size: 32px !important;
 
-  .subjects-content {
-    padding: 24px 16px 32px;
   }
-
+ 
+  .subjects-hero-subtitle {
+    font-size: 15px !important;
+  }
+ 
+  /* Main container */
+  .subjects-container {
+    padding: 36px 16px 48px !important;
+  }
+ 
+  /* Section header */
+  .subjects-section-header {
+    margin-bottom: 28px !important;
+  }
+ 
+  .subjects-section-title {
+    font-size: 24px !important;
+  }
+ 
+  .subjects-section-subtitle {
+    font-size: 14px !important;
+  }
+ 
+  /* Grid — 2 columns on tablet-ish mobile */
   .subjects-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
   }
-
+ 
+  /* Cards */
+  .subject-card {
+    padding: 18px !important;
+    min-height: 200px !important;
+    max-height: unset !important;
+    aspect-ratio: unset !important;
+  }
+ 
   .subject-title {
-    font-size: 16px;
+    font-size: 15px !important;
   }
-
+ 
   .subject-description {
-    font-size: 13px;
+    font-size: 12px !important;
+    -webkit-line-clamp: 3 !important;
   }
+ 
+  /* Always show footer link on mobile (no hover) */
+  .subject-card-footer {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+ 
+  .subject-link-text {
+    font-size: 13px !important;
+  }
+ 
+  /* CTA section */
+  .subjects-cta-section {
+    margin-top: 48px !important;
+  }
+ 
+  .subjects-cta-card {
+    padding: 32px 20px !important;
+  }
+ 
+  .subjects-cta-title {
+    font-size: 22px !important;
+  }
+ 
+  .subjects-cta-text {
+    font-size: 14px !important;
+  }
+ 
+  .subjects-cta-button {
+    padding: 12px 28px !important;
+    font-size: 15px !important;
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+ 
+}
+ 
+/* ── Small phones (≤ 480px) ── */
+@media (max-width: 480px) {
+ 
+  .subjects-hero {
+    padding: 48px 20px 36px !important;
+  }
+ 
+  .subjects-hero-title {
+    font-size: 32px !important;
+  }
+ 
+  .subjects-hero-subtitle {
+    font-size: 15px !important;
+  }
+ 
+  .subjects-container {
+    padding: 28px 12px 40px !important;
+  }
+ 
+  /* Single column on small phones */
+  .subjects-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+ 
+  .subject-card {
+    min-height: unset !important;
+    padding: 16px !important;
+  }
+ 
+  .subject-title {
+    font-size: 16px !important;
+  }
+ 
+  .subject-description {
+    font-size: 13px !important;
+    -webkit-line-clamp: unset !important;
+  }
+ 
+  .subjects-section-title {
+    font-size: 22px !important;
+  }
+ 
+  .subjects-cta-title {
+    font-size: 20px !important;
+  }
+ 
 }

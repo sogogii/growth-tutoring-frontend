@@ -1114,7 +1114,9 @@
   }
 
   .home ~ .app-main,
-  .app-main:has(.home) {
+  .app-main:has(.home),
+  .app-main:has(.signup-choice-page),
+  .app-main:has(.my-profile-page) {
     padding-top: 0; /* Remove top padding only for homepage */
   }
 
@@ -1123,10 +1125,14 @@
   .app-main:has(.about-page),
   .app-main:has(.how-it-works-page),
   .app-main:has(.subjects-page),
-  .app-main:has(.faq-page) {
+  .app-main:has(.contact-page),
+  .app-main:has(.faq-page),
+  .app-main:has(.auth-page),
+  .app-main:has(.signup-choice-page),
+  .app-main:has(.my-profile-page) {
     padding-left: 0 !important;
     padding-right: 0 !important;
-}
+  }
 }
 
 /* Mobile phones (480px and below) */
