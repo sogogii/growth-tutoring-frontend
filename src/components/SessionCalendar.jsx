@@ -25,7 +25,8 @@ function SessionCalendar({ tutorUserId }) {
     setLoading(true)
     try {
       const res = await fetch(
-        `${API_BASE}/api/session-requests/tutor/${tutorUserId}/upcoming`
+        `${API_BASE}/api/session-requests/tutor/${tutorUserId}/upcoming`,
+        { credentials: 'include' }
       )
       if (res.ok) {
         const data = await res.json()

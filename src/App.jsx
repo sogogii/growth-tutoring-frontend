@@ -771,7 +771,7 @@ function App() {
                     <Link to="/my-students" onClick={() => setIsMobileMenuOpen(false)}>
                       My Students
                     </Link>
-                    <Link to="/earnings" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link to="/my-earnings" onClick={() => setIsMobileMenuOpen(false)}>
                       Earnings
                     </Link>
                   </>
