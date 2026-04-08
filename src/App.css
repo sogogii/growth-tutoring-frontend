@@ -944,9 +944,9 @@
 
   /* Make logo smaller */
   .logo-image {
-    width: 90px !important;
-    height: 90px !important;
-    transform: scale(1.1);
+    width: 70px !important;
+    height: 55px !important;
+    transform: scale(1.6) !important;
   }
 
   .logo-name {
