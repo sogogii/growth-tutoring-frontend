@@ -4,57 +4,78 @@ import './styles/BookingSuccessPage.css'
 function BookingSuccessPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  
-  const { sessionRequestId, message } = location.state || {}
+
+  const { message } = location.state || {}
 
   return (
     <div className="booking-success-page">
       <div className="success-container">
-        <h1>Booking Request Sent!</h1>
-        
-        <p className="success-message">
+
+        {/* Icon */}
+        <div className="success-icon-wrapper">
+          <div className="success-icon">✓</div>
+        </div>
+
+        {/* Title */}
+        <h1 className="success-title">Booking Request Sent!</h1>
+        <p className="success-subtitle">
           {message || 'Your session request has been sent successfully.'}
         </p>
 
-        <div className="info-box">
-          <h3>What happens next?</h3>
-          <ol>
-            <li>
-              <strong>Tutor Review:</strong> The tutor will review your session request and respond within 24 hours.
-            </li>
-            <li>
-              <strong>Payment Authorization:</strong> Your payment method has been authorized but NOT charged yet.
-            </li>
-            <li>
-              <strong>If Accepted:</strong> The tutor accepts → Payment is processed → Session is confirmed!
-            </li>
-            <li>
-              <strong>If Declined:</strong> The tutor declines → Payment authorization is released → You won't be charged.
-            </li>
-          </ol>
+        {/* Steps */}
+        <div className="success-steps">
+          <h3 className="steps-title">What happens next?</h3>
+          <div className="step">
+            <div className="step-number">1</div>
+            <div className="step-content">
+              <strong>Tutor Review</strong>
+              <span>The tutor will review your request and respond within 24 hours.</span>
+            </div>
+          </div>
+          <div className="step">
+            <div className="step-number">2</div>
+            <div className="step-content">
+              <strong>Payment on Hold</strong>
+              <span>Your payment is authorized but not charged yet.</span>
+            </div>
+          </div>
+          <div className="step">
+            <div className="step-number">3</div>
+            <div className="step-content">
+              <strong>If Accepted</strong>
+              <span>Payment is processed and your session is confirmed.</span>
+            </div>
+          </div>
+          <div className="step">
+            <div className="step-number">4</div>
+            <div className="step-content">
+              <strong>If Declined</strong>
+              <span>Authorization is released and you won't be charged.</span>
+            </div>
+          </div>
         </div>
 
-        <div className="notice-box">
-          <p>
-            💡 <strong>Good to know:</strong> You can view and manage your session requests 
-            in your dashboard. You'll receive email notifications when the tutor responds.
-          </p>
+        {/* Notice */}
+        <div className="success-notice">
+          You'll receive an email notification when the tutor responds.
         </div>
 
-        <div className="action-buttons">
-          <button 
-            className="btn-primary"
+        {/* Buttons */}
+        <div className="success-actions">
+          <button
+            className="success-btn-primary"
             onClick={() => navigate('/my-sessions')}
           >
             View My Bookings
           </button>
-          <button 
-            className="btn-secondary"
+          <button
+            className="success-btn-secondary"
             onClick={() => navigate('/tutors')}
           >
             Browse More Tutors
           </button>
         </div>
+
       </div>
     </div>
   )

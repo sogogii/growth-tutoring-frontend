@@ -398,6 +398,14 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
           <>
             {/* Chat Header */}
             <div className="chat-header">
+              {/* Back button — mobile only */}
+              <button
+                className="chat-header-back"
+                onClick={() => navigate('/messages')}
+                aria-label="Back to conversations"
+              >
+                ←
+              </button>
               <div 
                 className="chat-header-content"
                 onClick={() => {

@@ -224,35 +224,53 @@
    RESPONSIVE DESIGN
    ========================================== */
 
-@media (max-width: 640px) {
-  /* Adjust page padding */
+@media (max-width: 768px) {
   .my-profile-page {
-    padding: 20px 0 32px;
+    padding: 16px 16px 32px !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
   }
 
-  /* Stack profile card main content vertically */
+  .my-profile-page h1 {
+    font-size: 20px;
+    min-width: unset !important;
+  }
+
+  .profile-section {
+    padding: 14px 12px;
+    border-radius: 10px;
+  }
+
   .profile-card-main {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  /* Make withdraw button full width on mobile */
-  .btn-outline-danger {
-    width: 100%;
-    align-self: stretch;
-  }
-
-  /* Stack actions vertically on mobile */
   .profile-card-actions {
     width: 100%;
     flex-direction: column;
+    gap: 8px;
   }
 
-  /* Make matched tutor buttons full width */
   .profile-card .btn.btn-primary,
   .profile-card .btn.btn-outline {
-    width: 100%;
+    width: 100% !important;
     text-align: center;
     justify-content: center;
+    box-sizing: border-box;
+    display: block;
+  }
+
+  .btn-outline-danger {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    box-sizing: border-box;
+  }
+
+  .profile-card-title {
+    flex-direction: column;
+    gap: 2px;
   }
 }

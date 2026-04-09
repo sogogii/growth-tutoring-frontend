@@ -16,7 +16,7 @@ function SessionRequestForm({ tutorUserId, tutorName, tutorTeachingMethod, stude
   const [selectedStartTime, setSelectedStartTime] = useState(null)
   const [selectedEndTime, setSelectedEndTime] = useState(null)
 
-  const [sessionFormat, setSessionFormat] = useState('ONLINE')
+  const [sessionFormat, setSessionFormat] = useState('IN_PERSON')
   
   // Step 3: Add Details
   const [subject, setSubject] = useState('')

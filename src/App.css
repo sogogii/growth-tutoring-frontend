@@ -1117,7 +1117,8 @@
   .app-main:has(.home),
   .app-main:has(.signup-choice-page),
   .app-main:has(.my-profile-page),
-  .app-main:has(.tutor-profile-page) {
+  .app-main:has(.tutor-profile-page),
+  .app-main:has(.sessions-page) {
     padding-top: 0; /* Remove top padding only for homepage */
   }
 
@@ -1131,7 +1132,10 @@
   .app-main:has(.auth-page),
   .app-main:has(.signup-choice-page),
   .app-main:has(.my-profile-page),
-  .app-main:has(.tutor-profile-page) {
+  .app-main:has(.tutor-profile-page),
+  .app-main:has(.checkout-page),
+  .app-main:has(.my-payments-page),
+  .app-main:has(.sessions-page) {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }

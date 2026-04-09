@@ -17,6 +17,7 @@
   z-index: 1000;
   padding: 1rem;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modal-content {
@@ -427,6 +428,7 @@
 .form-group input,
 .form-group textarea {
   width: 100%;
+  box-sizing: border-box;
   padding: 0.875rem;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -667,6 +669,7 @@
     border-radius: 20px 20px 0 0 !important;
     padding: 20px 16px !important;
     box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
   .modal-title {
@@ -767,6 +770,8 @@
   /* Inputs */
   .form-group input,
   .form-group textarea {
+    box-sizing: border-box;
+    max-width: 100%;
     padding: 12px !important;
     font-size: 0.95rem !important;
   }

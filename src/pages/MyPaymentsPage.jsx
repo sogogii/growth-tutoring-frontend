@@ -167,7 +167,12 @@ function MyPaymentsPage() {
   return (
     <div className="my-payments-page">
       <div className="payments-container">
-        <h1 className="page-title">My Payment Methods</h1>
+
+        {/* Header */}
+        <div className="payments-header">
+          <h1 className="page-title">Payment Methods</h1>
+          <p className="page-subtitle">Manage your saved cards and billing preferences</p>
+        </div>
 
         {error && (
           <div className="error-banner">
@@ -176,15 +181,27 @@ function MyPaymentsPage() {
           </div>
         )}
 
-        {/* Saved Cards Section */}
+        {/* Summary Card */}
+        <div className="payments-summary-card">
+          <div className="summary-left">
+            <h3>Saved Cards</h3>
+            <div className="summary-count">{paymentMethods.length}</div>
+            <div className="summary-label">
+              {paymentMethods.length === 1 ? '1 card on file' : `${paymentMethods.length} cards on file`}
+            </div>
+          </div>
+          <div className="summary-icon">💳</div>
+        </div>
+
+        {/* Cards Section */}
         <div className="payment-section">
-          <h2 className="section-title">
-            Saved Cards ({paymentMethods.length})
-          </h2>
-          <div className="section-divider"></div>
+          <div className="section-header">
+            <h2 className="section-title">Your Cards</h2>
+          </div>
 
           {paymentMethods.length === 0 && !showAddForm ? (
             <div className="empty-section">
+              <div className="empty-icon">💳</div>
               <p>No saved payment methods yet.</p>
             </div>
           ) : (
@@ -208,7 +225,7 @@ function MyPaymentsPage() {
           <div className="add-card-section">
             <div className="add-card-header">
               <h3>Add New Card</h3>
-              <button 
+              <button
                 className="close-btn"
                 onClick={() => setShowAddForm(false)}
                 disabled={processingAction === 'adding'}
@@ -216,7 +233,6 @@ function MyPaymentsPage() {
                 ✕
               </button>
             </div>
-            
             <Elements stripe={stripePromise}>
               <AddPaymentMethodForm
                 onSubmit={handleAddPaymentMethod}
@@ -226,13 +242,20 @@ function MyPaymentsPage() {
             </Elements>
           </div>
         ) : (
-          <button 
+          <button
             className="add-card-btn"
             onClick={() => setShowAddForm(true)}
           >
-            + Add Payment Method
+            <span>+</span> Add Payment Method
           </button>
         )}
+
+        {/* Security Note */}
+        <div className="payments-security-note">
+          <span className="security-icon">🔒</span>
+          <span>Your payment information is encrypted and securely stored via Stripe. Growth Tutoring never stores your full card details.</span>
+        </div>
+
       </div>
     </div>
   )
