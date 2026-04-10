@@ -1,42 +1,53 @@
-/* MyEarningsPage.css */
+/* ==========================================
+   MY EARNINGS PAGE — consistent with SchedulePage
+   ========================================== */
 
 .earnings-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 40px 20px;
+  box-sizing: border-box;
 }
 
 .earnings-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   background: white;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
+/* ── Header ── */
 .earnings-header {
+  padding: 32px 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   text-align: center;
-  margin-bottom: 40px;
 }
 
 .earnings-header h1 {
-  font-size: 2.5rem;
-  color: #2d3748;
-  margin-bottom: 10px;
+  margin: 0 0 8px;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .earnings-header p {
-  color: #718096;
+  margin: 0;
   font-size: 1.1rem;
+  opacity: 0.95;
 }
 
-/* Summary Cards */
+/* ── Inner content ── */
+.earnings-body {
+  padding: 40px 40px;
+}
+/* ── Summary Cards ── */
 .earnings-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
 }
 
 .summary-card {
@@ -45,176 +56,188 @@
   padding: 24px;
   color: white;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .summary-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
 .summary-content h3 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   opacity: 0.9;
 }
 
 .summary-value {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
   margin: 0;
+  line-height: 1;
 }
 
 .summary-note {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   opacity: 0.8;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-/* Date Filter */
+/* ── Filter ── */
 .earnings-filter {
   background: #f7fafc;
   border-radius: 12px;
   padding: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  border: 1px solid #e2e8f0;
 }
 
 .earnings-filter h3 {
   color: #2d3748;
-  margin-bottom: 16px;
-  font-size: 1.2rem;
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .filter-inputs {
   display: flex;
   gap: 16px;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .filter-input-group {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   flex: 1;
-  min-width: 200px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  align-self: flex-end;
+  padding-bottom: 0;
 }
 
 .filter-input-group label {
+  white-space: nowrap;
   font-weight: 600;
   color: #4a5568;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .filter-input-group input[type="date"] {
-  padding: 10px 12px;
-  border: 2px solid #e2e8f0;
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+  font-size: 0.95rem;
+  color: #2d3748;
+  outline: none;
+  background: white;
 }
 
 .filter-input-group input[type="date"]:focus {
-  outline: none;
   border-color: #667eea;
 }
 
 .filter-actions {
   display: flex;
-  gap: 12px;
-}
-
-.btn-filter,
-.btn-clear-filter {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
+  gap: 8px;
+  align-items: flex-end;
 }
 
 .btn-filter {
+  padding: 9px 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
 }
 
-.btn-filter:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
+.btn-filter:hover:not(:disabled) { opacity: 0.9; }
+.btn-filter:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .btn-clear-filter {
-  background: #e2e8f0;
+  padding: 9px 20px;
+  background: white;
   color: #4a5568;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btn-clear-filter:hover:not(:disabled) {
-  background: #cbd5e0;
+  border-color: #667eea;
+  color: #667eea;
 }
 
-.btn-filter:disabled,
-.btn-clear-filter:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.btn-clear-filter:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Earnings List */
+/* ── Earnings List ── */
 .earnings-list-section h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
   color: #2d3748;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
+  margin: 0 0 16px;
 }
 
+/* ── Table ── */
 .earnings-table-wrapper {
   overflow-x: auto;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 24px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
 }
 
 .earnings-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-}
-
-.earnings-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  font-size: 0.9rem;
 }
 
 .earnings-table th {
-  padding: 16px 12px;
+  background: #f7fafc;
+  padding: 14px 12px;
   text-align: left;
   font-weight: 600;
-  font-size: 0.9rem;
+  color: #4a5568;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
 }
 
-.earnings-table tbody tr {
-  border-bottom: 1px solid #e2e8f0;
-  transition: background-color 0.2s ease;
+.earnings-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf2f7;
+  color: #2d3748;
+  vertical-align: middle;
 }
 
 .earnings-table tbody tr:hover {
   background: #f7fafc;
 }
 
-.earnings-table td {
-  padding: 16px 12px;
-  color: #4a5568;
-  font-size: 0.95rem;
+.earnings-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* Probationary Badge */
+/* Probationary badge */
 .probationary-badge {
-  display: inline-block;
-  background: #f6ad55;
-  color: white;
+  background: #fef3c7;
+  color: #92400e;
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 6px;
@@ -223,34 +246,24 @@
   vertical-align: middle;
 }
 
-/* Session Format Badges */
-.session-format {
-  text-align: center;
-}
+/* Format badges */
+.session-format { text-align: center; }
 
 .format-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.format-badge.online {
-  background: #dbeafe;
-  color: #1e40af;
-}
+.format-badge.online { background: #dbeafe; color: #1e40af; }
+.format-badge.in-person { background: #fce7f3; color: #be123c; }
+.format-badge.unknown { background: #f3f4f6; color: #6b7280; }
 
-.format-badge.in-person {
-  background: #fce7f3;
-  color: #be123c;
-}
-
-/* Commission Breakdown */
-.commission-breakdown {
-  text-align: center;
-}
+/* Commission */
+.commission-breakdown { text-align: center; }
 
 .commission-info {
   display: flex;
@@ -259,54 +272,63 @@
   align-items: center;
 }
 
-.commission-rate {
-  font-size: 0.75rem;
-  color: #718096;
-  font-weight: 600;
-}
+.commission-rate { font-size: 0.75rem; color: #718096; font-weight: 600; }
+.commission-amount { font-weight: 600; color: #e53e3e; }
 
-.commission-amount {
-  font-weight: 600;
-  color: #e53e3e;
-}
+.net-earnings { font-weight: 700; color: #38a169; font-size: 1rem; }
+.base-amount { color: #2d3748; font-weight: 500; }
 
-/* Net Earnings Column */
-.net-earnings {
-  font-weight: 700;
-  color: #38a169;
-  font-size: 1.05rem;
-}
-
-.base-amount {
-  color: #2d3748;
-  font-weight: 500;
-}
-
-/* Table Footer */
-.earnings-table tfoot {
-  background: #f7fafc;
-  font-weight: 700;
-}
+/* Table footer */
+.earnings-table tfoot { background: #f7fafc; }
 
 .earnings-table tfoot td {
-  padding: 20px 12px;
-  border-top: 2px solid #cbd5e0;
+  padding: 16px 12px;
+  border-top: 2px solid #e2e8f0;
+  font-weight: 700;
 }
 
-.total-label {
-  text-align: right;
+.total-label { text-align: right; color: #2d3748; font-size: 1rem; }
+.total-amount { color: #38a169; font-size: 1.2rem; }
+
+/* ── Empty / Loading ── */
+.empty-earnings {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon { font-size: 3.5rem; margin-bottom: 16px; }
+
+.empty-earnings h4 {
   color: #2d3748;
-  font-size: 1.1rem;
+  margin-bottom: 8px;
+  font-size: 1.4rem;
 }
 
-.total-amount {
-  color: #38a169;
-  font-size: 1.3rem;
+.empty-earnings p { color: #718096; font-size: 0.95rem; }
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 60px 20px;
 }
 
-/* Commission Info Box */
+.error-state h3 { color: #2d3748; margin-bottom: 12px; }
+.error-state p { color: #718096; }
+
+.retry-button {
+  margin-top: 20px;
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Commission Info Box ── */
 .commission-info-box {
-  background: linear-gradient(135deg, #edf2f7 0%, #e6fffa 100%);
+  background: #f7fafc;
   border-left: 4px solid #667eea;
   border-radius: 8px;
   padding: 20px;
@@ -315,120 +337,112 @@
 
 .commission-info-box h4 {
   color: #2d3748;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .commission-info-box ul {
   list-style: none;
   padding: 0;
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
 }
 
 .commission-info-box li {
   color: #4a5568;
-  padding: 6px 0;
-  font-size: 0.95rem;
+  padding: 5px 0;
+  font-size: 0.9rem;
 }
 
 .commission-info-box .note {
   color: #718096;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-style: italic;
   margin: 0;
   padding-top: 12px;
-  border-top: 1px solid #cbd5e0;
+  border-top: 1px solid #e2e8f0;
 }
 
-/* Empty States */
-.empty-earnings,
-.empty-state,
-.loading-state,
-.error-state {
-  text-align: center;
-  padding: 60px 20px;
+/* ── Mobile Cards ── */
+.earnings-cards {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.empty-icon,
-.error-icon {
-  font-size: 4rem;
-  margin-bottom: 16px;
+.earning-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  box-sizing: border-box;
 }
 
-.empty-earnings h4,
-.empty-state h2,
-.error-state h3 {
-  color: #2d3748;
-  margin-bottom: 12px;
-  font-size: 1.5rem;
+.earning-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
 }
 
-.empty-earnings p,
-.empty-state p,
-.error-state p {
-  color: #718096;
-  font-size: 1rem;
+.earning-card-date { font-size: 0.8rem; color: #718096; }
+.earning-card-net { font-size: 1.1rem; font-weight: 700; color: #38a169; }
+
+.earning-card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  color: #4a5568;
+  border-bottom: 1px solid #edf2f7;
 }
 
-/* Loading Spinner */
-.loading-spinner {
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
+.earning-card-row:last-child { border-bottom: none; }
+.earning-card-label { color: #718096; font-weight: 500; }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.retry-button {
-  margin-top: 20px;
-  padding: 12px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.retry-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .earnings-table th,
-  .earnings-table td {
-    padding: 12px 8px;
-    font-size: 0.85rem;
-  }
-}
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 
 @media (max-width: 768px) {
-  .earnings-container {
-    padding: 24px 16px;
+  .earnings-page {
+    padding: 1rem 0.75rem 3rem;
   }
 
-  .earnings-header h1 {
-    font-size: 2rem;
+  .earnings-container {
+    border-radius: 12px;
+  }
+
+  .earnings-header {
+    padding: 20px 20px;
+  }
+
+  .earnings-header h1 { font-size: 1.5rem; }
+  .earnings-header p { font-size: 0.95rem; }
+
+  .earnings-body {
+    padding: 20px 16px;
   }
 
   .earnings-summary {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .summary-card { padding: 16px; }
+  .summary-value { font-size: 1.75rem; }
+
+  .earnings-filter {
+    padding: 16px;
   }
 
   .filter-inputs {
     flex-direction: column;
-    align-items: stretch;
+    gap: 12px;
   }
+
+  .filter-input-group { min-width: unset; }
 
   .filter-actions {
     width: 100%;
@@ -437,27 +451,12 @@
   .btn-filter,
   .btn-clear-filter {
     flex: 1;
+    text-align: center;
   }
 
-  .earnings-table-wrapper {
-    overflow-x: scroll;
-  }
+  /* Hide table, show cards */
+  .earnings-table-wrapper { display: none; }
+  .earnings-cards { display: flex; }
 
-  .earnings-table {
-    min-width: 900px;
-  }
-
-  .commission-info-box {
-    padding: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .earnings-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .summary-value {
-    font-size: 2rem;
-  }
+  .commission-info-box { padding: 14px; }
 }
