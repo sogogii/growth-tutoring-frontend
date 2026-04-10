@@ -5,10 +5,10 @@
    ======================================== */
 
 .schedule-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 40px 20px;
   min-width: 1100px;
+  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .schedule-container {
@@ -317,7 +317,8 @@
 
 @media (max-width: 1024px) {
   .schedule-page {
-    padding: 30px 15px;
+    min-width: unset;  
+    padding: 0;
   }
 
   .schedule-container {
@@ -341,36 +342,44 @@
 
 @media (max-width: 768px) {
   .schedule-page {
-    padding: 20px 10px;
+    min-width: unset;   /* ← KEY FIX: removes the 1100px floor */
+    padding: 0;
+  }
+
+  .schedule-container {
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
   }
 
   .schedule-page-header {
-    padding: 20px 24px;
+    padding: 20px 16px;
   }
 
   .schedule-page-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .schedule-page-header p {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .admin-tabs {
-    padding: 0 12px;
+    padding: 0 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .admin-tab {
-    padding: 14px 20px;
-    font-size: 0.9rem;
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    white-space: nowrap;
   }
 
   .availability-tab,
   .requests-tab,
   .calendar-tab {
-    padding: 20px 24px;
+    padding: 16px;
   }
 
   .btn-save-schedule {
@@ -379,24 +388,7 @@
   }
 
   .schedule-help {
-    padding: 20px;
-  }
-
-  .schedule-help h3 {
-    font-size: 1.1rem;
-  }
-
-  .schedule-help ul {
-    padding-left: 20px;
-    font-size: 0.95rem;
-  }
-
-  .calendar-intro h2 {
-    font-size: 1.5rem;
-  }
-
-  .calendar-intro p {
-    font-size: 0.95rem;
+    padding: 16px;
   }
 }
 

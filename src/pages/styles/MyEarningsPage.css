@@ -3,19 +3,21 @@
    ========================================== */
 
 .earnings-page {
+  min-width: 1100px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 40px 20px;
+  padding: 0;
   box-sizing: border-box;
 }
 
 .earnings-container {
-  max-width: 1200px;
+  max-width: 1200px; 
   margin: 0 auto;
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ── Header ── */
@@ -89,7 +91,7 @@
   background: #f7fafc;
   border-radius: 12px;
   padding: 24px;
-  margin-bottom: 28px;
+  margin: 0 40px 28px;
   border: 1px solid #e2e8f0;
 }
 
@@ -184,6 +186,10 @@
 }
 
 .btn-clear-filter:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.earnings-list-section {
+  padding: 0 40px 40px; 
+}
 
 /* ── Earnings List ── */
 .earnings-list-section h3 {
@@ -406,15 +412,20 @@
 
 @media (max-width: 768px) {
   .earnings-page {
-    padding: 1rem 0.75rem 3rem;
+    min-width: unset;    /* ← KEY FIX */
+    padding: 0;
   }
 
   .earnings-container {
-    border-radius: 12px;
+    border-radius: 16px;
+    margin: 0 auto; 
+    width: calc(100% - 24px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
 
   .earnings-header {
     padding: 20px 20px;
+    border-radius: 16px 16px 0 0;
   }
 
   .earnings-header h1 { font-size: 1.5rem; }
@@ -442,10 +453,20 @@
     gap: 12px;
   }
 
-  .filter-input-group { min-width: unset; }
+  .filter-input-group { 
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .filter-input-group input[type="date"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
 
   .filter-actions {
     width: 100%;
+    flex-direction: row;
   }
 
   .btn-filter,
@@ -454,7 +475,6 @@
     text-align: center;
   }
 
-  /* Hide table, show cards */
   .earnings-table-wrapper { display: none; }
   .earnings-cards { display: flex; }
 
