@@ -36,6 +36,7 @@ import InboxPage from './pages/chat/InboxPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
 import AdminFlaggedMessagesPage from './pages/admin/AdminFlaggedMessagesPage'
 import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
+import VirtualClassroom from './pages/classroom/VirtualClassroom'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -939,6 +940,15 @@ function App() {
               currentUser && currentUser.role === 'ADMIN' ?
                 <AdminPromotionsPage currentUser={currentUser} />
               : <Navigate to="/" replace />
+            }
+          />
+
+          <Route
+            path="/classroom/:sessionRequestId"
+            element={
+              currentUser
+                ? <VirtualClassroom currentUser={currentUser} />
+                : <Navigate to="/login" replace />
             }
           />
         </Routes>
