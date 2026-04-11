@@ -299,7 +299,8 @@ function App() {
     const loadUnreviewedCount = async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/admin/flagged-messages/count?adminUserId=${currentUser.userId}`
+          `${API_BASE}/api/admin/flagged-messages/count`,
+          { credentials: 'include' }
         )
         if (!res.ok) {
           setUnreviewedCount(0)
