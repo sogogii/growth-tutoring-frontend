@@ -37,6 +37,7 @@ import AdminPage from './pages/admin/AdminPage.jsx'
 import AdminFlaggedMessagesPage from './pages/admin/AdminFlaggedMessagesPage'
 import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 import VirtualClassroom from './pages/classroom/VirtualClassroom'
+import MyClassroomPage from './pages/classroom/MyClassroomPage'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -608,6 +609,13 @@ function App() {
                         >
                           My earnings
                         </button>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/my-classroom')}
+                        >
+                          My classroom
+                        </button>
                       </>
                     )}
                   
@@ -647,6 +655,15 @@ function App() {
                         onClick={() => goTo('/my-sessions')}
                       >
                         My sessions
+                      </button>
+                    )}
+                    {currentUser.role === 'STUDENT' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => goTo('/my-classroom')}
+                      >
+                        My classroom
                       </button>
                     )}
 
@@ -952,6 +969,7 @@ function App() {
                 : <Navigate to="/login" replace />
             }
           />
+          <Route path="/my-classroom" element={<MyClassroomPage currentUser={currentUser} />} />
         </Routes>
       </main>
 

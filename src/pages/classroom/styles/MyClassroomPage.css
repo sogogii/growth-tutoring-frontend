@@ -1,0 +1,304 @@
+/* ============================================================
+   My Classroom Page
+   ============================================================ */
+
+.myclassroom-page {
+  min-height: calc(100vh - 80px);
+  background: #f9f8f5;
+  padding: 48px 24px 80px;
+}
+
+.myclassroom-container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.myclassroom-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  gap: 16px;
+}
+
+.myclassroom-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px;
+  letter-spacing: -0.4px;
+}
+
+.myclassroom-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.myclassroom-online-note {
+  display: block;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.myclassroom-refresh {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 18px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.myclassroom-refresh:hover {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+/* ── States ── */
+.myclassroom-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  gap: 12px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.myclassroom-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid #e5e7eb;
+  border-top-color: #667eea;
+  animation: mc-spin 0.8s linear infinite;
+}
+
+@keyframes mc-spin {
+  to { transform: rotate(360deg); }
+}
+
+.myclassroom-error {
+  color: #ef4444;
+}
+
+.myclassroom-error button {
+  margin-top: 8px;
+  padding: 8px 20px;
+  border: 1px solid #fca5a5;
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.myclassroom-empty-icon {
+  font-size: 40px;
+  margin-bottom: 4px;
+}
+
+.myclassroom-empty h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 6px;
+}
+
+.myclassroom-empty p {
+  font-size: 14px;
+  color: #9ca3af;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* ── Session list ── */
+.myclassroom-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Session card ── */
+.myclassroom-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.myclassroom-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border-color: #d1d5db;
+}
+
+/* "Starting soon" variant */
+.myclassroom-card--soon {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #fafafe 0%, #f8f7ff 100%);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.myclassroom-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.myclassroom-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.myclassroom-card-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.myclassroom-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.myclassroom-card-meta {
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.myclassroom-dot {
+  color: #d1d5db;
+}
+
+.myclassroom-card-format {
+  margin-top: 2px;
+}
+
+.myclassroom-format-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.myclassroom-format-badge--online {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.myclassroom-format-badge--in_person {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* ── Card right side ── */
+.myclassroom-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.myclassroom-countdown {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.myclassroom-countdown--soon {
+  color: #667eea;
+}
+
+/* ── CTA Buttons ── */
+.myclassroom-btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.myclassroom-btn--default {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.myclassroom-btn--default:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.myclassroom-btn--active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+}
+
+.myclassroom-btn--active:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .myclassroom-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+  }
+
+  .myclassroom-card-right {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .myclassroom-title {
+    font-size: 22px;
+  }
+}
