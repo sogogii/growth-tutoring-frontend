@@ -272,8 +272,8 @@
   border: 1px solid var(--border-default);
   border-radius: 8px;
   font-size: 1rem;
-  color: var(--text-primary);
-  background: var(--bg-white);
+  color: #111827;
+  background: #ffffff;
   transition: all 0.2s ease;
   font-family: inherit;
   width: 100%;
