@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate, useParams } from 'react-router-dom'
 import { useEffect, useState, useRef, useCallback } from 'react'  
 import { FaInstagram, FaYoutube, FaLinkedin, FaTiktok } from 'react-icons/fa'
 
@@ -67,6 +67,18 @@ function ScrollToTop() {
   return null
 }
 
+function ClassroomActivator({ setClassroomSessionId }) {
+  const { sessionRequestId } = useParams()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    setClassroomSessionId(sessionRequestId)
+    navigate(-1) // go back to the page they came from
+  }, [sessionRequestId])
+
+  return null
+}
+
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('currentUser')
@@ -90,7 +102,9 @@ function App() {
   const supportRef = useRef(null)
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-   const [unreadMessages, setUnreadMessages] = useState(0)
+  const [unreadMessages, setUnreadMessages] = useState(0)
+
+  const [classroomSessionId, setClassroomSessionId] = useState(null)
 
   const handleLogout = (isIdle = false) => {
     localStorage.removeItem('currentUser')
@@ -965,13 +979,24 @@ function App() {
             path="/classroom/:sessionRequestId"
             element={
               currentUser
-                ? <VirtualClassroom currentUser={currentUser} />
+                ? <ClassroomActivator setClassroomSessionId={setClassroomSessionId} />
                 : <Navigate to="/login" replace />
             }
           />
-          <Route path="/my-classroom" element={<MyClassroomPage currentUser={currentUser} />} />
+          <Route 
+            path="/my-classroom" 
+            element={<MyClassroomPage currentUser={currentUser} classroomSessionId={classroomSessionId} />} 
+          />
         </Routes>
       </main>
+
+      {classroomSessionId && (
+        <VirtualClassroom
+          currentUser={currentUser}
+          sessionRequestId={classroomSessionId}
+          onClose={() => setClassroomSessionId(null)}
+        />
+      )}
 
       {/* Footer */}
       <footer className="app-footer">

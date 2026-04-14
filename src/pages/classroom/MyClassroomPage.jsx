@@ -41,7 +41,7 @@ function isWithin30Min(isoString) {
   return diff <= 30 * 60 * 1000
 }
 
-export default function MyClassroomPage({ currentUser }) {
+export default function MyClassroomPage({ currentUser, classroomSessionId }) {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -168,12 +168,19 @@ export default function MyClassroomPage({ currentUser }) {
                     <div className={`myclassroom-countdown ${soon ? 'myclassroom-countdown--soon' : ''}`}>
                       {getTimeUntil(session.requestedStart)}
                     </div>
-                    <button
-                      className={`myclassroom-btn ${soon ? 'myclassroom-btn--active' : 'myclassroom-btn--default'}`}
-                      onClick={() => handleEnter(session)}
-                    >
-                      {isTutor ? 'Open Classroom' : 'Join Classroom'}
-                    </button>
+                    {classroomSessionId === String(session.id) ? (
+                      <div className="myclassroom-live-indicator">
+                        <span className="myclassroom-live-dot" />
+                        Session in progress
+                      </div>
+                    ) : (
+                      <button
+                        className={`myclassroom-btn ${soon ? 'myclassroom-btn--active' : 'myclassroom-btn--default'}`}
+                        onClick={() => handleEnter(session)}
+                      >
+                        {isTutor ? 'Open Classroom' : 'Join Classroom'}
+                      </button>
+                    )}
                   </div>
                 </div>
               )
