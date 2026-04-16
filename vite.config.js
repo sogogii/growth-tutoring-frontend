@@ -1,5 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+
+// Local Two-Devices
+{/*
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import fs from 'fs'
 
 export default defineConfig({
@@ -18,3 +27,4 @@ export default defineConfig({
     }
   }
 })
+  */}
