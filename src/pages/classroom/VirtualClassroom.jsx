@@ -186,23 +186,20 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
             body: JSON.stringify({}),
           }
         )
-        if (res.ok) {
-          clearInterval(interval)
-          const data = await res.json()
-          await joinChimeMeeting(null, data.attendee)
-        }
 
-        const data = await res.json()
+        if (!res.ok) return  // tutor hasn't opened yet — keep polling
+
+        clearInterval(interval)
+        const data = await res.json()  // read body exactly once
         setRequestedEnd(data.requestedEnd)
         await joinChimeMeeting(null, data.attendee)
-
       } catch (err) {
-        // keep polling
+        // keep polling on network errors
       }
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [currentUser, joined])
+  }, [currentUser, joined, preJoinDone])
 
   // Subscribe to presence broadcasts from other participants
   useEffect(() => {
