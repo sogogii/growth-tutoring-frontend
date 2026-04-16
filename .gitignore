@@ -45,3 +45,6 @@ schema.sql
 
 # text files
 *.txt
+
+# cert
+cert/
