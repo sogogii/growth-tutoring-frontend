@@ -546,7 +546,12 @@ function TutorsPage({ currentUser }) {
                 </button>
 
                 {showSchedulePanel && (
-                  <div className="filter-dropdown-panel sched-panel">
+                  <div
+                    className="filter-dropdown-panel sched-panel"
+                    onClick={e => e.stopPropagation()}
+                    onMouseDown={e => e.stopPropagation()}
+                    onTouchStart={e => e.stopPropagation()}
+                  >
                     <div className="filter-panel-header">
                       <span>Filter by availability</span>
                       <button className="filter-panel-close" onClick={() => setShowSchedulePanel(false)}>×</button>
@@ -631,7 +636,12 @@ function TutorsPage({ currentUser }) {
                 </button>
 
                 {showPricePanel && (
-                  <div className="filter-dropdown-panel">
+                  <div
+                    className="filter-dropdown-panel"
+                    onClick={e => e.stopPropagation()}
+                    onMouseDown={e => e.stopPropagation()}
+                    onTouchStart={e => e.stopPropagation()}
+                  >
                     <div className="filter-panel-header">
                       <span>Select Price Range</span>
                       <button 
@@ -688,7 +698,12 @@ function TutorsPage({ currentUser }) {
                 </button>
 
                 {showMethodPanel && (
-                  <div className="filter-dropdown-panel">
+                  <div
+                    className="filter-dropdown-panel"
+                    onClick={e => e.stopPropagation()}
+                    onMouseDown={e => e.stopPropagation()}
+                    onTouchStart={e => e.stopPropagation()}
+                  >
                     <div className="filter-panel-header">
                       <span>Teaching Method</span>
                       <button 
@@ -744,7 +759,12 @@ function TutorsPage({ currentUser }) {
                 </button>
 
                 {showSubjectsPanel && (
-                  <div className="filter-dropdown-panel">
+                  <div
+                    className="filter-dropdown-panel"
+                    onClick={e => e.stopPropagation()}
+                    onMouseDown={e => e.stopPropagation()}
+                    onTouchStart={e => e.stopPropagation()}
+                  >
                     <div className="filter-panel-header">
                       <span>Select Subjects</span>
                       <button 

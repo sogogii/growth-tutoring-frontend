@@ -991,6 +991,7 @@
     top: auto;
     max-height: none;
     align-self: auto;
+    z-index: 200;
   }
 
   /* ── Sort chips: inline side by side ── */
