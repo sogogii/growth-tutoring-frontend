@@ -133,6 +133,7 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
   const [unreadChat, setUnreadChat] = useState(0)
   const [showVBG, setShowVBG] = useState(false)
   const [vbgActive, setVbgActive] = useState('none')
+  const intentionalLeaveRef = useRef(false)
 
   // attendeeId → { name, role }
   const [nameMap, setNameMap] = useState({})
@@ -192,7 +193,7 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
         clearInterval(interval)
         const data = await res.json()  // read body exactly once
         setRequestedEnd(data.requestedEnd)
-        await joinChimeMeeting(null, data.attendee)
+        await joinChimeMeeting(data.meeting, data.attendee)
       } catch (err) {
         // keep polling on network errors
       }
@@ -331,6 +332,16 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
   const joinChimeMeeting = async (meeting, attendee) => {
     const config = new MeetingSessionConfiguration(meeting, attendee)
     await meetingManager.join(config)
+
+    meetingManager.audioVideo?.addObserver({
+      audioVideoDidStop: (sessionStatus) => {
+        const code = sessionStatus.statusCode()
+        if (code !== 0 && !isTutor && !intentionalLeaveRef.current) {
+          alert('The tutor has ended the session.')
+          onClose()
+        }
+      }
+    })
     await meetingManager.start()
 
     // Apply pre-join preferences
@@ -352,6 +363,7 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
   }
 
   const handleEndMeeting = async () => {
+    intentionalLeaveRef.current = true
     await meetingManager.leave()
     if (isTutor && meetingId) {
       await fetch(`${API_BASE}/api/classroom/${sessionRequestId}/end`, {
