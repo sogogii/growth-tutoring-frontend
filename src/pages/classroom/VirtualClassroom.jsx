@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useBlocker } from 'react-router-dom'
 import {
   MeetingProvider,
   darkTheme,
@@ -262,19 +262,6 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
     }
   }, [joined, requestedEnd])
 
-  const broadcastPresence = (av) => {
-    if (!av || !myAttendeeId) return
-    try {
-      const payload = JSON.stringify({
-        type: 'presence',
-        attendeeId: myAttendeeId,
-        name: displayName,
-        role,
-      })
-      av.realtimeSendDataMessage(PRESENCE_TOPIC, new TextEncoder().encode(payload), 30000)
-    } catch (e) {}
-  }
-
   // Announce own presence after joining + every 30 seconds
   useEffect(() => {
     if (!joined || !myAttendeeId) return
@@ -309,6 +296,71 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
     document.addEventListener('mousedown', onMouseDown)
     return () => document.removeEventListener('mousedown', onMouseDown)
   }, [minimized])
+
+  // go back
+  useEffect(() => {
+    if (!joined) return
+
+    const handleBeforeUnload = (e) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [joined])
+
+  // students go back while loading
+  useEffect(() => {
+    if (joined || isTutor) return
+
+    window.history.pushState(null, '', window.location.href)
+
+    const handlePopState = () => {
+      const confirmed = window.confirm('Are you sure you want to leave?')
+      if (confirmed) {
+        onClose()
+      } else {
+        window.history.pushState(null, '', window.location.href)
+      }
+    }
+
+    // Delay attaching listener to avoid firing on mount
+    const timer = setTimeout(() => {
+      window.addEventListener('popstate', handlePopState)
+    }, 500)
+
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [joined, isTutor])
+
+  // go back
+  useEffect(() => {
+    if (!joined) return
+
+    const handlePopState = (e) => {
+      const confirmed = window.confirm(
+        isTutor
+          ? 'Are you sure you want to end the session? This will end it for everyone.'
+          : 'Are you sure you want to leave the session?'
+      )
+      if (confirmed) {
+        intentionalLeaveRef.current = true
+        handleEndMeeting()
+      } else {
+        // Push state back to prevent navigation
+        window.history.pushState(null, '', window.location.href)
+      }
+    }
+
+    // Push a state so we can intercept the back button
+    window.history.pushState(null, '', window.location.href)
+    window.addEventListener('popstate', handlePopState)
+
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [joined])
 
   const handleCreateMeeting = async () => {
     try {
@@ -447,6 +499,19 @@ function ClassroomInner({ sessionRequestId, currentUser, onClose }) {
     }
     document.addEventListener('mousemove', onMove)
     document.addEventListener('mouseup', onUp)
+  }
+
+  const broadcastPresence = (av) => {
+    if (!av || !myAttendeeId) return
+    try {
+      const payload = JSON.stringify({
+        type: 'presence',
+        attendeeId: myAttendeeId,
+        name: displayName,
+        role,
+      })
+      av.realtimeSendDataMessage(PRESENCE_TOPIC, new TextEncoder().encode(payload), 30000)
+    } catch (e) {}
   }
 
   // ── Pre-join ──
