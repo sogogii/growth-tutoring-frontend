@@ -20,6 +20,8 @@ function ClickableAvatar({ currentImage, onImageChange, userName = 'User', curre
   // Default avatar with initials
   const DEFAULT_AVATAR = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=E5E7EB&color=374151&size=280`
 
+  const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080').replace(/\/+$/, '')
+
   /**
    * Validate file
    */
@@ -124,27 +126,25 @@ function ClickableAvatar({ currentImage, onImageChange, userName = 'User', curre
    * Update profile picture on backend immediately
    */
   const updateProfilePictureOnBackend = async (imageUrl) => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-    
-    try {
-      const response = await fetch(`${API_BASE}/api/users/${currentUser.userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          profileImageUrl: imageUrl
-        }),
-      })
+    const response = await fetch(`${API_BASE}/api/users/${currentUser.userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        userUid: currentUser.userUid,
+        birthday: currentUser.birthday,
+        profileImageUrl: imageUrl,
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile on backend')
-      }
-
-      return await response.json()
-    } catch (err) {
-      console.error('Backend update error:', err)
-      throw err
+    if (!response.ok) {
+      throw new Error('Failed to update profile on backend');
     }
-  }
+
+    return await response.json();
+  };
 
   /**
    * Handle file selection
