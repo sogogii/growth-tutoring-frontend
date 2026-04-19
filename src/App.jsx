@@ -38,6 +38,7 @@ import AdminFlaggedMessagesPage from './pages/admin/AdminFlaggedMessagesPage'
 import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 import VirtualClassroom from './pages/classroom/VirtualClassroom'
 import MyClassroomPage from './pages/classroom/MyClassroomPage'
+import ChatbotWidget from './components/ChatbotWidget'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -989,6 +990,8 @@ function App() {
           />
         </Routes>
       </main>
+      {/* Enable when ready */}
+      {/*<ChatbotWidget />*/}
 
       {classroomSessionId && (
         <VirtualClassroom
