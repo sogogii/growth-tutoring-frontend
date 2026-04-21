@@ -221,6 +221,50 @@
 }
 
 /* ==========================================
+   FAVORITE BUTTON
+   ========================================== */
+
+.btn-favorite {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-favorite:hover:not(:disabled) {
+  border-color: #f97316;
+  color: #f97316;
+  background: #fff7ed;
+}
+
+.btn-favorite.favorited {
+  color: #f97316;
+  border-color: #f97316;
+  background: #fff7ed;
+}
+
+.btn-favorite:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Favorites section highlight */
+.favorites-section {
+  border-color: #fed7aa !important;
+  background: linear-gradient(to bottom, #fff7ed, #ffffff) !important;
+}
+
+.favorites-section h2 {
+  color: #c2410c;
+}
+
+/* ==========================================
    RESPONSIVE DESIGN
    ========================================== */
 

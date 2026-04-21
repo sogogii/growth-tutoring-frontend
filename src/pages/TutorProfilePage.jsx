@@ -66,13 +66,11 @@ function TutorProfilePage({ currentUser }) {
   const isStudent = currentUser?.role === 'STUDENT'
   const isAdmin = currentUser?.role === 'ADMIN'
 
-  const [linkStatus, setLinkStatus] = useState('NONE')
-  const [linkLoading, setLinkLoading] = useState(false)
   const [chatLoading, setChatLoading] = useState(false)
   const [showRequestForm, setShowRequestForm] = useState(false)
 
-  const [isConnected, setIsConnected] = useState(false)
-  const [checkingConnection, setCheckingConnection] = useState(true)
+  const [isFavorited, setIsFavorited] = useState(false)
+  const [favoriteLoading, setFavoriteLoading] = useState(false)
 
   // Load tutor info
   const loadTutor = async (userId) => {
@@ -144,24 +142,6 @@ function TutorProfilePage({ currentUser }) {
     }
   }
 
-  // Load link status
-  const loadLinkStatus = async (studentUserId, tutorUserId) => {
-    try {
-      const res = await fetch(
-        `${API_BASE}/api/student-tutor-links/status?studentUserId=${studentUserId}&tutorUserId=${tutorUserId}`
-      )
-      if (!res.ok) {
-        setLinkStatus('NONE')
-        return
-      }
-      const data = await res.json()
-      setLinkStatus(data.status || 'NONE')
-    } catch (err) {
-      console.error(err)
-      setLinkStatus('NONE')
-    }
-  }
-
   useEffect(() => {
     const userId = Number(id)
     setLoading(true)
@@ -171,7 +151,13 @@ function TutorProfilePage({ currentUser }) {
     loadReviews(userId)
 
     if (isStudent && currentUser) {
-      loadLinkStatus(currentUser.userId, userId)
+      fetch(
+        `${API_BASE}/api/students/${currentUser.userId}/favorites/${userId}/status`,
+        { credentials: 'include' }
+      )
+        .then(r => r.ok ? r.json() : { favorited: false })
+        .then(data => setIsFavorited(data.favorited || false))
+        .catch(() => setIsFavorited(false))
     }
   }, [id, isStudent, currentUser])
 
@@ -322,33 +308,20 @@ function TutorProfilePage({ currentUser }) {
   }
 
   // Add tutor request
-  const handleAddTutorRequest = async () => {
-    if (!currentUser || !isStudent) {
-      navigate('/login')
-      return
-    }
-
-    setLinkLoading(true)
+  const handleToggleFavorite = async () => {
+    if (!currentUser || !isStudent) { navigate('/login'); return }
+    setFavoriteLoading(true)
     try {
-      const res = await fetch(`${API_BASE}/api/student-tutor-links`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          studentUserId: currentUser.userId,
-          tutorUserId: tutor.userId
-        })
-      })
-
-      if (!res.ok) {
-        const text = await res.text()
-        throw new Error(text || 'Failed to send request')
-      }
-
-      setLinkStatus('PENDING')
+      const res = await fetch(
+        `${API_BASE}/api/students/${currentUser.userId}/favorites/${tutor.userId}`,
+        { method: isFavorited ? 'DELETE' : 'POST', credentials: 'include' }
+      )
+      if (!res.ok) throw new Error((await res.text()) || 'Failed to update favorites')
+      setIsFavorited(!isFavorited)
     } catch (err) {
       alert(err.message)
     } finally {
-      setLinkLoading(false)
+      setFavoriteLoading(false)
     }
   }
 
@@ -462,22 +435,6 @@ function TutorProfilePage({ currentUser }) {
     ? tutor.subject.split(',').map((s) => s.trim())
     : []
 
-  const addTutorLabel = (() => {
-    switch (linkStatus) {
-      case 'PENDING':
-        return 'Request Sent'
-      case 'ACCEPTED':
-        return 'Tutor Added'
-      case 'DECLINED':
-        return 'Add Tutor'
-      default:
-        return 'Add Tutor'
-    }
-  })()
-
-  const addTutorDisabled =
-    linkLoading || linkStatus === 'PENDING' || linkStatus === 'ACCEPTED'
-
   return (
     <div className="tutor-profile-page">
       <div className="tutor-profile-card">
@@ -544,15 +501,11 @@ function TutorProfilePage({ currentUser }) {
               {isStudent && (
                 <button
                   type="button"
-                  className="tutor-profile-secondary-cta"
-                  onClick={handleAddTutorRequest}
-                  disabled={addTutorDisabled}
-                  title="Add this tutor to your favorites for easy tracking"
+                  className={`tutor-profile-secondary-cta${isFavorited ? ' favorited' : ''}`}
+                  onClick={handleToggleFavorite}
+                  disabled={favoriteLoading}
                 >
-                  {linkLoading ? 'Loading...' : 
-                  linkStatus === 'PENDING' ? 'Request Sent' :
-                  linkStatus === 'ACCEPTED' ? 'In My Tutors' :
-                  'Add to My Tutors'}
+                  {favoriteLoading ? 'Loading...' : isFavorited ? '♥ Favorited' : '♡ Add to Favorites'}
                 </button>
               )}
             </div>

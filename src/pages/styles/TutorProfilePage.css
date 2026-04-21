@@ -741,6 +741,12 @@
   opacity: 0.95;
 }
 
+.tutor-profile-secondary-cta.favorited {
+  background: #fff7ed;
+  border-color: #f97316;
+  color: #c2410c;
+}
+
 /* =============================================================
    TUTOR PROFILE PAGE — MOBILE RESPONSIVE
    
