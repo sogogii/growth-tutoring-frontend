@@ -33,10 +33,11 @@ function MyStudentsPage({ currentUser }) {
           { credentials: 'include' }
         )
 
-        if (!pendingRes.ok || !matchedRes.ok) {
-          const text =
-            (await pendingRes.text()) || (await matchedRes.text()) || ''
-          throw new Error(text || 'Failed to load students')
+        if (!pendingRes.ok) {
+          throw new Error((await pendingRes.text()) || 'Failed to load pending students')
+        }
+        if (!matchedRes.ok) {
+          throw new Error((await matchedRes.text()) || 'Failed to load students')
         }
 
         const pendingData = await pendingRes.json()
