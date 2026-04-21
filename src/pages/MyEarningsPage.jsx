@@ -255,76 +255,109 @@ function MyEarningsPage() {
               <p>Completed sessions will appear here once payment is captured.</p>
             </div>
           ) : (
-            <div className="earnings-table-wrapper">
-              <table className="earnings-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Session ID</th>
-                    <th>Format</th>
-                    <th>Duration</th>
-                    <th>Hourly Rate</th>
-                    <th>Base Amount</th>
-                    <th>Commission</th>
-                    <th>Net Earnings</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <div className="earnings-cards">
+            <>
+              {/* Desktop Table */}
+              <div className="earnings-table-wrapper">
+                <table className="earnings-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Session ID</th>
+                      <th>Format</th>
+                      <th>Duration</th>
+                      <th>Hourly Rate</th>
+                      <th>Base Amount</th>
+                      <th>Commission</th>
+                      <th>Net Earnings</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     {earnings.map(earning => (
-                      <div key={earning.paymentId} className="earning-card">
-                        <div className="earning-card-header">
-                          <div>
-                            <div className="earning-card-date">{formatDateTime(earning.capturedAt)}</div>
-                            <div style={{ fontSize: '0.8rem', color: '#718096' }}>
-                              Session #{earning.sessionRequestId}
-                              {earning.sessionNumber <= 3 && (
-                                <span className="probationary-badge" style={{ marginLeft: 4 }}>
-                                  P{earning.sessionNumber}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="earning-card-net">{formatCurrency(earning.netEarnings)}</div>
-                        </div>
-                        <div className="earning-card-row">
-                          <span className="earning-card-label">Format</span>
+                      <tr key={earning.paymentId}>
+                        <td>{formatDateTime(earning.capturedAt)}</td>
+                        <td>
+                          #{earning.sessionRequestId}
+                          {earning.sessionNumber <= 3 && (
+                            <span className="probationary-badge">
+                              P{earning.sessionNumber}
+                            </span>
+                          )}
+                        </td>
+                        <td className="session-format">
                           <span className={`format-badge ${earning.sessionFormat === 'IN_PERSON' ? 'in-person' : 'online'}`}>
                             {earning.sessionFormat === 'IN_PERSON' ? 'In-Person' : 'Online'}
                           </span>
-                        </div>
-                        <div className="earning-card-row">
-                          <span className="earning-card-label">Duration</span>
-                          <span>{earning.durationMinutes} min</span>
-                        </div>
-                        <div className="earning-card-row">
-                          <span className="earning-card-label">Rate</span>
-                          <span>{formatCurrency(earning.hourlyRate)}/hr</span>
-                        </div>
-                        <div className="earning-card-row">
-                          <span className="earning-card-label">Base</span>
-                          <span>{formatCurrency(earning.baseAmount)}</span>
-                        </div>
-                        <div className="earning-card-row">
-                          <span className="earning-card-label">Commission</span>
-                          <span style={{ color: '#e53e3e' }}>
-                            -{formatCurrency(earning.commissionAmount)} ({formatCommissionRate(earning.commissionRate)})
-                          </span>
+                        </td>
+                        <td>{earning.durationMinutes} min</td>
+                        <td>{formatCurrency(earning.hourlyRate)}/hr</td>
+                        <td className="base-amount">{formatCurrency(earning.baseAmount)}</td>
+                        <td className="commission-breakdown">
+                          <div className="commission-info">
+                            <span className="commission-rate">{formatCommissionRate(earning.commissionRate)}</span>
+                            <span className="commission-amount">-{formatCurrency(earning.commissionAmount)}</span>
+                          </div>
+                        </td>
+                        <td className="net-earnings">{formatCurrency(earning.netEarnings)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colSpan="7" className="total-label">Total Net Earnings</td>
+                      <td className="total-amount">
+                        <strong>{formatCurrency(totalEarnings)}</strong>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              {/* Mobile Cards */}
+              <div className="earnings-cards">
+                {earnings.map(earning => (
+                  <div key={earning.paymentId} className="earning-card">
+                    <div className="earning-card-header">
+                      <div>
+                        <div className="earning-card-date">{formatDateTime(earning.capturedAt)}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#718096' }}>
+                          Session #{earning.sessionRequestId}
+                          {earning.sessionNumber <= 3 && (
+                            <span className="probationary-badge" style={{ marginLeft: 4 }}>
+                              P{earning.sessionNumber}
+                            </span>
+                          )}
                         </div>
                       </div>
-                    ))}
+                      <div className="earning-card-net">{formatCurrency(earning.netEarnings)}</div>
+                    </div>
+                    <div className="earning-card-row">
+                      <span className="earning-card-label">Format</span>
+                      <span className={`format-badge ${earning.sessionFormat === 'IN_PERSON' ? 'in-person' : 'online'}`}>
+                        {earning.sessionFormat === 'IN_PERSON' ? 'In-Person' : 'Online'}
+                      </span>
+                    </div>
+                    <div className="earning-card-row">
+                      <span className="earning-card-label">Duration</span>
+                      <span>{earning.durationMinutes} min</span>
+                    </div>
+                    <div className="earning-card-row">
+                      <span className="earning-card-label">Rate</span>
+                      <span>{formatCurrency(earning.hourlyRate)}/hr</span>
+                    </div>
+                    <div className="earning-card-row">
+                      <span className="earning-card-label">Base</span>
+                      <span>{formatCurrency(earning.baseAmount)}</span>
+                    </div>
+                    <div className="earning-card-row">
+                      <span className="earning-card-label">Commission</span>
+                      <span style={{ color: '#e53e3e' }}>
+                        -{formatCurrency(earning.commissionAmount)} ({formatCommissionRate(earning.commissionRate)})
+                      </span>
+                    </div>
                   </div>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td colSpan="7" className="total-label">Total Net Earnings</td>
-                    <td className="total-amount">
-                      <strong>{formatCurrency(totalEarnings)}</strong>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                ))}
+              </div>
+            </>
           )}
 
           {/* Commission Info */}
@@ -337,7 +370,7 @@ function MyEarningsPage() {
                 <li><strong>In-person tutoring</strong> (after first 3): 15% commission</li>
               </ul>
               <p className="note">
-                <strong>Note:</strong> The probationary period applies to your first 3 sessions overall, 
+                <strong>Note:</strong> The probationary period applies to your first 3 sessions overall,
                 not per student. Base Amount = Your hourly rate × session hours (excludes $5 platform fee).
               </p>
             </div>
