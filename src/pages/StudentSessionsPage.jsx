@@ -151,7 +151,11 @@ function StudentSessionsPage({ currentUser }) {
         {session.subject && <p>Subject: {session.subject}</p>}
         {session.tutorResponseMessage && (
           <p className="response-message">
-            Tutor Response: {session.tutorResponseMessage}
+            <strong>
+              {session.status === 'DECLINED' ? 'Reason for Decline' :
+              session.status === 'CANCELLED' ? 'Cancellation Reason' : 'Tutor Response'}:
+            </strong>{' '}
+            {session.tutorResponseMessage.replace(/^TUTOR CANCELLATION:\s*/i, '')}
           </p>
         )}
       </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './styles/StudentSessionsPage.css' // Reuse same styles
 import CancellationModal from '../components/CancellationModal'
+import DeclineModal from '../components/DeclineModal'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
@@ -13,6 +14,8 @@ function TutorSessionsPage({ currentUser }) {
   const [processing, setProcessing] = useState(null)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [sessionToCancel, setSessionToCancel] = useState(null)
+  const [showDeclineModal, setShowDeclineModal] = useState(false)
+  const [sessionToDecline, setSessionToDecline] = useState(null)
 
   useEffect(() => {
     if (currentUser?.userId) {
@@ -54,6 +57,17 @@ function TutorSessionsPage({ currentUser }) {
     await loadSessions()
     setShowCancelModal(false)
     setSessionToCancel(null)
+  }
+
+  const handleOpenDeclineModal = (session) => {
+    setSessionToDecline(session)
+    setShowDeclineModal(true)
+  }
+
+  const handleDeclineSuccess = async () => {
+    await loadSessions()
+    setShowDeclineModal(false)
+    setSessionToDecline(null)
   }
 
   const handleDecision = async (requestId, decision) => {
@@ -176,7 +190,7 @@ function TutorSessionsPage({ currentUser }) {
               </button>
               <button
                 className="btn btn-danger"
-                onClick={() => handleDecision(session.id, 'DECLINE')}  // Changed from handleRespond
+                onClick={() => handleOpenDeclineModal(session)}
                 disabled={processing === session.id}
               >
                 Decline
@@ -355,6 +369,13 @@ function TutorSessionsPage({ currentUser }) {
               setSessionToCancel(null)
             }}
             onSuccess={handleCancellationSuccess}
+          />
+        )}
+        {showDeclineModal && sessionToDecline && (
+          <DeclineModal
+            session={sessionToDecline}
+            onClose={() => { setShowDeclineModal(false); setSessionToDecline(null) }}
+            onSuccess={handleDeclineSuccess}
           />
         )}
       </div>
