@@ -420,12 +420,13 @@ function MessagesPage({ currentUser, refreshUnreadCount }) {
                     : 'default' 
                 }}
               >
-                {activeConversation?.otherProfileImageUrl ? (
+              {activeConversation?.otherProfileImageUrl ? (
+                <div className="chat-header-avatar">
                   <img 
                     src={activeConversation.otherProfileImageUrl} 
                     alt={activeConversation.otherName}
-                    className="chat-header-avatar"
                   />
+                </div>
                 ) : (
                   <div className="chat-header-avatar avatar-fallback">
                     {getInitials(activeConversation?.otherName || '')}
