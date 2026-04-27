@@ -607,6 +607,38 @@
   transform: translateX(20px);
 }
 
+/* ── Change Password ── */
+.change-pw-toggle-btn {
+  background: none;
+  border: 1.5px solid var(--primary-orange);
+  color: var(--primary-orange);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.change-pw-toggle-btn:hover {
+  background: var(--primary-orange-bg);
+}
+
+.change-pw-form {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--bg-gray-light);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.change-pw-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
 /* =============================================================
    MY PROFILE PAGE — MOBILE RESPONSIVE
    
@@ -803,6 +835,30 @@
     padding-bottom: 80px !important;
   }
 
+  .change-pw-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.change-pw-submit-btn {
+  background: var(--primary-orange);
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.change-pw-submit-btn:hover {
+  background: var(--primary-orange-dark);
+}
+
+.change-pw-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ── Small phones (≤ 480px) ── */

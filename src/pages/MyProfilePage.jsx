@@ -45,6 +45,14 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
   const [locations, setLocations] = useState([])
   const [editingLocations, setEditingLocations] = useState(false)
 
+  const [showChangePw,   setShowChangePw]   = useState(false)
+  const [currentPw,      setCurrentPw]      = useState('')
+  const [newPw,          setNewPw]          = useState('')
+  const [confirmPw,      setConfirmPw]      = useState('')
+  const [changePwLoading, setChangePwLoading] = useState(false)
+  const [changePwError,  setChangePwError]  = useState(null)
+  const [changePwSuccess, setChangePwSuccess] = useState(null)
+
   // which fields are in "edit mode"
   const [editing, setEditing] = useState({
     profileImageUrl: false,
@@ -332,6 +340,39 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
       setError(err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleChangePassword(e) {
+    e.preventDefault()
+    setChangePwError(null)
+    setChangePwSuccess(null)
+
+    if (!currentPw.trim())       { setChangePwError('Please enter your current password.');         return }
+    if (!newPw.trim())           { setChangePwError('Please enter a new password.');                return }
+    if (newPw.length < 8)        { setChangePwError('New password must be at least 8 characters.'); return }
+    if (newPw === currentPw)     { setChangePwError('New password must differ from current.');      return }
+    if (newPw !== confirmPw)     { setChangePwError('Passwords do not match.');                     return }
+
+    setChangePwLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/change-password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+      })
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || 'Failed to change password.')
+      }
+      setChangePwSuccess('Password updated successfully!')
+      setCurrentPw(''); setNewPw(''); setConfirmPw('')
+      setTimeout(() => { setShowChangePw(false); setChangePwSuccess(null) }, 2000)
+    } catch (err) {
+      setChangePwError(err.message)
+    } finally {
+      setChangePwLoading(false)
     }
   }
 
@@ -901,6 +942,73 @@ function MyProfilePage({ currentUser, setCurrentUser }) {
                   Receive updates about new features, tutors, and Growth Tutoring news.
                 </span>
               </label>
+            </div>
+          </div>
+
+          {/* Security Section */}
+          <div className="my-profile-section readonly-section">
+            <div className="section-header">
+              <h2 className="section-title">Security</h2>
+              <span className="section-subtitle">Manage your password</span>
+            </div>
+
+            <div className="form-field">
+              <button
+                type="button"
+                className="change-pw-toggle-btn"
+                onClick={() => { setShowChangePw(v => !v); setChangePwError(null); setChangePwSuccess(null) }}
+              >
+                🔒 {showChangePw ? 'Cancel' : 'Change Password'}
+              </button>
+
+              {showChangePw && (
+                <div className="change-pw-form">
+                  <div className="change-pw-fields">
+                    <div className="form-field">
+                      <label className="field-label">Current Password</label>
+                      <input
+                        type="password"
+                        className="form-input"
+                        value={currentPw}
+                        onChange={e => setCurrentPw(e.target.value)}
+                        placeholder="Enter current password"
+                      />
+                    </div>
+                    <div className="form-field">
+                      <label className="field-label">New Password</label>
+                      <input
+                        type="password"
+                        className="form-input"
+                        value={newPw}
+                        onChange={e => setNewPw(e.target.value)}
+                        placeholder="At least 8 characters"
+                      />
+                    </div>
+                    <div className="form-field">
+                      <label className="field-label">Confirm New Password</label>
+                      <input
+                        type="password"
+                        className="form-input"
+                        value={confirmPw}
+                        onChange={e => setConfirmPw(e.target.value)}
+                        placeholder="Re-enter new password"
+                      />
+                    </div>
+                  </div>
+
+                  {changePwError   && <p className="auth-error"  style={{ marginTop: '8px' }}>{changePwError}</p>}
+                  {changePwSuccess && <p className="auth-success" style={{ marginTop: '8px' }}>{changePwSuccess}</p>}
+
+                  <button
+                    type="button"
+                    className="change-pw-submit-btn"
+                    onClick={handleChangePassword}
+                    disabled={changePwLoading}
+                  >
+                    {changePwLoading ? 'Updating...' : 'Update Password'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
