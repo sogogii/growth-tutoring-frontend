@@ -134,13 +134,13 @@ function TutorSessionsDetailPage({ currentUser }) {
     switch (category) {
       case 'pending':
         return sessions.filter(s => s.status === 'PENDING')
-      case 'upcoming':
-        return sessions.filter(s =>
-          s.status === 'ACCEPTED' && new Date(s.requestedStart) > now
-        )
       case 'past':
         return sessions.filter(s =>
-          s.status === 'ACCEPTED' && new Date(s.requestedStart) <= now
+          (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
+        )
+      case 'upcoming':
+        return sessions.filter(s =>
+          s.status === 'ACCEPTED' && new Date(s.requestedEnd) > now
         )
       case 'declined':
         return sessions.filter(s =>
@@ -236,6 +236,19 @@ function TutorSessionsDetailPage({ currentUser }) {
           ) : null}
         </div>
       )}
+
+      {isPastCategory && (
+  <div className="session-actions">
+    <button
+      className="btn btn-primary"
+      onClick={() => navigate(
+        `/report/new?sessionId=${session.id}&studentId=${session.studentUserId}&studentName=${encodeURIComponent(session.studentFirstName + ' ' + session.studentLastName)}`
+      )}
+    >
+      ✦ Write AI Report
+    </button>
+  </div>
+)}
     </div>
   )
 

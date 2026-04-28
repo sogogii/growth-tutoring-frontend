@@ -39,6 +39,9 @@ import AdminPromotionsPage from './pages/admin/AdminPromotionsPage'
 import VirtualClassroom from './pages/classroom/VirtualClassroom'
 import MyClassroomPage from './pages/classroom/MyClassroomPage'
 import ChatbotWidget from './components/ChatbotWidget'
+import SessionReportPage  from './pages/tutor/SessionReportPage'
+import ProgressPage       from './pages/student/ProgressPage'
+import PendingReportsPage from './pages/tutor/PendingReportsPage'
 
 // relationship pages
 import MyStudentsPage from './pages/MyStudentsPage'
@@ -631,6 +634,13 @@ function App() {
                         >
                           My classroom
                         </button>
+                        <button
+                          type="button"
+                          className="user-menu-link"
+                          onClick={() => goTo('/pending-reports')}
+                        >
+                          ✦ Pending Reports
+                        </button>
                       </>
                     )}
                   
@@ -679,6 +689,15 @@ function App() {
                         onClick={() => goTo('/my-classroom')}
                       >
                         My classroom
+                      </button>
+                    )}
+                    {currentUser.role === 'STUDENT' && (
+                      <button
+                        type="button"
+                        className="user-menu-link"
+                        onClick={() => goTo('/progress')}
+                      >
+                        My progress
                       </button>
                     )}
 
@@ -987,6 +1006,30 @@ function App() {
           <Route 
             path="/my-classroom" 
             element={<MyClassroomPage currentUser={currentUser} classroomSessionId={classroomSessionId} />} 
+          />
+          <Route
+            path="/report/new"
+            element={
+              currentUser?.role === 'TUTOR'
+                ? <SessionReportPage currentUser={currentUser} />
+                : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/progress"
+            element={
+              currentUser?.role === 'STUDENT'
+                ? <ProgressPage currentUser={currentUser} />
+                : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/pending-reports"
+            element={
+              currentUser?.role === 'TUTOR'
+              ? <PendingReportsPage currentUser={currentUser} />
+                : <Navigate to="/login" replace />
+            }
           />
         </Routes>
       </main>

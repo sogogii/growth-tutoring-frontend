@@ -1,0 +1,280 @@
+/* AIIntakeModal.css */
+
+.intake-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.intake-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.intake-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.intake-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.intake-ai-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f0effe;
+  color: #5b4fcf;
+  padding: 3px 10px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.intake-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+
+.intake-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.intake-close:hover {
+  color: #333;
+}
+
+/* Step indicators */
+.intake-steps {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.intake-step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  position: relative;
+}
+
+.intake-step-dot:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 100%;
+  height: 1px;
+  background: #e5e7eb;
+  z-index: 0;
+}
+
+.intake-step-dot.done:not(:last-child)::after,
+.intake-step-dot.active:not(:last-child)::after {
+  background: #5b4fcf;
+}
+
+.intake-dot-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #888;
+  position: relative;
+  z-index: 1;
+}
+
+.intake-step-dot.active .intake-dot-circle {
+  background: #5b4fcf;
+  color: #fff;
+}
+
+.intake-step-dot.done .intake-dot-circle {
+  background: #5b4fcf;
+  color: #fff;
+  font-size: 13px;
+}
+
+.intake-dot-label {
+  font-size: 10px;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+.intake-step-dot.active .intake-dot-label {
+  color: #5b4fcf;
+  font-weight: 500;
+}
+
+/* Body */
+.intake-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+}
+
+.intake-step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.intake-optional {
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+/* Chips */
+.intake-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.intake-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.intake-chip:hover {
+  border-color: #a5b4fc;
+  background: #f5f3ff;
+}
+
+.intake-chip.selected {
+  border-color: #5b4fcf;
+  background: #f0effe;
+  color: #3c31a0;
+  font-weight: 500;
+}
+
+/* Slider */
+.intake-slider {
+  width: 100%;
+  margin: 0.5rem 0 0.25rem;
+  accent-color: #5b4fcf;
+}
+
+.intake-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Textarea */
+.intake-textarea {
+  width: 100%;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #374151;
+  resize: vertical;  
+  font-family: inherit;
+  transition: border-color 0.12s;
+  box-sizing: border-box; 
+  max-width: 100%;
+}
+
+.intake-textarea:focus {
+  outline: none;
+  border-color: #5b4fcf;
+}
+
+/* Footer */
+.intake-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.intake-btn-back {
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.intake-btn-back:hover {
+  background: #f9fafb;
+}
+
+.intake-btn-next,
+.intake-btn-submit {
+  padding: 9px 22px;
+  border-radius: 8px;
+  border: none;
+  background: #5b4fcf;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.intake-btn-next:hover,
+.intake-btn-submit:hover {
+  background: #4a3fb5;
+}
+
+.intake-btn-next:disabled,
+.intake-btn-submit:disabled {
+  background: #c4bef0;
+  cursor: not-allowed;
+}
+
+@media (max-width: 540px) {
+  .intake-modal {
+    max-height: 100vh;
+    border-radius: 16px 16px 0 0;
+    align-self: flex-end;
+  }
+}

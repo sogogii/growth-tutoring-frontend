@@ -115,12 +115,11 @@ function StudentSessionsPage({ currentUser }) {
   // Separate sessions by status and time
   const pendingSessions = sessions.filter(s => s.status === 'PENDING')
   
-  const confirmedSessions = sessions.filter(s => 
-    s.status === 'ACCEPTED' && new Date(s.requestedStart) > now
+  const confirmedSessions = sessions.filter(s =>
+    s.status === 'ACCEPTED' && new Date(s.requestedEnd) > now
   )
-  
-  const pastSessions = sessions.filter(s => 
-    s.status === 'ACCEPTED' && new Date(s.requestedStart) <= now
+  const pastSessions = sessions.filter(s =>
+    (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
   )
   
   const cancelledDeclinedSessions = sessions.filter(s => 

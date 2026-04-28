@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import VerificationBadge from '../../components/VerificationBadge'
+import AIIntakeModal from '../../components/AIIntakeModal'
+import MatchBadge from '../../components/MatchBadge'
 import './styles/TutorsPage.css'
 
 const RAW_API_BASE_URL =
@@ -133,6 +135,11 @@ function TutorsPage({ currentUser }) {
   const [scheduleTimeStart, setScheduleTimeStart] = useState('')
   const [scheduleTimeEnd, setScheduleTimeEnd]     = useState('')
   const [showSchedulePanel, setShowSchedulePanel] = useState(false)
+
+  const [showIntake, setShowIntake]       = useState(false)
+  const [aiMatches, setAiMatches]         = useState([])   // [{ tutor, score, reason }]
+  const [aiLoading, setAiLoading]         = useState(false)
+  const [aiError, setAiError]             = useState(null)
   
   // Subject filter - initialize from navigation state if present
   const [selectedSubjects, setSelectedSubjects] = useState(() => {
@@ -445,6 +452,14 @@ function TutorsPage({ currentUser }) {
         return num(a.hourlyRate) - num(b.hourlyRate)
       case 'experienceDesc':
         return num(b.experienceYears) - num(a.experienceYears)
+      case 'aiMatch': {
+        const aiIndex = Object.fromEntries(aiMatches.map(m => [m.tutor.userId, m]))
+        return [...scheduleFiltered].sort((a, b) => {
+          const sa = aiIndex[a.id]?.score ?? -1
+          const sb = aiIndex[b.id]?.score ?? -1
+          return sb - sa
+        })
+      }
       default:
         return 0
     }
@@ -459,6 +474,26 @@ function TutorsPage({ currentUser }) {
     selectedSubjects.length +
     (scheduleDay ? 1 : 0) +
     selectedMethods.length
+
+  async function handleAiSubmit(intakeData) {
+    setAiLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/matching/recommend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(intakeData),
+      })
+      if (!res.ok) throw new Error('Matching failed')
+      setAiMatches(await res.json())
+      setSortOption('aiMatch')
+      setShowIntake(false)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   return (
     <div className="tutors-page">
@@ -505,6 +540,13 @@ function TutorsPage({ currentUser }) {
 
               {/* Sort by section */}
               <div className="tutors-sidebar-section">
+                <button
+                  type="button"
+                  className={`tutors-sort-chip tutors-sort-chip--ai ${sortOption === 'aiMatch' ? 'active' : ''}`}
+                  onClick={() => setShowIntake(true)}
+                >
+                  ✦ Growth AI Match
+                </button>
                 <h3>Sort by</h3>
                 <button
                   type="button"
@@ -911,9 +953,13 @@ function TutorsPage({ currentUser }) {
 
                   <div className="tutor-card-main">
                     <div className="tutor-header">
-                      <h3 className="tutor-name">{tutor.name}</h3>
-                      <VerificationBadge tier={tutor.verificationTier} />
-                    </div>
+  <h3 className="tutor-name">{tutor.name}</h3>
+  <VerificationBadge tier={tutor.verificationTier} />
+  {sortOption === 'aiMatch' && (() => {
+    const match = aiMatches.find(m => Number(m.tutor.userId) === Number(tutor.id))
+    return match ? <MatchBadge score={match.score} reason={match.reason} /> : null
+  })()}
+</div>
 
                     {/* HIDE REVIEW 
                     <div className="tutor-rating-row">
@@ -1020,6 +1066,12 @@ function TutorsPage({ currentUser }) {
           </div>
         </div>
       </section>
+      <AIIntakeModal
+        isOpen={showIntake}
+        onClose={() => setShowIntake(false)}
+        onSubmit={handleAiSubmit}
+        loading={aiLoading}
+      />
     </div>
   )
 }

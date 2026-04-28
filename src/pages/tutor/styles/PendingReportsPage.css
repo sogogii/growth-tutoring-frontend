@@ -1,0 +1,386 @@
+/* PendingReportsPage.css */
+
+.pr-page {
+  min-height: 100vh;
+  background: #f8f7f4;
+  padding: 2rem 1rem 4rem;
+}
+
+.pr-container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ── Back button ── */
+.pr-back-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.pr-back-btn:hover { color: #111; }
+
+/* ── Header ── */
+.pr-header { margin-bottom: 1.5rem; }
+
+.pr-header-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pr-ai-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+}
+
+.pr-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.pr-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Overdue alert banner */
+.pr-overdue-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px 16px;
+  flex-shrink: 0;
+}
+
+.pr-overdue-alert-icon { font-size: 18px; }
+
+.pr-overdue-alert-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #dc2626;
+  margin: 0 0 2px;
+}
+
+.pr-overdue-alert-sub {
+  font-size: 12px;
+  color: #ef4444;
+  margin: 0;
+}
+
+/* ── Stats ── */
+.pr-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.pr-stat {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.pr-stat--overdue { border-color: #fecaca; background: #fef2f2; }
+.pr-stat--urgent  { border-color: #fed7aa; background: #fff7ed; }
+
+.pr-stat-num {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.pr-stat--overdue .pr-stat-num { color: #dc2626; }
+.pr-stat--urgent  .pr-stat-num { color: #ea580c; }
+
+.pr-stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+  display: block;
+}
+
+/* ── Filter tabs ── */
+.pr-filter-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+}
+
+.pr-filter-tab {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.pr-filter-tab:hover { border-color: #c4bef0; color: #5b4fcf; }
+
+.pr-filter-tab.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Loading ── */
+.pr-loading {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.pr-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: pr-spin 0.7s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes pr-spin { to { transform: rotate(360deg); } }
+
+/* ── Error ── */
+.pr-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* ── Empty ── */
+.pr-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.pr-empty-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+
+.pr-empty h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.pr-empty p { font-size: 14px; color: #6b7280; margin: 0; }
+
+/* ── List ── */
+.pr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Card ── */
+.pr-card {
+  display: flex;
+  gap: 14px;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.pr-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  border-color: #c4bef0;
+}
+
+.pr-card--overdue {
+  border-color: #fecaca;
+  background: #fff;
+}
+
+.pr-card--overdue:hover { border-color: #f87171; }
+
+.pr-card--urgent {
+  border-color: #fed7aa;
+}
+
+.pr-card--urgent:hover { border-color: #fb923c; }
+
+/* Card left — avatar */
+.pr-card-left { flex-shrink: 0; }
+
+.pr-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pr-avatar--fallback {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Card body */
+.pr-card-body { flex: 1; min-width: 0; }
+
+.pr-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pr-student-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.pr-session-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.pr-subject {
+  font-weight: 600;
+  color: #5b4fcf;
+}
+
+.pr-format {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.pr-format--online    { background: #e0f2fe; color: #0369a1; }
+.pr-format--in_person { background: #fef9c3; color: #854d0e; }
+
+/* Time indicator */
+.pr-time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pr-time--overdue { background: #fef2f2; color: #dc2626; }
+.pr-time--urgent  { background: #fff7ed; color: #ea580c; }
+.pr-time--ok      { background: #f0effe; color: #5b4fcf; }
+
+.pr-time-icon { font-style: normal; }
+
+/* Card footer */
+.pr-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pr-deadline {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.pr-deadline strong { color: #6b7280; }
+
+/* Write button */
+.pr-write-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: opacity 0.12s, box-shadow 0.12s;
+  box-shadow: 0 2px 10px rgba(102,126,234,0.35);
+}
+
+.pr-write-btn:hover {
+  opacity: 0.92;
+  box-shadow: 0 4px 16px rgba(102,126,234,0.45);
+}
+
+.pr-write-btn--overdue {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 2px 10px rgba(220,38,38,0.3);
+}
+
+.pr-write-btn--overdue:hover {
+  box-shadow: 0 4px 16px rgba(220,38,38,0.4);
+}
+
+@media (max-width: 560px) {
+  .pr-card-top    { flex-direction: column; }
+  .pr-card-footer { flex-direction: column; align-items: flex-start; }
+  .pr-write-btn   { width: 100%; justify-content: center; }
+  .pr-stats       { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .pr-stat-num    { font-size: 20px; }
+}

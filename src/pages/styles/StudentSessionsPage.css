@@ -11,7 +11,8 @@
 }
 
 .sessions-container {
-  max-width: 860px;
+  min-width: 900px;
+  width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
 }

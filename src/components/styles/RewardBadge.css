@@ -1,0 +1,46 @@
+/* RewardBadge.css */
+
+.reward-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+
+.reward-badge-gold   { background: #fefce8; border-color: #fcd34d; }
+.reward-badge-orange { background: #fff7ed; border-color: #fdba74; }
+.reward-badge-green  { background: #ecfdf5; border-color: #6ee7b7; }
+.reward-badge-gray   { background: #f9fafb; border-color: #e5e7eb; }
+
+.reward-badge-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.reward-badge-sm .reward-badge-icon { font-size: 14px; }
+
+.reward-badge-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.reward-badge-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
+
+.reward-badge-sm .reward-badge-label { font-size: 12px; }
+
+.reward-badge-desc {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.reward-badge-date {
+  font-size: 10px;
+  color: #9ca3af;
+}

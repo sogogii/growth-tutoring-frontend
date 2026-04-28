@@ -116,11 +116,11 @@ function StudentSessionsDetailPage({ currentUser }) {
         return sessions.filter(s => s.status === 'PENDING')
       case 'confirmed':
         return sessions.filter(s => 
-          s.status === 'ACCEPTED' && new Date(s.requestedStart) > now
+          s.status === 'ACCEPTED' && new Date(s.requestedEnd) > now
         )
       case 'past':
-        return sessions.filter(s => 
-          s.status === 'ACCEPTED' && new Date(s.requestedStart) <= now
+        return sessions.filter(s =>
+          (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
         )
       case 'cancelled':
         return sessions.filter(s => 

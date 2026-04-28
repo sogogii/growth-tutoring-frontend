@@ -57,12 +57,12 @@ export default function MyClassroomPage({ currentUser, classroomSessionId }) {
   const fetchSessions = async () => {
     try {
       setLoading(true)
-      let url
-      if (isTutor) {
-        url = `${API_BASE}/api/session-requests/tutor/${currentUser.userId}/upcoming`
-      } else {
-        url = `${API_BASE}/api/session-requests/student/${currentUser.userId}`
-      }
+
+      // BOTH tutor and student now use the full session list
+      // so the frontend filter (requestedEnd) controls what shows
+      const url = isTutor
+        ? `${API_BASE}/api/session-requests/tutor/${currentUser.userId}`
+        : `${API_BASE}/api/session-requests/student/${currentUser.userId}`
 
       const res = await fetch(url, { credentials: 'include' })
       if (!res.ok) throw new Error('Failed to load sessions')
@@ -70,7 +70,11 @@ export default function MyClassroomPage({ currentUser, classroomSessionId }) {
 
       const now = new Date()
       const upcoming = (Array.isArray(data) ? data : [])
-        .filter(s => s.status === 'ACCEPTED' && new Date(s.requestedStart) > now && s.sessionFormat !== 'IN_PERSON')
+        .filter(s =>
+          s.status === 'ACCEPTED' &&
+          new Date(s.requestedEnd) > now &&       // ← was requestedStart
+          s.sessionFormat !== 'IN_PERSON'
+        )
         .sort((a, b) => new Date(a.requestedStart) - new Date(b.requestedStart))
 
       setSessions(upcoming)

@@ -136,11 +136,10 @@ function TutorSessionsPage({ currentUser }) {
   const pendingSessions = sessions.filter(s => s.status === 'PENDING')
 
   const upcomingSessions = sessions.filter(s =>
-    s.status === 'ACCEPTED' && new Date(s.requestedStart) > now
+    s.status === 'ACCEPTED' && new Date(s.requestedEnd) > now
   )
-
   const pastSessions = sessions.filter(s =>
-    s.status === 'ACCEPTED' && new Date(s.requestedStart) <= now
+    (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
   )
 
   const declinedCancelledSessions = sessions.filter(s =>
@@ -204,6 +203,19 @@ function TutorSessionsPage({ currentUser }) {
               Cancel Session
             </button>
           ) : null}
+        </div>
+      )}
+
+      {isPast && (
+        <div className="session-actions">
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate(
+              `/report/new?sessionId=${session.id}&studentId=${session.studentUserId}&studentName=${encodeURIComponent(session.studentFirstName + ' ' + session.studentLastName)}`
+            )}
+          >
+            ✦ Write AI Report
+          </button>
         </div>
       )}
     </div>
