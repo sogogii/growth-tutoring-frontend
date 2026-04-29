@@ -336,9 +336,18 @@ function TutorProfilePage({ currentUser }) {
   return (
     <div key={review.id} className={`review-card ${isMyReview ? 'my-review' : ''}`}>
       <div className="review-card-top">
-        <div className="review-avatar">
-          {initial}
-        </div>
+        {review.studentProfileImageUrl ? (
+          <img
+            src={review.studentProfileImageUrl}
+            alt={initial}
+            className="review-avatar"
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <div className="review-avatar">
+            {initial}
+          </div>
+        )}
 
         <div className="review-info">
           <div className="review-author">
