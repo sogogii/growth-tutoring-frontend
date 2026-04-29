@@ -120,7 +120,8 @@ function StudentSessionsDetailPage({ currentUser }) {
         )
       case 'past':
         return sessions.filter(s =>
-          (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
+          s.status === 'COMPLETED' ||
+          (s.status === 'ACCEPTED' && new Date(s.requestedEnd) <= now)
         )
       case 'cancelled':
         return sessions.filter(s => 

@@ -136,7 +136,8 @@ function TutorSessionsDetailPage({ currentUser }) {
         return sessions.filter(s => s.status === 'PENDING')
       case 'past':
         return sessions.filter(s =>
-          (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
+          s.status === 'COMPLETED' ||
+          (s.status === 'ACCEPTED' && new Date(s.requestedEnd) <= now)
         )
       case 'upcoming':
         return sessions.filter(s =>
@@ -213,7 +214,7 @@ function TutorSessionsDetailPage({ currentUser }) {
             <>
               <button
                 className="btn btn-success"
-                onClick={() => handleRespond(session.id, 'ACCEPT')}
+                onClick={() => handleDecision(session.id, 'ACCEPT')}
                 disabled={processing === session.id}
               >
                 {processing === session.id ? 'Processing...' : 'Accept'}

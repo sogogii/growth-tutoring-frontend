@@ -119,7 +119,8 @@ function StudentSessionsPage({ currentUser }) {
     s.status === 'ACCEPTED' && new Date(s.requestedEnd) > now
   )
   const pastSessions = sessions.filter(s =>
-    (s.status === 'ACCEPTED' || s.status === 'COMPLETED') && new Date(s.requestedEnd) <= now
+    s.status === 'COMPLETED' ||
+    (s.status === 'ACCEPTED' && new Date(s.requestedEnd) <= now)
   )
   
   const cancelledDeclinedSessions = sessions.filter(s => 
